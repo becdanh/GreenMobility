@@ -1,0 +1,133 @@
+﻿@using PagedList.Core.Mvc;
+@model PagedList.Core.IPagedList<GreenMobility.Models.Parking>
+
+@{
+    int currentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Quản lý bãi đỗ: page " + currentPage;
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-header">
+    <h2 class="header-title">Quản lý bãi đỗ</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <span class="breadcrumb-item active">Danh sách bãi đỗ : Trang @currentPage</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row m-b-30">
+            <div class="col-lg-8">
+                <div class="d-md-flex">
+                    <div class="m-b-10">
+                        <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.lsTrangThai">
+                            <option value="" disabled selected>Chọn trạng thái</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-right">
+                <a class="btn btn-primary" asp-controller="AdminParkings" asp-action="Create">
+                    <i class="anticon anticon-plus-circle m-r-5"></i>
+                    <span>Thêm mới bãi đỗ</span>
+                </a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Tên bãi đỗ</th>
+                        <th scope="col">Địa chỉ</th>
+                        <th scope="col">Trạng thái</th>
+                        <th class="text-right" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        int serialNumber = (currentPage - 1) * Model.PageSize;
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(++serialNumber)</td>
+                                <td>@item.ParkingName</td>
+                                <td>@item.Address</td>
+                                <td>
+                                    @if ((bool)item.IsActive)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Hoạt động</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>Khóa</div>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-right">
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminParkings" asp-action="Edit" asp-route-id="@item.ParkingId">
+                                        <i class="anticon anticon-edit"></i>
+                                    </a>
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminParkings" asp-action="Details" asp-route-id="@item.ParkingId">
+                                        <i class="anticon anticon-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-5">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminParkings" asp-route-IsActive="@ViewBag.CurrentActive" asp-action="Index"></pager>
+                </ul>
+            </div>
+            <div class ="col-sm-12 col-md-7 text-right">
+                @if (Model != null)
+                {
+                    <p>Tổng số bãi đỗ: @Model.TotalItemCount</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#idstatus").change(function () {
+                var isActive = jQuery(this).children(":selected").attr("value");
+                isActive = parseFloat(isActive);
+                $('#idstatus option').removeAttr('selected');
+                $("#idstatus > [value = " + isActive + "]").attr("selected", true);
+                $.ajax({
+                    url: '/Admin/AdminParkings/Filter',
+                    dataType: "json",
+                    type: 'GET',
+                    data: { IsActive: isActive },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+        $(function () {
+            var isActive = @ViewBag.CurrentActive; // Get current active status from ViewBag
+            $("#idstatus").val(isActive); // Set dropdown value
+        });
+    </script>
+}

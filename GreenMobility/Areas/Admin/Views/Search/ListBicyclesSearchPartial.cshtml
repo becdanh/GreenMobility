@@ -1,0 +1,28 @@
+﻿@model List<Bicycle>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>@(item.BicycleName ?? "N/A")</td>
+            <td>@(item.LicensePlate ?? "N/A")</td>
+            <td>@(item.Parking?.ParkingName ?? "N/A")</td>
+            <td>@(item.BicycleStatus?.Description ?? "N/A")</td>
+            <td class="text-right">
+                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Edit" asp-route-id="@item.BicycleId">
+                    <i class="anticon anticon-edit"></i>
+                </a>
+                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Details" asp-route-id="@item.BicycleId">
+                    <i class="anticon anticon-eye"></i>
+                </a>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="5">Không tìm thấy xe tương ứng.</td>
+    </tr>
+}

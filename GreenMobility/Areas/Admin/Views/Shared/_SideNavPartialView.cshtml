@@ -1,0 +1,62 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="side-nav">
+    <div class="side-nav-inner">
+        <ul class="side-nav-menu scrollable">
+            <li class="nav-item">
+                <a class="dropdown-toggle" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-dashboard"></i>
+                    </span>
+                    <span class="title">Dashboard</span>
+                    <span class="arrow">
+                        <i class="arrow-icon"></i>
+                    </span>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-appstore"></i>
+                    </span>
+                    <span class="title">Quản lý dữ liệu</span>
+                    <span class="arrow">
+                        <i class="arrow-icon"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index">Danh sách xe</a>
+                    </li>
+                    <li>
+                        <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index">Danh sách bãi đỗ</a>
+                    </li>
+                    <li>
+                        <a asp-area="Admin" asp-controller="" asp-action="Index">Danh sách khách hàng</a>
+                    </li>
+                    <li>
+                        <a asp-area="Admin" asp-controller="AdminEmployees" asp-action="Index">Danh sách nhân viên</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a asp-area="Admin" asp-action="Index" asp-controller="AdminPosts" asp-area="Admin">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-file"></i>
+                    </span>
+                    <span class="title">Quản lý tin tức</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-area="Admin" asp-action="Index" asp-controller="AdminRentals" asp-area="Admin">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-hdd"></i>
+                    </span>
+                    <span class="title">Quản lý đơn thuê xe</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

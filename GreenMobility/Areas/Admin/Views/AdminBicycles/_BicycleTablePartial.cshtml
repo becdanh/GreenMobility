@@ -1,0 +1,50 @@
+﻿@model PagedList.Core.IPagedList<GreenMobility.Models.Bicycle>
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Tên xe đạp</th>
+                    <th scope="col">Biển số</th>
+                    <th scope="col">Bãi đỗ</th>
+                    <th scope="col">Trạng thái</th>
+                    <th class="text-right" scope="col">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.BicycleName</td>
+                        <td>@item.LicensePlate</td>
+                        <td>@item.Parking.ParkingName</td>
+                        <td>@item.BicycleStatus.Description</td>
+                        <td class="text-right">
+                            <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Edit" asp-route-id="@item.BicycleId">
+                                <i class="anticon anticon-edit"></i>
+                            </a>
+                            <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Details" asp-route-id="@item.BicycleId">
+                                <i class="anticon anticon-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-5">
+            <ul class="pagination">
+                <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminBicycles" asp-action="Search"></pager>
+            </ul>
+        </div>
+
+        <div class="col-sm-12 col-md-7 text-right">
+            <p>Tổng số xe: @Model.TotalItemCount</p>
+        </div>
+    </div>
+
+}

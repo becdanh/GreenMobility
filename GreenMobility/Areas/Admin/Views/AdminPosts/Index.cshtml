@@ -1,0 +1,143 @@
+﻿@using PagedList.Core.Mvc
+@model PagedList.Core.IPagedList<GreenMobility.Models.Post>
+@{
+    int currentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Quản lý tin tức: page " + currentPage;
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-header">
+    <div class="header-sub-title">
+        <h2 class="header-title">Quản lý tin tức</h2>
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <span class="breadcrumb-item active">Danh sách tin tức : Trang @currentPage</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row m-b-30">
+            <div class="col-lg-8">
+                <div class="d-md-flex">
+                    <div class="m-b-10 m-r-10">
+                        <div class="input-affix" style="min-width: 180px;">
+                            <i class="prefix-icon anticon anticon-search"></i>
+                            <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Tìm kiếm xe đạp">
+                        </div>
+                    </div>
+                    <div class="m-b-10">
+                        <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.TrangThai">
+                            <option value="" disabled selected>Chọn trạng thái</option>
+                            <option value="0" selected>Tất cả trạng thái</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 text-right">
+                <a class="btn btn-primary" asp-controller="AdminPosts" asp-action="Create">
+                    <i class="anticon anticon-plus-circle m-r-5"></i>
+                    <span>Thêm mới tin tức</span>
+                </a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Tiêu đề</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Tin nóng</th>
+                        <th scope="col">Tin mới</th>
+                        <th class="text-right" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody id="record_table">
+                    @if (Model != null)
+                    {
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.CreatedDate</td>
+                                <td>
+                                    @if (item.Published == true)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Công khai</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>Ẩn</div>
+                                        </div>
+                                    }
+
+                                </td>
+                                <td>
+                                    @if (item.IsHot == true)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Hot</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>-</div>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsNewfeed == true)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>New</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>-</div>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-right">
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminPosts" asp-action="Edit" asp-route-id="@item.PostId">
+                                        <i class="anticon anticon-edit"></i>
+                                    </a>
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminPosts" asp-action="Details" asp-route-id="@item.PostId">
+                                        <i class="anticon anticon-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-5">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminPosts" asp-route-IsActive="@ViewBag.CurrentStatus" asp-action="Index"></pager>
+                </ul>
+            </div>
+            <div class="col-sm-12 col-md-7 text-right">
+                @if (Model != null)
+                {
+                    <p>Tổng số tin tức: @Model.TotalItemCount</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

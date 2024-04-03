@@ -1,0 +1,54 @@
+﻿@model GreenMobility.Models.Parking
+
+@{
+    ViewData["Title"] = "Thông tin bãi đỗ";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-header">
+    <h2 class="header-title">Quản lý bãi đỗ</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="breadcrumb-item">Danh sách bãi đỗ</a>
+            <span class="breadcrumb-item active">Thông tin bãi đỗ</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Thông tin bãi đỗ</h4>
+        <div class="table-responsive">
+            <table class="product-info-table m-t-20">
+                <tbody>
+                    <tr>
+                        <td>Tên bãi đỗ:</td>
+                        <td class="text-dark font-weight-semibold">@Model.ParkingName</td>
+                    </tr>
+                    <tr>
+                        <td>Alias:</td>
+                        <td>@Model.Alias</td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ:</td>
+                        <td>@Model.Address</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="text-left d-flex flex-row-reverse">
+            <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="btn btn-success btn-tone m-r-5">Quay lại</a>
+            <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.ParkingId">
+                <button type="submit" class="btn btn-danger btn-tone m-r-5">Xóa</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("deleteForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (confirm("Bạn có chắc chắn muốn xóa bãi đỗ này?")) {
+            this.submit();
+        }
+    });
+</script>

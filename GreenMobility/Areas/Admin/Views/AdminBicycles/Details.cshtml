@@ -1,0 +1,105 @@
+﻿@model GreenMobility.Models.Bicycle
+
+@{
+    ViewData["Title"] = "Thông tin xe đạp";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="breadcrumb-item">Danh sách xe đạp</a>
+            <span class="breadcrumb-item active">Thông tin xe đạp : @Model.BicycleName - @Model.LicensePlate</span>
+        </nav>
+    </div>
+</div>
+
+<div class="page-header no-gutters has-tab">
+    <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+        <div class="media align-items-center m-b-15">
+            <div class="avatar avatar-image rounded" style="height:70px; width:70px">
+                <img src="~/images/bicycles/@Model.Photo" alt="@Model.BicycleName" />
+            </div>
+            <div class="m-l-15">
+                <h4 class="m-b-0">@Model.BicycleName - @Model.LicensePlate</h4>
+                <p class="text-muted m-b-0">ID: #@Model.BicycleId</p>
+            </div>
+        </div>
+        <div class="d-flex align-items-center m-b-15">
+            <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="Adminbicycles" asp-action="Edit" asp-route-id="@Model.BicycleId">Sửa đổi</a>
+            <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.BicycleId" class="mr-2">
+                <button type="submit" class="btn btn-danger btn-tone">Xóa</button>
+            </form>
+            <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#bicycle-details">Thông tin chi tiết</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#bicycle-images">Ảnh đại diện</a>
+        </li>
+    </ul>
+</div>
+<div class="tab-content m-t-15">
+    <div class="tab-pane fade show active" id="bicycle-details">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">THÔNG TIN: @Model.BicycleName - @Model.LicensePlate</h4>
+                <div class="table-responsive">
+                    <table class="product-info-table m-t-20">
+                        <tbody>
+                            <tr>
+                                <td>Tên xe đạp:</td>
+                                <td class="text-dark font-weight-semibold">@Model.BicycleName</td>
+                            </tr>
+                            <tr>
+                                <td>Biển số:</td>
+                                <td>@Model.LicensePlate</td>
+                            </tr>
+                            <tr>
+                                <td>Alias:</td>
+                                <td>@Model.Alias</td>
+                            </tr>
+                            <tr>
+                                <td>Trạng thái:</td>
+                                <td>@Model.BicycleStatus?.Description</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">THÔNG TIN MÔ TẢ</h4>
+            </div>
+            <div class="card-body">
+                @Html.Raw(Model.Description)
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="bicycle-images">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <img class="img-fluid" src="~/images/bicycles/@Model.Photo" alt="@Model.BicycleName - @Model.LicensePlate">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("deleteForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (confirm("Bạn có chắc chắn muốn xóa xe đạp này?")) {
+            this.submit();
+        }
+    });
+</script>
