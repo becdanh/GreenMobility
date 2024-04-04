@@ -10,36 +10,75 @@
         <nav class="breadcrumb breadcrumb-dash">
             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
             <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="breadcrumb-item">Danh sách bãi đỗ</a>
-            <span class="breadcrumb-item active">Thông tin bãi đỗ</span>
+            <span class="breadcrumb-item active">Thông tin bãi đỗ : @Model.ParkingName - @Model.Address</span>
         </nav>
     </div>
 </div>
-<div class="card">
-    <div class="card-body">
-        <h4 class="card-title">Thông tin bãi đỗ</h4>
-        <div class="table-responsive">
-            <table class="product-info-table m-t-20">
-                <tbody>
-                    <tr>
-                        <td>Tên bãi đỗ:</td>
-                        <td class="text-dark font-weight-semibold">@Model.ParkingName</td>
-                    </tr>
-                    <tr>
-                        <td>Alias:</td>
-                        <td>@Model.Alias</td>
-                    </tr>
-                    <tr>
-                        <td>Địa chỉ:</td>
-                        <td>@Model.Address</td>
-                    </tr>
-                </tbody>
-            </table>
+
+<div class="page-header no-gutters has-tab">
+    <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+        <div class="media align-items-center m-b-15">
+            <div class="avatar avatar-image rounded" style="height:70px; width:70px">
+                <img src="~/images/parkings/@Model.Photo" alt="@Model.ParkingName" />
+            </div>
+            <div class="m-l-15">
+                <h4 class="m-b-0">@Model.ParkingName - @Model.Address</h4>
+                <p class="text-muted m-b-0">ID: #@Model.ParkingId</p>
+            </div>
         </div>
-        <div class="text-left d-flex flex-row-reverse">
-            <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="btn btn-success btn-tone m-r-5">Quay lại</a>
-            <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.ParkingId">
-                <button type="submit" class="btn btn-danger btn-tone m-r-5">Xóa</button>
+        <div class="d-flex align-items-center m-b-15">
+            <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminParkings" asp-action="Edit" asp-route-id="@Model.ParkingId">Sửa đổi</a>
+            <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.ParkingId" class="mr-2">
+                <button type="submit" class="btn btn-danger btn-tone">Xóa</button>
             </form>
+            <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#parkings-details">Thông tin chi tiết</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#parkings-images">Ảnh đại diện</a>
+        </li>
+    </ul>
+</div>
+<div class="tab-content m-t-15">
+    <div class="tab-pane fade show active" id="parkings-details">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Thông tin bãi đỗ</h4>
+                <div class="table-responsive">
+                    <table class="product-info-table m-t-20">
+                        <tbody>
+                            <tr>
+                                <td>Tên bãi đỗ:</td>
+                                <td class="text-dark font-weight-semibold">@Model.ParkingName</td>
+                            </tr>
+                            <tr>
+                                <td>Alias:</td>
+                                <td>@Model.Alias</td>
+                            </tr>
+                            <tr>
+                                <td>Địa chỉ:</td>
+                                <td>@Model.Address</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="parkings-images">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <img class="img-fluid" src="~/images/parkings/@Model.Photo" alt="@Model.ParkingName">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

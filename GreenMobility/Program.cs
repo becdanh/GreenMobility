@@ -7,7 +7,11 @@ using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddMvcOptions(option =>
+    {
+        option.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+    });
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 builder.Services.AddDbContext<GreenMobilityContext>(options => options.UseSqlServer(

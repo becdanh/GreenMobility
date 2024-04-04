@@ -23,18 +23,16 @@ namespace GreenMobility.Areas.Admin.Controllers
             _context = context;
             _notyf = notyf;
         }
-
-        // GET: Admin/AdminParkings
         public async Task<IActionResult> Index(int page = 1, int IsActive = 0)
         {
             var pageNumber = page;
             var pageSize = 10;
 
-            List<SelectListItem> lsTrangThai = new List<SelectListItem>();
-            lsTrangThai.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
-            lsTrangThai.Add(new SelectListItem() { Text = "Hoạt động", Value = "1" });
-            lsTrangThai.Add(new SelectListItem() { Text = "Khóa", Value = "2" });
-            ViewData["lsTrangThai"] = lsTrangThai;
+            List<SelectListItem> lsStatus = new List<SelectListItem>();
+            lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
+            lsStatus.Add(new SelectListItem() { Text = "Hoạt động", Value = "1" });
+            lsStatus.Add(new SelectListItem() { Text = "Khóa", Value = "2" });
+            ViewData["lsStatus"] = lsStatus;
 
             List<Parking> lsParkings = new List<Parking>();
 
@@ -69,7 +67,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return Json(new { status = "success", redirectUrl = url });
         }
 
-        // GET: Admin/AdminParkings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Parkings == null)
@@ -87,7 +84,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(parking);
         }
 
-        // GET: Admin/AdminParkings/Create
         public IActionResult Create()
         {
             return View();
@@ -97,6 +93,18 @@ namespace GreenMobility.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ParkingId,ParkingName,Address,IsActive,Photo")] Parking parking, IFormFile? fPhoto)
         {
+            if (string.IsNullOrWhiteSpace(parking.ParkingName))
+                ModelState.AddModelError("ParkingName", "Tên bãi đỗ không được để trống");
+
+            if (string.IsNullOrWhiteSpace(parking.Address))
+                ModelState.AddModelError("Address", "Địa chỉ không được để trống");
+
+            if (ParkingNameExists(parking.ParkingName))
+            {
+                ModelState.AddModelError("ParkingName", "Tên bãi đỗ đã tồn tại");
+                return View(parking);
+            }
+
             if (ModelState.IsValid)
             {
                 parking.ParkingName = Utilities.ToTitleCase(parking.ParkingName);
@@ -108,6 +116,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                         parking.Photo = await Utilities.UploadFile(fPhoto, @"parkings", image.ToLower());
                     }
                 }
+
                 if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
 
                 parking.Alias = Utilities.SEOUrl(parking.ParkingName);
@@ -119,7 +128,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(parking);
         }
 
-        // GET: Admin/AdminParkings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Parkings == null)
@@ -135,37 +143,49 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(parking);
         }
 
-        // POST: Admin/AdminParkings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ParkingId,ParkingName,Address,IsActive")] Parking parking, IFormFile? fPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("ParkingId,ParkingName,Address,IsActive,Photo")] Parking parking, IFormFile? fPhoto)
         {
             if (id != parking.ParkingId)
             {
                 return NotFound();
             }
 
+            if (string.IsNullOrWhiteSpace(parking.ParkingName))
+                ModelState.AddModelError("ParkingName", "Tên bãi đỗ không được để trống");
+
+            if (string.IsNullOrWhiteSpace(parking.Address))
+                ModelState.AddModelError("Address", "Địa chỉ không được để trống");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    parking.ParkingName = Utilities.ToTitleCase(parking.ParkingName);
+                    if (!ParkingNameExistsExceptCurrent(parking.ParkingName, id))
                     {
-                        if (fPhoto != null)
+                        parking.ParkingName = Utilities.ToTitleCase(parking.ParkingName);
                         {
-                            string extension = Path.GetExtension(fPhoto.FileName);
-                            string image = Utilities.SEOUrl(parking.ParkingName) + extension;
-                            parking.Photo = await Utilities.UploadFile(fPhoto, @"parkings", image.ToLower());
+                            if (fPhoto != null)
+                            {
+                                string extension = Path.GetExtension(fPhoto.FileName);
+                                string image = Utilities.SEOUrl(parking.ParkingName) + extension;
+                                parking.Photo = await Utilities.UploadFile(fPhoto, @"parkings", image.ToLower());
+                            }
                         }
-                    }
-                    if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
+                        if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
 
-                    parking.Alias = Utilities.SEOUrl(parking.ParkingName);
-                    _context.Update(parking);
-                    await _context.SaveChangesAsync();
-                    _notyf.Success("Cập nhật bãi đỗ thành công");
+                        parking.Alias = Utilities.SEOUrl(parking.ParkingName);
+                        _context.Update(parking);
+                        await _context.SaveChangesAsync();
+                        _notyf.Success("Cập nhật bãi đỗ thành công");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("ParkingName", "Tên bãi đỗ đã tồn tại");
+                        _notyf.Error("Cập nhật bãi đỗ thất bại");
+                        return View(parking);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -183,7 +203,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(parking);
         }
 
-        // POST: Admin/AdminParkings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -211,6 +230,16 @@ namespace GreenMobility.Areas.Admin.Controllers
         private bool ParkingExists(int id)
         {
             return (_context.Parkings?.Any(e => e.ParkingId == id)).GetValueOrDefault();
+        }
+
+        private bool ParkingNameExists(string parkingName)
+        {
+            return _context.Parkings.Any(p => p.ParkingName == parkingName);
+        }
+
+        private bool ParkingNameExistsExceptCurrent(string parkingName, int id)
+        {
+            return _context.Parkings.Any(p => p.ParkingName == parkingName && p.ParkingId != id);
         }
     }
 }
