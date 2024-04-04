@@ -2,8 +2,8 @@
 @model PagedList.Core.IPagedList<GreenMobility.Models.Parking>
 
 @{
-    int currentPage = ViewBag.CurrentPage;
-    ViewData["Title"] = "Quản lý bãi đỗ: page " + currentPage;
+    int CurrentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Quản lý bãi đỗ: page " + CurrentPage;
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 <div class="page-header">
@@ -11,7 +11,7 @@
     <div class="header-sub-title">
         <nav class="breadcrumb breadcrumb-dash">
             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <span class="breadcrumb-item active">Danh sách bãi đỗ : Trang @currentPage</span>
+            <span class="breadcrumb-item active">Danh sách bãi đỗ : Trang @CurrentPage</span>
         </nav>
     </div>
 </div>
@@ -21,7 +21,7 @@
             <div class="col-lg-8">
                 <div class="d-md-flex">
                     <div class="m-b-10">
-                        <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.lsTrangThai">
+                        <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.lsStatus">
                             <option value="" disabled selected>Chọn trạng thái</option>
                         </select>
                     </div>
@@ -48,11 +48,11 @@
                 <tbody>
                     @if (Model != null)
                     {
-                        int serialNumber = (currentPage - 1) * Model.PageSize;
+                        int OrdinalNumber = (CurrentPage - 1) * Model.PageSize;
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@(++serialNumber)</td>
+                                <td>@(++OrdinalNumber)</td>
                                 <td>@item.ParkingName</td>
                                 <td>@item.Address</td>
                                 <td>
@@ -126,8 +126,8 @@
             });
         });
         $(function () {
-            var isActive = @ViewBag.CurrentActive; // Get current active status from ViewBag
-            $("#idstatus").val(isActive); // Set dropdown value
+            var isActive = @ViewBag.CurrentActive;
+            $("#idstatus").val(isActive);
         });
     </script>
 }
