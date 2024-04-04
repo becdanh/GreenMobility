@@ -23,10 +23,10 @@ namespace GreenMobility.Areas.Admin.Controllers
             _context = context;
             _notyf = notyf;
         }
-        public async Task<IActionResult> Index(int page = 1, int IsActive = 0)
+        public async Task<IActionResult> Index(int page = 1, int isActive = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 10;
+            var pageSize = 20;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
@@ -34,33 +34,36 @@ namespace GreenMobility.Areas.Admin.Controllers
             lsStatus.Add(new SelectListItem() { Text = "Khóa", Value = "2" });
             ViewData["lsStatus"] = lsStatus;
 
-            List<Parking> lsParkings = new List<Parking>();
+            IQueryable<Parking> parkingQuery = _context.Parkings;
 
-            if (IsActive == 1)
+            if (isActive == 1)
             {
-                lsParkings = _context.Parkings
-                    .Where(x => x.IsActive == true).ToList();
+                parkingQuery = parkingQuery.Where(x => x.IsActive);
             }
-            else if (IsActive == 2)
+            else if (isActive == 2)
             {
-                lsParkings = _context.Parkings
-                    .Where(x => x.IsActive == false).ToList();
+                parkingQuery = parkingQuery.Where(x => !x.IsActive);
             }
-            else
+
+            if (!string.IsNullOrEmpty(keyword))
             {
-                lsParkings = _context.Parkings.ToList();
+                keyword = keyword.Trim().ToLower();
+                parkingQuery = parkingQuery.Where(x => x.ParkingName.ToLower().Contains(keyword) || x.Address.ToLower().Contains(keyword));
             }
+
+            List<Parking> lsParkings = await parkingQuery.ToListAsync();
             PagedList<Parking> models = new PagedList<Parking>(lsParkings.AsQueryable(), pageNumber, pageSize);
 
             ViewBag.CurrentPage = pageNumber;
-            ViewBag.CurrentActive = IsActive;
+            ViewBag.CurrentActive = isActive;
+            ViewBag.Keyword = keyword;
 
             return View(models);
         }
-        public IActionResult Filter(int IsActive = 0)
+        public IActionResult FilterAndSearch(int isActive = 0, string keyword = "")
         {
-            var url = $"/Admin/AdminParkings?IsActive={IsActive}";
-            if (IsActive == 0)
+            var url = $"/Admin/AdminParkings?isActive={isActive}&keyword={keyword}";
+            if (isActive == 0 && string.IsNullOrEmpty(keyword))
             {
                 url = "/Admin/AdminParkings";
             }
