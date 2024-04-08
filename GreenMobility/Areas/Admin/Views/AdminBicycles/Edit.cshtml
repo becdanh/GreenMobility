@@ -51,33 +51,47 @@
                     <div class="form-group">
                         <label class="font-weight-semibold" for="BicycleName">Tên xe đạp</label>
                         <input type="text" class="form-control" asp-for="BicycleName">
+                        @Html.ValidationMessage("BicycleName", new { @style = "color:#f00" })
                     </div>
-                    <div class="form-group">
-                        <label class="font-weight-semibold" for="LicensePlate">Biển số</label>
-                        <input type="text" class="form-control" asp-for="LicensePlate">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="LicensePlate">Biển số</label>
+                            <input type="text" class="form-control" asp-for="LicensePlate">
+                            @Html.ValidationMessage("LicensePlate", new { @style = "color:#f00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="RentalPrice">Giá thuê</label>
+                            <input type="text" class="form-control" asp-for="RentalPrice">
+                            @Html.ValidationMessage("RentalPrice", new { @style = "color:#f00" })
+                        </div>
                     </div>
-
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label class="font-weight-semibold" for="ParkingId">Bãi xe</label>
                             <select class="custom-select" asp-for="ParkingId" style="min-width: 200px;" asp-items="ViewBag.lsBaiDo">
-                                <option selected>Chọn bãi xe</option>
+                                <option value="0" selected>Chọn bãi xe</option>
                             </select>
+                            @Html.ValidationMessage("ParkingId", new { @style = "color:#f00" })
                         </div>
                         <div class="form-group col-md-6">
                             <label class="font-weight-semibold" for="BicycleStatusId">Trạng thái</label>
                             <select class="custom-select" asp-for="BicycleStatusId" style="min-width: 200px;" asp-items="ViewBag.lsTrangThai">
-                                <option selected>Chọn trạng thái</option>
+                                <option value="0" selected>Chọn trạng thái</option>
                             </select>
+                            @Html.ValidationMessage("BicycleStatusId", new { @style = "color:#f00" })
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label class="font-weight-semibold" for="Photo">Ảnh đại diện</label>
-                        <input name="fPhoto" type="file" class="form-control-file" asp-for="Photo">
+                        <input name="fPhoto" type="file" class="form-control-file" asp-for="Photo" onchange="previewImage(event)">
                         <span asp-validation-for="Photo" class="text-danger"></span>
                     </div>
-
+                    <div id="imagePreview">
+                        @if (!string.IsNullOrEmpty(Model.Photo))
+                        {
+                            <img id="previewImg" src="~/images/bicycles/@Model.Photo" style="max-width: 200px; max-height: 200px;" />
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,7 +113,6 @@
     <script src="~/Adminassets/summernote/summernote-bs4.js"></script>
 
     <script>
-
         jQuery(document).ready(function () {
             $('.summernote').summernote({
                 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
@@ -110,7 +123,13 @@
                 focus: true
             });
         });
+        function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('imagePreview');
+            output.innerHTML = '<img id="previewImg" src="' + reader.result + '" style="max-width: 200px; max-height: 200px;" />';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
     </script>
 }
-
-
