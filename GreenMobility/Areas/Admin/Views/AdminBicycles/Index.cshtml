@@ -1,8 +1,8 @@
 ﻿@model PagedList.Core.IPagedList<GreenMobility.Models.Bicycle>
 
 @{
-    int currentPage = ViewBag.CurrentPage;
-    ViewData["Title"] = "Quản lý xe đạp: page " + currentPage;
+    int CurrentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Quản lý xe đạp: page " + CurrentPage;
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -11,7 +11,7 @@
     <div class="header-sub-title">
         <nav class="breadcrumb breadcrumb-dash">
             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <span class="breadcrumb-item active">Danh sách xe đạp : Trang @currentPage</span>
+            <span class="breadcrumb-item active">Danh sách xe đạp : Trang @CurrentPage</span>
         </nav>
     </div>
 </div>
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="m-b-10">
-                        <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.TrangThai">
+                        <select class="custom-select" id="status" name="status" style="min-width: 180px;" asp-items="ViewBag.TrangThai">
                             <option value="" disabled selected>Chọn trạng thái</option>
                             <option value="0" selected>Tất cả trạng thái</option>
                         </select>
@@ -46,6 +46,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th scope="col">#</th>
                         <th scope="col">Tên xe đạp</th>
                         <th scope="col">Biển số</th>
                         <th scope="col">Bãi đỗ</th>
@@ -54,22 +55,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @if(Model != null)
                     {
-                        <tr>
-                            <td>@item.BicycleName</td>
-                            <td>@item.LicensePlate</td>
-                            <td>@item.Parking.ParkingName</td>
-                            <td>@item.BicycleStatus.Description</td>
-                            <td class="text-right">
-                                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Edit" asp-route-id="@item.BicycleId">
-                                    <i class="anticon anticon-edit"></i>
-                                </a>
-                                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Details" asp-route-id="@item.BicycleId">
-                                    <i class="anticon anticon-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
+                        int OrdinalNumber = (CurrentPage - 1) * Model.PageSize;
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(++OrdinalNumber)</td>
+                                <td>@item.BicycleName</td>
+                                <td>@item.LicensePlate</td>
+                                <td>@item.Parking.ParkingName</td>
+                                <td>@item.BicycleStatus.Description</td>
+                                <td class="text-right">
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Edit" asp-route-id="@item.BicycleId">
+                                        <i class="anticon anticon-edit"></i>
+                                    </a>
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Details" asp-route-id="@item.BicycleId">
+                                        <i class="anticon anticon-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
@@ -78,7 +84,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-5">
                 <ul class="pagination">
-                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminBicycles" asp-route-Status="@ViewBag.CurrentStatus" asp-action="Index"></pager>
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminBicycles" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
                 </ul>
             </div>
 
@@ -92,52 +98,33 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            jQuery("#idstatus").change(function () {
-                var status = jQuery(this).children(":selected").attr("value");
+            $("#status, #keyword").change(function () {
+                var status = $("#status").children(":selected").val();
+                var keyword = $("#keyword").val();
                 status = parseFloat(status);
-                $('#idstatus option').removeAttr('selected');
-                $("#idstatus > [value=" + status + "]").attr("selected", "true");
-
+                $('#status option').removeAttr('selected');
+                $("#status > [value = " + status + "]").attr("selected", true);
                 $.ajax({
-                    url: '/Admin/AdminBicycles/Filter',
-                    datatype: "json",
-                    type: "GET",
-                    data: {
-                        Status: status
-                    },
-                    async: true,
-                    success: function (results) {
-                        if (results.status == "success") {
-                            window.location.href = results.redirectUrl;
+                    url: '/Admin/AdminBicycles/FilterAndSearch',
+                    dataType: "json",
+                    type: 'GET',
+                    data: { status: status, keyword: keyword },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            window.location.href = response.redirectUrl;
                         }
                     },
-                    error: function (xhr) {
-                        alert('error');
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
                     }
                 });
             });
-            $("#keyword").keypress(function (e) {
-                if (e.which == 13) { // Kiểm tra nếu phím nhấn là phím Enter (mã 13)
-                    var keyword = $(this).val().trim();
-                    $.ajax({
-                        url: '/Admin/AdminBicycles/Search',
-                        datatype: "json",
-                        type: "GET",
-                        data: {
-                            keyword: keyword
-                        },
-                        async: true,
-                        success: function (results) {
-                            if (results.status == "success") {
-                                window.location.href = results.redirectUrl;
-                            }
-                        },
-                        error: function (xhr) {
-                            alert('error');
-                        }
-                    });
-                }
-            });
+        });
+        $(function () {
+            var status = @ViewBag.CurrentStatus;
+            $("#status").val(status);
+            var keyword = "@ViewBag.CurrentKeyword";
+            $("#keyword").val(keyword);
         });
     </script>
 }

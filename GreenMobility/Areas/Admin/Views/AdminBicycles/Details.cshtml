@@ -4,8 +4,8 @@
     ViewData["Title"] = "Thông tin xe đạp";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
 <div class="page-header">
+    <h2 class="header-title">Quản lý xe đạp</h2>
     <div class="header-sub-title">
         <nav class="breadcrumb breadcrumb-dash">
             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="d-flex align-items-center m-b-15">
-            <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="Adminbicycles" asp-action="Edit" asp-route-id="@Model.BicycleId">Sửa đổi</a>
+            <a class="btn btn-primary btn-tone mr-2" asp-area="Admin" asp-controller="Adminbicycles" asp-action="Edit" asp-route-id="@Model.BicycleId">Sửa đổi</a>
             <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.BicycleId" class="mr-2">
                 <button type="submit" class="btn btn-danger btn-tone">Xóa</button>
             </form>
@@ -63,6 +63,10 @@
                             <tr>
                                 <td>Alias:</td>
                                 <td>@Model.Alias</td>
+                            </tr>
+                            <tr>
+                                <td>Giá thuê:</td>
+                                <td>@Model.RentalPrice</td>
                             </tr>
                             <tr>
                                 <td>Trạng thái:</td>

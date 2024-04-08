@@ -24,56 +24,49 @@ namespace GreenMobility.Areas.Admin.Controllers
         }
 
         // GET: Admin/Bicycles
-        public async Task<IActionResult> Index(int page = 1, int Status = 0, string keyword = "")
+        public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
             var pageSize = 3;
 
-            IQueryable<Bicycle> query = _context.Bicycles
+            IQueryable<Bicycle> bicycleQuery = _context.Bicycles
                 .AsNoTracking()
                 .Include(x => x.Parking)
                 .Include(x => x.BicycleStatus);
 
             if (!string.IsNullOrEmpty(keyword))
             {
-                query = query.Where(x => x.BicycleName.Contains(keyword)
-                                    || x.Parking.ParkingName.Contains(keyword));
+                keyword = keyword.Trim().ToLower();
+                bicycleQuery = bicycleQuery
+                    .Where(x => x.BicycleName.ToLower().Contains(keyword)
+                            || x.Parking.Address.Contains(keyword)
+                            || x.LicensePlate.Contains(keyword));
             }
-
-            if (Status != 0)
+            if (status != 0)
             {
-                query = query.Where(x => x.BicycleStatusId == Status);
+                bicycleQuery = bicycleQuery.Where(x => x.BicycleStatusId == status);
             }
 
-            var lsBicycles = await query.ToListAsync();
+            var lsBicycles = await bicycleQuery.ToListAsync();
 
             PagedList<Bicycle> models = new PagedList<Bicycle>(lsBicycles.AsQueryable(), pageNumber, pageSize);
             ViewBag.CurrentPage = pageNumber;
-            ViewBag.CurrentStatus = Status;
-            ViewData["TrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description", Status);
+            ViewBag.CurrentStatus = status;
+            ViewData["TrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description", status);
+            ViewBag.CurrentKeyword = keyword;
             return View(models);
         }
 
-
-
-        public IActionResult Filter(int Status = 0)
+        public IActionResult FilterAndSearch(int status = 0, string keyword = "")
         {
-            var url = $"/Admin/AdminBicycles?Status={Status}";
-            if (Status == 0)
+            var url = $"/Admin/AdminBicycles?status={status}&keyword={keyword}";
+            if (status == 0 && string.IsNullOrEmpty(keyword))
             {
-                url = $"/Admin/AdminBicycles";
+                url = "/Admin/AdminBicycles";
             }
             return Json(new { status = "success", redirectUrl = url });
         }
 
-        [HttpGet]
-        public IActionResult Search(string keyword)
-        {
-            var url = $"/Admin/AdminBicycles?keyword={keyword}";
-            return Json(new { status = "success", redirectUrl = url });
-        }
-
-        // GET: Admin/Bicycles/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Bicycles == null)
@@ -102,23 +95,43 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId")] Bicycle bicycle, IFormFile? fPhoto)
+        public async Task<IActionResult> Create([Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId,RentalPrice")] Bicycle bicycle, IFormFile? fPhoto)
         {
+            if (string.IsNullOrWhiteSpace(bicycle.BicycleName))
+                ModelState.AddModelError("BicycleName", "Tên xe không được để trống");
+
+            if (string.IsNullOrWhiteSpace(bicycle.LicensePlate))
+                ModelState.AddModelError("LicensePlate", "Biển số không được để trống");
+
+            if (bicycle.ParkingId == 0)
+                ModelState.AddModelError("ParkingId", "Vui lòng chọn một bãi xe");
+
+            if (bicycle.RentalPrice <= 0)
+                ModelState.AddModelError("RentalPrice", "Vui lòng nhập giá thuê hợp lệ");
+
+            if (bicycle.BicycleStatusId == 0)
+                ModelState.AddModelError("BicycleStatusId", "Vui lòng chọn một trạng thái");
+
+            if (LicensePlateExists(bicycle.LicensePlate))
+            {
+                ModelState.AddModelError("LicensePlate", "Biển số xe đã tồn tại");
+                return View(bicycle);
+            }
             if (ModelState.IsValid)
             {
                 bicycle.BicycleName = Utilities.ToTitleCase(bicycle.BicycleName);
+                bicycle.LicensePlate = Utilities.ToTitleCase(bicycle.LicensePlate);
+
+                if (fPhoto != null)
                 {
-                    if (fPhoto != null)
-                    {
-                        string extension = Path.GetExtension(fPhoto.FileName);
-                        string image = Utilities.SEOUrl(bicycle.BicycleName) + extension;
-                        bicycle.Photo = await Utilities.UploadFile(fPhoto, @"bicycles", image.ToLower());
-                    }
+                    string extension = Path.GetExtension(fPhoto.FileName);
+                    string image = Utilities.SEOUrl(bicycle.LicensePlate) + extension;
+                    bicycle.Photo = await Utilities.UploadFile(fPhoto, @"bicycles", image.ToLower());
                 }
 
                 if (string.IsNullOrEmpty(bicycle.Photo)) bicycle.Photo = "default.jpg";
 
-                bicycle.Alias = Utilities.SEOUrl(bicycle.BicycleName);
+                bicycle.Alias = Utilities.SEOUrl(bicycle.LicensePlate);
                 bicycle.DateModified = DateTime.Now;
                 bicycle.DateCreated = DateTime.Now;
 
@@ -153,34 +166,61 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId")] Bicycle bicycle, IFormFile? fPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId,RentalPrice")] Bicycle bicycle, IFormFile? fPhoto)
         {
             if (id != bicycle.BicycleId)
             {
                 return NotFound();
             }
 
+            if (string.IsNullOrWhiteSpace(bicycle.BicycleName))
+                ModelState.AddModelError("BicycleName", "Tên xe không được để trống");
+
+            if (string.IsNullOrWhiteSpace(bicycle.LicensePlate))
+                ModelState.AddModelError("LicensePlate", "Biển số không được để trống");
+
+            if (bicycle.ParkingId == 0)
+                ModelState.AddModelError("ParkingId", "Vui lòng chọn một bãi xe");
+
+            if (bicycle.RentalPrice <= 0)
+                ModelState.AddModelError("RentalPrice", "Vui lòng nhập giá thuê hợp lệ");
+
+
+            if (bicycle.BicycleStatusId == 0)
+                ModelState.AddModelError("BicycleStatusId", "Vui lòng chọn một trạng thái");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    bicycle.BicycleName = Utilities.ToTitleCase(bicycle.BicycleName);
+                    if (!LicensePlateExistsExceptCurrent(bicycle.LicensePlate, id))
                     {
+                        bicycle.BicycleName = Utilities.ToTitleCase(bicycle.BicycleName);
+                        bicycle.LicensePlate = Utilities.ToTitleCase(bicycle.LicensePlate);
+
                         if (fPhoto != null)
                         {
                             string extension = Path.GetExtension(fPhoto.FileName);
-                            string image = Utilities.SEOUrl(bicycle.BicycleName) + extension;
+                            string image = Utilities.SEOUrl(bicycle.LicensePlate) + extension;
                             bicycle.Photo = await Utilities.UploadFile(fPhoto, @"bicycles", image.ToLower());
                         }
+
+                        if (string.IsNullOrEmpty(bicycle.Photo)) bicycle.Photo = "default.jpg";
+
+                        bicycle.Alias = Utilities.SEOUrl(bicycle.LicensePlate);
+                        bicycle.DateModified = DateTime.Now;
+
+                        _context.Update(bicycle);
+                        await _context.SaveChangesAsync();
+                        _notyf.Success("Cập nhật xe thành công");
                     }
-                    if (string.IsNullOrEmpty(bicycle.Photo)) bicycle.Photo = "default.jpg";
+                    else
+                    {
+                        ModelState.AddModelError("LicensePlate", "Biển số xe đã tồn tại");
+                        _notyf.Error("Cập nhật xe thất bại");
+                        return View(bicycle);
+                    }
 
-                    bicycle.Alias = Utilities.SEOUrl(bicycle.BicycleName);
-                    bicycle.DateModified = DateTime.Now;
-
-                    _context.Update(bicycle);
-                    await _context.SaveChangesAsync();
-                    _notyf.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -230,6 +270,15 @@ namespace GreenMobility.Areas.Admin.Controllers
         private bool BicycleExists(int id)
         {
             return (_context.Bicycles?.Any(e => e.BicycleId == id)).GetValueOrDefault();
+        }
+        private bool LicensePlateExists(string licensePlate)
+        {
+            return _context.Bicycles.Any(b => b.LicensePlate == licensePlate);
+        }
+
+        private bool LicensePlateExistsExceptCurrent(string licensePlate, int id)
+        {
+            return _context.Bicycles.Any(b => b.LicensePlate == licensePlate && b.BicycleId != id);
         }
     }
 }

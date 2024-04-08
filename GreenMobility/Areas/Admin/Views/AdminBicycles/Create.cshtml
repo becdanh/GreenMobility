@@ -18,6 +18,7 @@
         </nav>
     </div>
 </div>
+
 <form asp-controller="AdminBicycles" asp-action="Create" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="page-header no-gutters has-tab">
@@ -25,7 +26,7 @@
             <div class="media align-items-center m-b-15">
             </div>
             <div class="m-b-15">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary mr-1">
                     <i class="anticon anticon-save"></i>
                     <span>Lưu</span>
                 </button>
@@ -34,7 +35,7 @@
         </div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#bicycle-edit-basic">THÔNG TIN XE ĐẠP</a>
+                <a class="nav-link active" data-toggle="tab" href="#bicycle-edit-basic">THÔNG TIN CHI TIẾT</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#bicyle-edit-description">MÔ TẢ</a>
@@ -48,33 +49,42 @@
                     <div class="form-group">
                         <label class="font-weight-semibold" for="BicycleName">Tên xe đạp</label>
                         <input type="text" class="form-control" asp-for="BicycleName">
+                        @Html.ValidationMessage("BicycleName", new { @style = "color:#f00" })
                     </div>
-                    <div class="form-group">
-                        <label class="font-weight-semibold" for="LicensePlate">Biển số</label>
-                        <input type="text" class="form-control" asp-for="LicensePlate">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="LicensePlate">Biển số</label>
+                            <input type="text" class="form-control" asp-for="LicensePlate">
+                            @Html.ValidationMessage("LicensePlate", new { @style = "color:#f00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="RentalPrice">Giá thuê</label>
+                            <input type="number" class="form-control" asp-for="RentalPrice">
+                            @Html.ValidationMessage("RentalPrice", new { @style = "color:#f00" })
+                        </div>
                     </div>
-
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label class="font-weight-semibold" for="ParkingId">Bãi xe</label>
                             <select class="custom-select" asp-for="ParkingId" style="min-width: 200px;" asp-items="ViewBag.lsBaiDo">
-                                <option selected>Chọn bãi xe</option>
+                                <option value="0" selected>Chọn bãi xe</option>
                             </select>
+                            @Html.ValidationMessage("ParkingId", new { @style = "color:#f00" })
                         </div>
                         <div class="form-group col-md-6">
                             <label class="font-weight-semibold" for="BicycleStatusId">Trạng thái</label>
                             <select class="custom-select" asp-for="BicycleStatusId" style="min-width: 200px;" asp-items="ViewBag.lsTrangThai">
-                                <option selected>Chọn trạng thái</option>
+                                <option value="0" selected>Chọn trạng thái</option>
                             </select>
+                            @Html.ValidationMessage("BicycleStatusId", new { @style = "color:#f00" })
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label class="font-weight-semibold" for="Photo">Ảnh đại diện</label>
-                        <input name="fPhoto" type="file" class="form-control-file" asp-for="Photo">
+                        <input name="fPhoto" type="file" class="form-control-file" asp-for="Photo" onchange="previewImage(event)">
                         <span asp-validation-for="Photo" class="text-danger"></span>
                     </div>
-                    
+                    <div id="imagePreview"></div>
                 </div>
             </div>
         </div>
@@ -96,7 +106,6 @@
     <script src="~/Adminassets/summernote/summernote-bs4.js"></script>
 
     <script>
-
         jQuery(document).ready(function () {
             $('.summernote').summernote({
                 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
@@ -107,6 +116,14 @@
                 focus: true
             });
         });
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('imagePreview');
+                output.innerHTML = '<img src="' + reader.result + '" style="max-width: 200px; max-height: 200px;" />';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
     </script>
 }
 

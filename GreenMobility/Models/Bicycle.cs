@@ -14,7 +14,7 @@ namespace GreenMobility.Models
         public string BicycleName { get; set; } = null!;
         public string? Description { get; set; }
         public int? ParkingId { get; set; }
-        public string? LicensePlate { get; set; }
+        public string LicensePlate { get; set; } = null!;
         public string? Photo { get; set; }
         public int? BicycleStatusId { get; set; }
         public string? Alias { get; set; }
