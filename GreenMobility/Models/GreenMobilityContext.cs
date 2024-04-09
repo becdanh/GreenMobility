@@ -115,6 +115,10 @@ namespace GreenMobility.Models
 
                 entity.Property(e => e.BirthDate).HasColumnType("date");
 
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.DateModified).HasColumnType("datetime");
+
                 entity.Property(e => e.Email).HasMaxLength(50);
 
                 entity.Property(e => e.FullName).HasMaxLength(255);
