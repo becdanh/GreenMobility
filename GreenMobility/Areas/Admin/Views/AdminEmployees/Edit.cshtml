@@ -1,67 +1,136 @@
 ﻿@model GreenMobility.Models.Employee
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa nhân viên";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
-<h1>Edit</h1>
-
-<h4>Employee</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EmployeeId" />
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
+<form asp-controller="AdminEmployees" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="EmployeeId" />
+    <input type="hidden" asp-for="Photo" />
+    <input type="hidden" asp-for="Password" />
+    <input type="hidden" asp-for="DateCreated" />
+    <div class="page-header no-gutters">
+        <div class="row align-items-md-center">
+            <div class="col-md-8">
+                <h2 class="header-title">Quản lý nhân viên</h2>
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                        <a asp-area="Admin" asp-controller="AdminEmployees" asp-action="Index" class="breadcrumb-item">Danh sách nhân viên</a>
+                        <span class="breadcrumb-item active">Chỉnh sửa nhân viên</span>
+                    </nav>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" class="form-control" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            <div class="col-md-4">
+                <div class="text-md-right">
+                    <div>
+                        <button type="submit" class="btn btn-primary mr-1">
+                            <i class="anticon anticon-save"></i>
+                            <span>Lưu</span>
+                        </button>
+                        <a asp-area="Admin" asp-controller="AdminEmployees" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" class="form-control" />
-                <span asp-validation-for="Photo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IsWorking" class="control-label"></label>
-                <input asp-for="IsWorking" class="form-control" />
-                <span asp-validation-for="IsWorking" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="tab-account">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Thông tin cơ bản</h4>
+                </div>
+                <div class="card-body">
+                    <div class="media align-items-center">
+                        <div class="avatar avatar-image m-h-10 m-r-15" style="height: 80px; width: 80px">
+                            <img id="avatarPreview" src="~/images/employees/@Model.Photo" alt="Avatar Preview" style="object-fit: contain; width: 100%; height: 100%;">
+                        </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+                        <div class="m-l-20 m-r-20">
+                            <h5 class="m-b-5 font-size-18">Ảnh đại diện</h5>
+                            <p class="opacity-07 font-size-13 m-b-0">
+                                Đề xuất: <br>
+                                1x1 Ảnh rõ mặt
+                            </p>
+                        </div>
+                        <div>
+                            <label for="fphoto" class="btn btn-tone btn-primary">
+                                <span>Chọn ảnh</span>
+                                <input type="file" id="fphoto" name="fphoto" asp-for="Photo" onchange="previewAvatar(event)" style="display: none;">
+                            </label>
+                        </div>
+                    </div>
 
+                    <hr class="m-v-25">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="FullName">Họ và tên:</label>
+                            <input type="text" class="form-control" asp-for="FullName" placeholder="Họ và tên">
+                            @Html.ValidationMessage("FullName", "", new { @style = "color:#f00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="Email">Email:</label>
+                            <input type="email" class="form-control" asp-for="Email" placeholder="email">
+                            @Html.ValidationMessage("Email", "", new { @style = "color:#f00" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="Phone">Số điện thoại:</label>
+                            <input type="text" class="form-control" asp-for="Phone" placeholder="Số điện thoại">
+                            @Html.ValidationMessage("Phone", "", new { @style = "color:#f00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="BirthDate">Ngày sinh:</label>
+                            <input type="date" class="form-control" asp-for="BirthDate" placeholder="Ngày sinh">
+                            @Html.ValidationMessage("BirthDate", "", new { @style = "color:#f00" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label class="font-weight-semibold" for="Address">Địa chỉ:</label>
+                            <input type="text" class="form-control" asp-for="Address" placeholder="Địa chỉ">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="switch m-r-10">
+                            <input type="checkbox" asp-for="IsWorking">
+                            <label for="IsWorking"></label>
+                        </div>
+                        <label>Làm việc</label>
+                    </div>
+                    @Html.ValidationMessage("Error", "", new { @style = "color:#f00" })
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Bãi đỗ làm việc</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label class="font-weight-semibold" for="ParkingId">Bãi đỗ</label>
+                            <select class="custom-select" asp-for="ParkingId" style="min-width: 200px;" asp-items="ViewBag.lsParkings">
+                                <option value="0" selected>Chọn bãi đỗ</option>
+                            </select>
+                            @Html.ValidationMessage("ParkingId", new { @style = "color:#f00" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts {
+    <script>
+        function previewAvatar(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('avatarPreview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+}

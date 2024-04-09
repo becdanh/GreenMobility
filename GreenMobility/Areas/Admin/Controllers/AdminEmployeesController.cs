@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GreenMobility.Models;
 using PagedList.Core;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using GreenMobility.Helpper;
 
 namespace GreenMobility.Areas.Admin.Controllers
 {
@@ -14,33 +16,64 @@ namespace GreenMobility.Areas.Admin.Controllers
     public class AdminEmployeesController : Controller
     {
         private readonly GreenMobilityContext _context;
+        private readonly INotyfService _notyf;
 
-        public AdminEmployeesController(GreenMobilityContext context)
+        public AdminEmployeesController(GreenMobilityContext context, INotyfService notyf)
         {
             _context = context;
+            _notyf = notyf;
         }
 
         // GET: Admin/AdminEmployees
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 8;
-            List<Employee> lsEmployees = new List<Employee>();
+            var pageSize = 4;
 
-            lsEmployees = _context.Employees
+            List<SelectListItem> lsStatus = new List<SelectListItem>();
+            lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
+            lsStatus.Add(new SelectListItem() { Text = "Hoạt động", Value = "1" });
+            lsStatus.Add(new SelectListItem() { Text = "Khóa", Value = "2" });
+            ViewData["lsStatus"] = lsStatus;
+
+            IQueryable<Employee> employeeQuery = _context.Employees
                 .AsNoTracking()
-                .Include(b => b.Parking)
-                .ToList();
+                .Include(x => x.Parking);
 
+            if (status == 1)
+            {
+                employeeQuery = employeeQuery.Where(x => x.IsWorking);
+            }
+            else if (status == 2)
+            {
+                employeeQuery = employeeQuery.Where(x => !x.IsWorking);
+            }
 
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                keyword = keyword.Trim().ToLower();
+                employeeQuery = employeeQuery.Where(x => x.FullName.ToLower().Contains(keyword) || x.Email.ToLower().Contains(keyword));
+            }
+
+            List<Employee> lsEmployees = await employeeQuery.ToListAsync();
             PagedList<Employee> models = new PagedList<Employee>(lsEmployees.AsQueryable(), pageNumber, pageSize);
 
             ViewBag.CurrentPage = pageNumber;
+            ViewBag.CurrentStatus = status;
+            ViewBag.Keyword = keyword;
 
             return View(models);
         }
 
-        // GET: Admin/AdminEmployees/Details/5
+        public IActionResult FilterAndSearch(int status = 0, string keyword = "")
+        {
+            var url = $"/Admin/AdminEmployees?status={status}&keyword={keyword}";
+            if (status == 0 && string.IsNullOrEmpty(keyword))
+            {
+                url = "/Admin/AdminEmployees";
+            }
+            return Json(new { status = "success", redirectUrl = url });
+        }
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Employees == null)
@@ -58,25 +91,64 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(employee);
         }
 
-        // GET: Admin/AdminEmployees/Create
         public IActionResult Create()
         {
+            ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
             return View();
         }
 
-        // POST: Admin/AdminEmployees/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking")] Employee employee)
+        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId")] Employee employee, IFormFile fPhoto)
         {
+            if (string.IsNullOrWhiteSpace(employee.FullName))
+                ModelState.AddModelError("FullName", "Họ và tên không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.Email))
+                ModelState.AddModelError("Email", "Email không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.Phone))
+                ModelState.AddModelError("Phone", "Số điện thoại không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.BirthDate.ToString()))
+                ModelState.AddModelError("BirthDate", "Ngày sinh không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.Password))
+                ModelState.AddModelError("Password", "Mật khẩu không được để trống");
+
+            if (employee.ParkingId == 0)
+                ModelState.AddModelError("ParkingId", "Vui lòng chọn bãi đỗ làm việc");
+
+            if (PhoneExists(employee.Phone))
+                ModelState.AddModelError("Phone", "Số điện thoại đã tồn tại");
+
+            if (EmailExists(employee.Email))
+                ModelState.AddModelError("Email", "Email đã tồn tại");
+
             if (ModelState.IsValid)
             {
+                employee.FullName = Utilities.ToTitleCase(employee.FullName);
+                employee.Address = Utilities.ToTitleCase(employee.Address);
+                if (fPhoto != null)
+                {
+                    string extension = Path.GetExtension(fPhoto.FileName);
+                    string image = Utilities.SEOUrl(employee.FullName) + extension;
+                    employee.Photo = await Utilities.UploadFile(fPhoto, @"employees", image.ToLower());
+                }
+
+                if (string.IsNullOrEmpty(employee.Photo)) employee.Photo = "default.jpg";
+                employee.DateModified = DateTime.Now;
+                employee.DateCreated = DateTime.Now;
+                employee.IsWorking = true;
+
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
+                _notyf.Success("Tạo mới thành công");
+
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Tạo mới thất bại, vui lòng kiểm tra lại thông tin");
+            ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
             return View(employee);
         }
 
@@ -93,6 +165,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
             return View(employee);
         }
 
@@ -101,19 +174,55 @@ namespace GreenMobility.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId")] Employee employee, IFormFile fPhoto)
         {
             if (id != employee.EmployeeId)
             {
                 return NotFound();
             }
+            if (string.IsNullOrWhiteSpace(employee.FullName))
+                ModelState.AddModelError("FullName", "Họ và tên không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.Email))
+                ModelState.AddModelError("Email", "Email không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.Phone))
+                ModelState.AddModelError("Phone", "Số điện thoại không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.BirthDate.ToString()))
+                ModelState.AddModelError("BirthDate", "Ngày sinh không được để trống");
+
+            if (string.IsNullOrWhiteSpace(employee.Password))
+                ModelState.AddModelError("Password", "Mật khẩu không được để trống");
+
+            if (employee.ParkingId == 0)
+                ModelState.AddModelError("ParkingId", "Vui lòng chọn bãi đỗ làm việc");
+
+            if (PhoneExistsExceptCurrent(employee.Phone, id))
+                ModelState.AddModelError("Phone", "Số điện thoại đã tồn tại");
+
+            if (EmailExistsExceptCurrent(employee.Email, id))
+                ModelState.AddModelError("Email", "Email đã tồn tại");
 
             if (ModelState.IsValid)
-            {
+            {  
                 try
                 {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                        employee.FullName = Utilities.ToTitleCase(employee.FullName);
+                        employee.Address = Utilities.ToTitleCase(employee.Address);
+                        if (fPhoto != null)
+                        {
+                            string extension = Path.GetExtension(fPhoto.FileName);
+                            string image = Utilities.SEOUrl(employee.FullName) + extension;
+                            employee.Photo = await Utilities.UploadFile(fPhoto, @"employees", image.ToLower());
+                        }
+
+                        if (string.IsNullOrEmpty(employee.Photo)) employee.Photo = "default.jpg";
+                        employee.DateModified = DateTime.Now;
+
+                        _context.Update(employee);
+                        await _context.SaveChangesAsync();
+                        _notyf.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -128,6 +237,8 @@ namespace GreenMobility.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Chỉnh sửa thất bại, vui lòng kiểm tra lại thông tin");
+            ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
             return View(employee);
         }
 
@@ -171,6 +282,26 @@ namespace GreenMobility.Areas.Admin.Controllers
         private bool EmployeeExists(int id)
         {
             return (_context.Employees?.Any(e => e.EmployeeId == id)).GetValueOrDefault();
+        }
+
+        private bool EmailExists(string email)
+        {
+            return _context.Employees.Any(b => b.Email == email);
+        }
+
+        private bool PhoneExists(string phone)
+        {
+            return _context.Employees.Any(b => b.Phone == phone);
+        }
+
+        private bool EmailExistsExceptCurrent(string email, int id)
+        {
+            return _context.Employees.Any(p => p.Email == email && p.EmployeeId != id);
+        }
+
+        private bool PhoneExistsExceptCurrent(string phone, int id)
+        {
+            return _context.Employees.Any(p => p.Phone == phone && p.EmployeeId != id);
         }
     }
 }

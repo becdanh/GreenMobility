@@ -5,13 +5,27 @@
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-<div class="page-header">
-    <h2 class="header-title">Quản lý nhân viên</h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <span class="breadcrumb-item active">Danh sách nhân viên : Trang @currentPage</span>
-        </nav>
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý nhân viên</h2>
+            <div class="header-sub-title">
+                <nav class="breadcrumb breadcrumb-dash">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                    <span class="breadcrumb-item active">Danh sách nhân viên</span>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-md-right">
+                <div>
+                    <a class="btn btn-primary" asp-controller="AdminEmployees" asp-action="Create">
+                        <i class="anticon anticon-plus-circle m-r-5"></i>
+                        <span>Thêm mới nhân viên</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="card">
@@ -25,14 +39,14 @@
                             <input id="keyword" name="keyword" type="text" class="form-control" placeholder="Tìm kiếm">
                         </div>
                     </div>
+                    <div class="d-md-flex">
+                        <div class="m-b-10">
+                            <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.lsStatus">
+                                <option value="" disabled selected>Chọn trạng thái</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="col-lg-4 text-right">
-                <a class="btn btn-primary" asp-controller="AdminEmployees" asp-action="Create">
-                    <i class="anticon anticon-plus-circle m-r-5"></i>
-                    <span>Thêm mới nhân viên</span>
-                </a>
             </div>
         </div>
         <div class="row">
@@ -43,7 +57,7 @@
                         <div class="card-body">
                             <div class="m-t-20 text-center">
                                 <div class="avatar avatar-image" style="height: 100px; width: 100px;">
-                                    <img src="@Url.Content(item.Photo)" alt="">
+                                    <img src="~/images/employees/@item.Photo" alt="@item.FullName">
                                 </div>
                                 <h4 class="m-t-30">@item.FullName</h4>
                                 <p>@item.Email</p>
@@ -59,10 +73,57 @@
                                     <i class="anticon anticon-eye"></i>
                                 </a>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
             }
         </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-5">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminEmployees" asp-route-isActive="@ViewBag.CurrentActive" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
+                </ul>
+            </div>
+            <div class="col-sm-12 col-md-7 text-right">
+                @if (Model != null)
+                {
+                    <p>Tổng số nhân viên: @Model.TotalItemCount</p>
+                }
+            </div>
+        </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#idstatus, #keyword").change(function () {
+                var status = $("#idstatus").children(":selected").val();
+                var keyword = $("#keyword").val();
+                status = parseFloat(status);
+                $('#idstatus option').removeAttr('selected');
+                $("#idstatus > [value = " + status + "]").attr("selected", true);
+                $.ajax({
+                    url: '/Admin/AdminEmployees/FilterAndSearch',
+                    dataType: "json",
+                    type: 'GET',
+                    data: { status: status, keyword: keyword },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+        $(function () {
+            var status = @ViewBag.CurrentStatus;
+            $("#idstatus").val(status);
+            var keyword = "@ViewBag.Keyword";
+            $("#keyword").val(keyword);
+        });
+    </script>
+}
