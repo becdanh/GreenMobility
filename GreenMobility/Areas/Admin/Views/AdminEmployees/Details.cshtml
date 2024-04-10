@@ -4,64 +4,125 @@
     ViewData["Title"] = "Details";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
-<h1>Details</h1>
-
-<div>
-    <h4>Employee</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BirthDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BirthDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Photo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Photo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsWorking)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsWorking)
-        </dd>
-    </dl>
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-7">
+            <h2 class="header-title">Quản lý nhân viên</h2>
+            <div class="header-sub-title">
+                <nav class="breadcrumb breadcrumb-dash">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                    <a asp-area="Admin" asp-controller="AdminEmployees" asp-action="Index" class="breadcrumb-item">Danh sách nhân viên</a>
+                    <span class="breadcrumb-item active">Chi tiết nhân viên</span>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="text-md-right d-flex justify-content-end">
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-primary btn-tone mr-2" asp-area="Admin" asp-controller="AdminEmployees" asp-action="Edit" asp-route-id="@Model.EmployeeId">Sửa đổi</a>
+                    <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.EmployeeId" class="mr-2">
+                        <button type="submit" class="btn btn-danger btn-tone">Xóa</button>
+                    </form>
+                    <a asp-area="Admin" asp-controller="AdminEmployees" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.EmployeeId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="card">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <div class="d-md-flex align-items-center">
+                    <div class="text-center text-sm-left ">
+                        <div class="avatar avatar-image" style="width: 150px; height:150px">
+                            <img src="~/images/employees/@Model.Photo" alt="@Model.FullName">
+                        </div>
+                    </div>
+                    <div class="text-center text-sm-left m-v-15 p-l-30">
+                        <h2 class="m-b-5">@Model.FullName</h2>
+                        <p class="text-opacity font-size-13">@Model.BirthDate?.ToString("dd/MM/yyyy")</p>
+                        <p class="text-dark m-b-20">
+                            @if ((bool)Model.IsWorking)
+                            {
+                                <div class="d-flex align-items-center">
+                                    <div class="badge badge-success badge-dot m-r-10"></div>
+                                    <div>Làm việc</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center">
+                                    <div class="badge badge-danger badge-dot m-r-10"></div>
+                                    <div>Nghỉ</div>
+                                </div>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="row">
+                    <div class="d-md-block d-none border-left col-1"></div>
+                    <div class="col">
+                        <ul class="list-unstyled m-t-10">
+                            <li class="row">
+                                <p class="col-sm-4 col-4 font-weight-semibold text-dark m-b-5">
+                                    <i class="m-r-10 text-primary anticon anticon-mail"></i>
+                                    <span>Email: </span>
+                                </p>
+                                <p class="col font-weight-semibold"> @Model.Email</p>
+                            </li>
+                            <li class="row">
+                                <p class="col-sm-4 col-4 font-weight-semibold text-dark m-b-5">
+                                    <i class="m-r-10 text-primary anticon anticon-phone"></i>
+                                    <span>Phone: </span>
+                                </p>
+                                <p class="col font-weight-semibold"> @Model.Phone</p>
+                            </li>
+                            <li class="row">
+                                <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
+                                    <i class="m-r-10 text-primary anticon anticon-compass"></i>
+                                    <span>Location: </span>
+                                </p>
+                                <p class="col font-weight-semibold"> @Model.Address</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Thông tin làm việc</h4>
+                <div class="table-responsive">
+                    <table class="product-info-table m-t-20">
+                        <tbody>
+                            <tr>
+                                <td>Ngày bắt đầu làm việc:</td>
+                                <td class="text-dark font-weight-semibold">@Model.DateCreated?.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <td>Làm việc tại:</td>
+                                <td>@Model.Parking.ParkingName</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("deleteForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (confirm("Bạn có chắc chắn muốn xóa xe đạp này?")) {
+            this.submit();
+        }
+    });
+</script>

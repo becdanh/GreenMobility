@@ -28,7 +28,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 4;
+            var pageSize = 10;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
@@ -82,6 +82,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
 
             var employee = await _context.Employees
+                .Include(m => m.Parking)
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
@@ -242,43 +243,29 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(employee);
         }
 
-        // GET: Admin/AdminEmployees/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Employees == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            return View(employee);
-        }
-
-        // POST: Admin/AdminEmployees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_context.Employees == null)
+            try
             {
-                return Problem("Entity set 'GreenMobilityContext.Employees'  is null.");
-            }
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
-            {
+                var employee = await _context.Employees.FindAsync(id);
+                if (employee == null)
+                {
+                    return NotFound();
+                }
+
                 _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+                _notyf.Success("Xóa thành công");
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                _notyf.Error("Xóa thất bại");
+                return RedirectToAction(nameof(Index));
+            }
         }
-
         private bool EmployeeExists(int id)
         {
             return (_context.Employees?.Any(e => e.EmployeeId == id)).GetValueOrDefault();
