@@ -1,0 +1,107 @@
+﻿@model GreenMobility.Models.Customer
+
+@{
+    ViewData["Title"] = "Chỉnh sửa khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<form asp-controller="AdminCustomers" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="CustomerId" />
+    <input type="hidden" asp-for="Password" />
+    <div class="page-header no-gutters has-tab">
+        <div class="row align-items-md-center">
+            <div class="col-md-8">
+                <h2 class="header-title">Quản lý khách hàng</h2>
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                        <a asp-area="Admin" asp-controller="AdminCustomers" asp-action="Index" class="breadcrumb-item">Danh sách khách hàng</a>
+                        <span class="breadcrumb-item active">Chỉnh sửa khách hàng</span>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-md-right">
+                    <div>
+                        <button type="submit" class="btn btn-primary mr-1">
+                            <i class="anticon anticon-save"></i>
+                            <span>Lưu</span>
+                        </button>
+                        <a asp-area="Admin" asp-controller="AdminCustomers" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#tab-account">Thông tin chi tiết</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#tab-network">Giấy tờ tùy thân</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="tab-account">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Thông tin cơ bản</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="FullName">Họ và tên:</label>
+                            <input type="text" class="form-control" asp-for="FullName" placeholder="Họ và tên">
+                            @Html.ValidationMessage("FullName", "", new { @style = "color:#f00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="Email">Email:</label>
+                            <input type="email" class="form-control" asp-for="Email" placeholder="email">
+                            @Html.ValidationMessage("Email", "", new { @style = "color:#f00" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="Phone">Số điện thoại:</label>
+                            <input type="text" class="form-control" asp-for="Phone" placeholder="Số điện thoại">
+                            @Html.ValidationMessage("Phone", "", new { @style = "color:#f00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="BirthDate">Ngày sinh:</label>
+                            <input type="date" class="form-control" placeholder="Ngày sinh">
+                            @Html.ValidationMessage("BirthDate", "", new { @style = "color:#f00" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label class="font-weight-semibold" for="Address">Địa chỉ:</label>
+                            <input type="text" class="form-control" asp-for="Address" placeholder="Địa chỉ">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="switch m-r-10">
+                            <input type="checkbox" asp-for="IsLocked">
+                            <label for="IsWorking"></label>
+                        </div>
+                        <label>Làm việc</label>
+                    </div>
+                    @Html.ValidationMessage("Error", "", new { @style = "color:#f00" })
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="tab-network">
+            <div class="row">
+                <div class="col-md-12 mx-auto">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Network Integration</h4>
+                        </div>
+                        <div class="card-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

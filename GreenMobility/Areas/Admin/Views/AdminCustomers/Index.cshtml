@@ -1,0 +1,152 @@
+﻿@model PagedList.Core.IPagedList<GreenMobility.Models.Customer>
+
+@{
+    int CurrentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Quản lý khách hàng: page " + CurrentPage;
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý khách hàng</h2>
+            <div class="header-sub-title">
+                <nav class="breadcrumb breadcrumb-dash">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                    <span class="breadcrumb-item active">Danh sách khách hàng : Trang @CurrentPage</span>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-md-right">
+                <div>
+                    <a class="btn btn-primary" asp-controller="AdminCustomers" asp-action="Create">
+                        <i class="anticon anticon-plus-circle m-r-5"></i>
+                        <span>Thêm mới khách hàng</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row m-b-30">
+            <div class="col-lg-8">
+                <div class="d-md-flex">
+                    <div class="m-b-10 m-r-10">
+                        <div class="input-affix m-v-4">
+                            <i class="prefix-icon anticon anticon-search opacity-04"></i>
+                            <input id="keyword" name="keyword" type="text" class="form-control" placeholder="Tìm kiếm">
+                        </div>
+                    </div>
+                    <div class="d-md-flex">
+                        <div class="m-b-10">
+                            <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.lsStatus">
+                                <option value="" disabled selected>Chọn trạng thái</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Tên khách hàng</th>
+                        <th scope="col">Số điện thoại</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Trạng thái</th>
+                        <th class="text-right" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        int OrdinalNumber = (CurrentPage - 1) * Model.PageSize;
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(++OrdinalNumber)</td>
+                                <td>@item.FullName</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Email</td>
+                                <td>
+                                    @if ((bool)item.IsLocked)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+                                            <div>Khóa</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            <div>Hoạt động</div>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-right">
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminCustomers" asp-action="Edit" asp-route-id="@item.CustomerId">
+                                        <i class="anticon anticon-edit"></i>
+                                    </a>
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminCustomers" asp-action="Details" asp-route-id="@item.CustomerId">
+                                        <i class="anticon anticon-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-5">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminCustomers" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
+                </ul>
+            </div>
+            <div class="col-sm-12 col-md-7 text-right">
+                @if (Model != null)
+                {
+                    <p>Tổng số khách hàng: @Model.TotalItemCount</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#idstatus, #keyword").change(function () {
+                var status = $("#idstatus").children(":selected").val();
+                var keyword = $("#keyword").val();
+                status = parseFloat(status);
+                $('#idstatus option').removeAttr('selected');
+                $("#idstatus > [value = " + status + "]").attr("selected", true);
+                $.ajax({
+                    url: '/Admin/AdminCustomers/FilterAndSearch',
+                    dataType: "json",
+                    type: 'GET',
+                    data: { status: status, keyword: keyword },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+        $(function () {
+            var status = @ViewBag.CurrentStatus;
+            $("#idstatus").val(status);
+            var keyword = "@ViewBag.Keyword";
+            $("#keyword").val(keyword);
+        });
+    </script>
+}
