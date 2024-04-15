@@ -5,14 +5,25 @@
     ViewData["Title"] = "Quản lý xe đạp: page " + CurrentPage;
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
-<div class="page-header">
-    <h2 class="header-title">Quản lý xe đạp</h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <span class="breadcrumb-item active">Danh sách xe đạp : Trang @CurrentPage</span>
-        </nav>
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý xe đạp</h2>
+            <nav class="breadcrumb breadcrumb-dash">
+                <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                <span class="breadcrumb-item active">Danh sách xe đạp : Trang @CurrentPage</span>
+            </nav>
+        </div>
+        <div class="col-md-4">
+            <div class="text-md-right">
+                <div>
+                    <a class="btn btn-primary" asp-controller="AdminBicycles" asp-action="Create">
+                        <i class="anticon anticon-plus-circle m-r-5"></i>
+                        <span>Thêm mới xe</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="card">
@@ -33,13 +44,6 @@
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-4 text-right">
-                <a class="btn btn-primary" asp-controller="AdminBicycles" asp-action="Create">
-                    <i class="anticon anticon-plus-circle m-r-5"></i>
-                    <span>Thêm mới xe</span>
-                </a>
             </div>
         </div>
         <div class="table-responsive">

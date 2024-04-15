@@ -8,99 +8,105 @@
     <link href="~/Adminassets/summernote/summernote-bs4.css" rel="stylesheet" />
     <link href="~/Adminassets/summernote/summernote.css" rel="stylesheet" />
 }
-<div class="page-header">
-    <h2 class="header-title">Quản lý xe đạp</h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="breadcrumb-item">Danh sách xe đạp</a>
-            <span class="breadcrumb-item active">Chỉnh sửa xe đạp</span>
-        </nav>
-    </div>
-</div>
 <form asp-controller="AdminBicycles" asp-action="Edit" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="BicycleId" />
     <input type="hidden" asp-for="Photo" />
     <input type="hidden" asp-for="DateCreated" />
-    <div class="page-header no-gutters has-tab">
-        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
-            <div class="media align-items-center m-b-15">
+    <div class="page-header no-gutters">
+        <div class="row align-items-md-center">
+            <div class="col-md-8">
+                <h2 class="header-title">Quản lý xe đạp</h2>
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                        <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="breadcrumb-item">Danh sách xe đạp</a>
+                        <span class="breadcrumb-item active">Chỉnh sửa xe đạp</span>
+                    </nav>
+                </div>
             </div>
-            <div class="m-b-15">
-                <button type="submit" class="btn btn-primary">
-                    <i class="anticon anticon-save"></i>
-                    <span>Lưu</span>
-                </button>
-                <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="btn btn-success btn-tone m-r-5">Quay lại</a>
+            <div class="col-md-4">
+                <div class="text-md-right">
+                    <div>
+                        <button type="submit" class="btn btn-primary mr-1">
+                            <i class="anticon anticon-save"></i>
+                            <span>Lưu</span>
+                        </button>
+                        <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#bicycle-edit-basic">THÔNG TIN XE ĐẠP</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#bicyle-edit-description">MÔ TẢ</a>
-            </li>
-        </ul>
     </div>
     <div class="tab-content m-t-15">
-        <div class="tab-pane fade show active" id="bicycle-edit-basic">
-            <div class="card">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label class="font-weight-semibold" for="BicycleName">Tên xe đạp</label>
-                        <input type="text" class="form-control" asp-for="BicycleName">
-                        @Html.ValidationMessage("BicycleName", new { @style = "color:#f00" })
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Thông tin xe đạp</h4>
+            </div>
+            <div class="card-body">
+                <div class="media align-items-center">
+                    <div class="img-fluid m-h-10 m-r-15" style="height: 80px; width: 120px">
+                        <img id="avatarPreview" src="~/images/bicycles/@Model.Photo" alt="Avatar Preview" style="object-fit: contain; width: 100%; height: 100%;">
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label class="font-weight-semibold" for="LicensePlate">Biển số</label>
-                            <input type="text" class="form-control" asp-for="LicensePlate">
-                            @Html.ValidationMessage("LicensePlate", new { @style = "color:#f00" })
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="font-weight-semibold" for="RentalPrice">Giá thuê</label>
-                            <input type="text" class="form-control" asp-for="RentalPrice">
-                            @Html.ValidationMessage("RentalPrice", new { @style = "color:#f00" })
-                        </div>
+
+                    <div class="m-l-20 m-r-20">
+                        <h5 class="m-b-5 font-size-18">Ảnh đại diện</h5>
+                        <p class="opacity-07 font-size-13 m-b-0">
+                            Đề xuất: <br>
+                            Ảnh chi tiết
+                        </p>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label class="font-weight-semibold" for="ParkingId">Bãi xe</label>
-                            <select class="custom-select" asp-for="ParkingId" style="min-width: 200px;" asp-items="ViewBag.lsBaiDo">
-                                <option value="0" selected>Chọn bãi xe</option>
-                            </select>
-                            @Html.ValidationMessage("ParkingId", new { @style = "color:#f00" })
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label class="font-weight-semibold" for="BicycleStatusId">Trạng thái</label>
-                            <select class="custom-select" asp-for="BicycleStatusId" style="min-width: 200px;" asp-items="ViewBag.lsTrangThai">
-                                <option value="0" selected>Chọn trạng thái</option>
-                            </select>
-                            @Html.ValidationMessage("BicycleStatusId", new { @style = "color:#f00" })
-                        </div>
+                    <div>
+                        <label for="fphoto" class="btn btn-tone btn-primary">
+                            <span>Chọn ảnh</span>
+                            <input type="file" id="fphoto" name="fphoto" asp-for="Photo" onchange="previewAvatar(event)" style="display: none;">
+                        </label>
                     </div>
-                    <div class="form-group">
-                        <label class="font-weight-semibold" for="Photo">Ảnh đại diện</label>
-                        <input name="fPhoto" type="file" class="form-control-file" asp-for="Photo" onchange="previewImage(event)">
-                        <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
+
+                <hr class="m-v-25">
+                <div class="form-group">
+                    <label class="font-weight-semibold" for="BicycleName">Tên xe đạp</label>
+                    <input type="text" class="form-control" asp-for="BicycleName" autofocus>
+                    @Html.ValidationMessage("BicycleName", new { @style = "color:#f00" })
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="font-weight-semibold" for="LicensePlate">Biển số</label>
+                        <input type="text" class="form-control" asp-for="LicensePlate">
+                        @Html.ValidationMessage("LicensePlate", new { @style = "color:#f00" })
                     </div>
-                    <div id="imagePreview">
-                        @if (!string.IsNullOrEmpty(Model.Photo))
-                        {
-                            <img id="previewImg" src="~/images/bicycles/@Model.Photo" style="max-width: 200px; max-height: 200px;" />
-                        }
+                    <div class="form-group col-md-6">
+                        <label class="font-weight-semibold" for="RentalPrice">Giá thuê</label>
+                        <input type="number" class="form-control" asp-for="RentalPrice">
+                        @Html.ValidationMessage("RentalPrice", new { @style = "color:#f00" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="font-weight-semibold" for="ParkingId">Bãi xe</label>
+                        <select class="custom-select" asp-for="ParkingId" style="min-width: 200px;" asp-items="ViewBag.lsBaiDo">
+                            <option value="0" selected>Chọn bãi xe</option>
+                        </select>
+                        @Html.ValidationMessage("ParkingId", new { @style = "color:#f00" })
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="font-weight-semibold" for="BicycleStatusId">Trạng thái</label>
+                        <select class="custom-select" asp-for="BicycleStatusId" style="min-width: 200px;" asp-items="ViewBag.lsTrangThai">
+                            <option value="0" selected>Chọn trạng thái</option>
+                        </select>
+                        @Html.ValidationMessage("BicycleStatusId", new { @style = "color:#f00" })
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="tab-pane fade" id="bicyle-edit-description">
-            <div class="card">
-                <div class="card-body">
-                    <textarea class="summernote" asp-for="Description"></textarea>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Mô tả</h4>
+            </div>
+            <div class="card-body">
+                <textarea class="summernote" asp-for="Description"></textarea>
             </div>
         </div>
     </div>
@@ -120,16 +126,15 @@
                 height: 200,
                 minHeight: null,
                 maxHeight: null,
-                focus: true
             });
         });
-        function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            var output = document.getElementById('imagePreview');
-            output.innerHTML = '<img id="previewImg" src="' + reader.result + '" style="max-width: 200px; max-height: 200px;" />';
+        function previewAvatar(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('avatarPreview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
         }
-        reader.readAsDataURL(event.target.files[0]);
-    }
     </script>
 }

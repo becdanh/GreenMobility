@@ -106,7 +106,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             if (bicycle.ParkingId == 0)
                 ModelState.AddModelError("ParkingId", "Vui lòng chọn một bãi xe");
 
-            if (bicycle.RentalPrice <= 0)
+            if (bicycle.RentalPrice <= 0 || bicycle.RentalPrice.ToString() == "")
                 ModelState.AddModelError("RentalPrice", "Vui lòng nhập giá thuê hợp lệ");
 
             if (bicycle.BicycleStatusId == 0)
@@ -140,6 +140,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 _notyf.Success("Tạo mới thành công");
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Tạo mới thất bại, vui lòng kiểm tra lại thông tin");
             ViewData["lsBaiDo"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
             ViewData["lsTrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description");
             return View(bicycle);
@@ -189,12 +190,13 @@ namespace GreenMobility.Areas.Admin.Controllers
             if (bicycle.BicycleStatusId == 0)
                 ModelState.AddModelError("BicycleStatusId", "Vui lòng chọn một trạng thái");
 
+            if (LicensePlateExistsExceptCurrent(bicycle.LicensePlate, id))
+                ModelState.AddModelError("LicensePlate", "Biển số xe đã tồn tại");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (!LicensePlateExistsExceptCurrent(bicycle.LicensePlate, id))
-                    {
                         bicycle.BicycleName = Utilities.ToTitleCase(bicycle.BicycleName);
                         bicycle.LicensePlate = Utilities.ToTitleCase(bicycle.LicensePlate);
 
@@ -212,15 +214,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
                         _context.Update(bicycle);
                         await _context.SaveChangesAsync();
-                        _notyf.Success("Cập nhật xe thành công");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("LicensePlate", "Biển số xe đã tồn tại");
-                        _notyf.Error("Cập nhật xe thất bại");
-                        return View(bicycle);
-                    }
-
+                        _notyf.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -236,6 +230,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Chỉnh sửa thất bại, vui lòng kiểm tra lại thông tin");
             ViewData["lsBaiDo"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
             ViewData["lsTrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description");
             return View(bicycle);
