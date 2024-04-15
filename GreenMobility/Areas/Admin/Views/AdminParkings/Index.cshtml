@@ -6,13 +6,25 @@
     ViewData["Title"] = "Quản lý bãi đỗ: page " + CurrentPage;
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-<div class="page-header">
-    <h2 class="header-title">Quản lý bãi đỗ</h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <span class="breadcrumb-item active">Danh sách bãi đỗ : Trang @CurrentPage</span>
-        </nav>
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý bãi đỗ</h2>
+            <nav class="breadcrumb breadcrumb-dash">
+                <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                <span class="breadcrumb-item active">Danh sách bãi đỗ : Trang @CurrentPage</span>
+            </nav>
+        </div>
+        <div class="col-md-4">
+            <div class="text-md-right">
+                <div>
+                    <a class="btn btn-primary" asp-controller="AdminParkings" asp-action="Create">
+                        <i class="anticon anticon-plus-circle m-r-5"></i>
+                        <span>Thêm mới bãi đỗ</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="card">
@@ -34,12 +46,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 text-right">
-                <a class="btn btn-primary" asp-controller="AdminParkings" asp-action="Create">
-                    <i class="anticon anticon-plus-circle m-r-5"></i>
-                    <span>Thêm mới bãi đỗ</span>
-                </a>
             </div>
         </div>
         <div class="table-responsive">
