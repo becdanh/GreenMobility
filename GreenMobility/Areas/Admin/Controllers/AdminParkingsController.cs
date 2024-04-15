@@ -103,10 +103,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 ModelState.AddModelError("Address", "Địa chỉ không được để trống");
 
             if (ParkingNameExists(parking.ParkingName))
-            {
                 ModelState.AddModelError("ParkingName", "Tên bãi đỗ đã tồn tại");
-                return View(parking);
-            }
 
             if (ModelState.IsValid)
             {
@@ -125,9 +122,10 @@ namespace GreenMobility.Areas.Admin.Controllers
                 parking.Alias = Utilities.SEOUrl(parking.ParkingName);
                 _context.Add(parking);
                 await _context.SaveChangesAsync();
-                _notyf.Success("Tạo mới bãi đỗ thành công");
+                _notyf.Success("Tạo mới thành công");
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Tạo mới thất bại, vui lòng kiểm tra lại thông tin");
             return View(parking);
         }
 
@@ -161,34 +159,28 @@ namespace GreenMobility.Areas.Admin.Controllers
             if (string.IsNullOrWhiteSpace(parking.Address))
                 ModelState.AddModelError("Address", "Địa chỉ không được để trống");
 
+            if (ParkingNameExistsExceptCurrent(parking.ParkingName, id))
+                ModelState.AddModelError("ParkingName", "Tên bãi đỗ đã tồn tại");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (!ParkingNameExistsExceptCurrent(parking.ParkingName, id))
+                    parking.ParkingName = Utilities.ToTitleCase(parking.ParkingName);
                     {
-                        parking.ParkingName = Utilities.ToTitleCase(parking.ParkingName);
+                        if (fPhoto != null)
                         {
-                            if (fPhoto != null)
-                            {
-                                string extension = Path.GetExtension(fPhoto.FileName);
-                                string image = Utilities.SEOUrl(parking.ParkingName) + extension;
-                                parking.Photo = await Utilities.UploadFile(fPhoto, @"parkings", image.ToLower());
-                            }
+                            string extension = Path.GetExtension(fPhoto.FileName);
+                            string image = Utilities.SEOUrl(parking.ParkingName) + extension;
+                            parking.Photo = await Utilities.UploadFile(fPhoto, @"parkings", image.ToLower());
                         }
-                        if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
+                    }
+                    if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
 
-                        parking.Alias = Utilities.SEOUrl(parking.ParkingName);
-                        _context.Update(parking);
-                        await _context.SaveChangesAsync();
-                        _notyf.Success("Cập nhật bãi đỗ thành công");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("ParkingName", "Tên bãi đỗ đã tồn tại");
-                        _notyf.Error("Cập nhật bãi đỗ thất bại");
-                        return View(parking);
-                    }
+                    parking.Alias = Utilities.SEOUrl(parking.ParkingName);
+                    _context.Update(parking);
+                    await _context.SaveChangesAsync();
+                    _notyf.Success("Cập nhật bãi đỗ thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -203,6 +195,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Chỉnh sửa thất bại, vui lòng kiểm tra lại thông tin");
             return View(parking);
         }
 

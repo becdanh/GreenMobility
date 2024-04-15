@@ -4,28 +4,66 @@
     ViewData["Title"] = "Chỉnh sửa bãi đỗ";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
-<div class="page-header">
-    <h2 class="header-title">Quản lý bãi đỗ</h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="breadcrumb-item">Danh sách bãi đỗ</a>
-            <span class="breadcrumb-item active">Chỉnh sửa bãi đỗ</span>
-        </nav>
-    </div>
-</div>
 <form asp-controller="AdminParkings" asp-action="Edit" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="ParkingId" />
     <input type="hidden" asp-for="Photo" />
+    <div class="page-header no-gutters">
+        <div class="row align-items-md-center">
+            <div class="col-md-8">
+                <h2 class="header-title">Quản lý bãi đỗ</h2>
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                        <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="breadcrumb-item">Danh sách bãi đỗ</a>
+                        <span class="breadcrumb-item active">Chỉnh sửa bãi đỗ</span>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-md-right">
+                    <div>
+                        <button type="submit" class="btn btn-primary mr-1">
+                            <i class="anticon anticon-save"></i>
+                            <span>Lưu</span>
+                        </button>
+                        <a asp-area="Admin" asp-controller="AdminPosts" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="tab-content m-t-15">
         <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Thông tin bãi đỗ</h4>
+            </div>
             <div class="card-body">
+                <div class="media align-items-center">
+                    <div class="img-fluid m-h-10 m-r-15" style="height: 80px; width: 120px">
+                        <img id="avatarPreview" src="~/images/parkings/@Model.Photo" alt="Avatar Preview" style="object-fit: contain; width: 100%; height: 100%;">
+                    </div>
+
+                    <div class="m-l-20 m-r-20">
+                        <h5 class="m-b-5 font-size-18">Ảnh đại diện</h5>
+                        <p class="opacity-07 font-size-13 m-b-0">
+                            Đề xuất: <br>
+                            Ảnh chi tiết
+                        </p>
+                    </div>
+                    <div>
+                        <label for="fphoto" class="btn btn-tone btn-primary">
+                            <span>Chọn ảnh</span>
+                            <input type="file" id="fphoto" name="fphoto" asp-for="Photo" onchange="previewAvatar(event)" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="m-v-25">
                 <div class="form-group">
                     <label class="font-weight-semibold" for="ParkingName">Tên bãi đỗ</label>
-                    <input type="text" class="form-control" asp-for="ParkingName">
-                    @Html.ValidationMessage("ParkingName", "",new { @style = "color:#f00" })
+                    <input type="text" class="form-control" asp-for="ParkingName" name="ParkingName">
+                    @Html.ValidationMessage("ParkingName", "", new { @style = "color:#f00" })
                 </div>
                 <div class="form-group">
                     <label class="font-weight-semibold" for="Address">Địa chỉ</label>
@@ -39,35 +77,19 @@
                     </div>
                     <label>Hoạt động</label>
                 </div>
-                <div class="form-group">
-                    <label class="font-weight-semibold" for="Photo">Ảnh đại diện</label>
-                    <input name="fPhoto" type="file" class="form-control-file" asp-for="Photo" onchange="previewImage(event)">
-                    <span asp-validation-for="Photo" class="text-danger"></span>
-                </div>
-                <div id="imagePreview">
-                    @if (!string.IsNullOrEmpty(Model.Photo))
-                    {
-                        <img id="previewImg" src="~/images/parkings/@Model.Photo" style="max-width: 200px; max-height: 200px;" />
-                    }
-                </div>
-                <div class="text-right">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="anticon anticon-save"></i>
-                        <span>Lưu</span>
-                    </button>
-                    <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="btn btn-success btn-tone m-r-5">Quay lại</a>
-                </div>
             </div>
         </div>
     </div>
 </form>
-<script>
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            var output = document.getElementById('imagePreview');
-            output.innerHTML = '<img id="previewImg" src="' + reader.result + '" style="max-width: 200px; max-height: 200px;" />';
+@section Scripts {
+    <script>
+        function previewAvatar(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('avatarPreview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
         }
-        reader.readAsDataURL(event.target.files[0]);
-    }
-</script>
+    </script>
+}
