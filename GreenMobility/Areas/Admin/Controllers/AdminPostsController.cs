@@ -27,31 +27,54 @@ namespace GreenMobility.Areas.Admin.Controllers
         }
 
         // GET: Admin/AdminPosts
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
-            var collection = _context.Posts.AsNoTracking().ToList();
-            foreach (var item in collection)
+            var pageNumber = page;
+            var pageSize = 10;
+
+            List<SelectListItem> lsStatus = new List<SelectListItem>();
+            lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
+            lsStatus.Add(new SelectListItem() { Text = "Công khai", Value = "1" });
+            lsStatus.Add(new SelectListItem() { Text = "Ẩn", Value = "2" });
+            ViewData["lsStatus"] = lsStatus;
+
+            IQueryable<Post> postQuery = _context.Posts
+                .AsNoTracking();
+
+            if (status == 1)
             {
-                if (item.CreatedDate == null)
-                {
-                    item.CreatedDate = DateTime.Now;
-                    _context.Update(item);
-                    _context.SaveChanges();
-                }
+                postQuery = postQuery.Where(x => x.Published);
+            }
+            else if (status == 2)
+            {
+                postQuery = postQuery.Where(x => !x.Published);
             }
 
-            var pageNumber = page == null || page <= 0 ? 1 : page.Value;
-            var pageSize = 10;
-            var lsposts = _context.Posts
-            .AsNoTracking()
-                .OrderBy(x => x.PostId);
-            PagedList<Post> models = new PagedList<Post>(lsposts, pageNumber, pageSize);
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                keyword = keyword.Trim().ToLower();
+                postQuery = postQuery.Where(x => x.Title.ToLower().Contains(keyword) || x.Contents.ToLower().Contains(keyword));
+            }
+
+            List<Post> lsPosts = await postQuery.ToListAsync();
+            PagedList<Post> models = new PagedList<Post>(lsPosts.AsQueryable(), pageNumber, pageSize);
 
             ViewBag.CurrentPage = pageNumber;
-            return View(models);
+            ViewBag.CurrentStatus = status;
+            ViewBag.Keyword = keyword;
+
+            return View(models); ;
         }
 
-        // GET: Admin/AdminPosts/Details/5
+        public IActionResult FilterAndSearch(int status = 0, string keyword = "")
+        {
+            var url = $"/Admin/AdminPosts?status={status}&keyword={keyword}";
+            if (status == 0 && string.IsNullOrEmpty(keyword))
+            {
+                url = "/Admin/AdminPosts";
+            }
+            return Json(new { status = "success", redirectUrl = url });
+        }
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Posts == null)
@@ -69,19 +92,21 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(post);
         }
 
-        // GET: Admin/AdminPosts/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/AdminPosts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PostId,Title,Scontents,Contents,Thumb,Published,Alias,CreatedDate,Author,AccountId,Tags,CatId,IsHot,IsNewfeed,MetaKey,MetaDesc,Views")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
+        public async Task<IActionResult> Create([Bind("PostId,Title,Contents,Published,Alias,CreatedDate,Author,AccountId,Thumb")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
         {
+            if (string.IsNullOrWhiteSpace(post.Title))
+                ModelState.AddModelError("Title", "Tiêu đề không được để trống");
+
+            if (string.IsNullOrWhiteSpace(post.Contents))
+                ModelState.AddModelError("Contents", "Nội dung không được để trống");
+
             if (ModelState.IsValid)
             {
                 if (fThumb != null)
@@ -96,12 +121,13 @@ namespace GreenMobility.Areas.Admin.Controllers
 
                 _context.Add(post);
                 await _context.SaveChangesAsync();
+                _notyf.Success("Thêm mới thành công");
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Tạo mới thất bại, vui lòng kiểm tra lại thông tin");
             return View(post);
         }
 
-        // GET: Admin/AdminPosts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -117,17 +143,20 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(post);
         }
 
-        // POST: Admin/AdminPosts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PostId,Title,Scontents,Contents,Thumb,Published,Alias,CreatedDate,Author,AccountId,Tags,CatId,IsHot,IsNewfeed,MetaKey,MetaDesc,Views")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
+        public async Task<IActionResult> Edit(int id, [Bind("PostId,Title,Contents,Published,Alias,CreatedDate,Author,AccountId,Thumb")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
         {
             if (id != post.PostId)
             {
                 return NotFound();
             }
+
+            if (string.IsNullOrWhiteSpace(post.Title))
+                ModelState.AddModelError("Title", "Tiêu đề không được để trống");
+
+            if (string.IsNullOrWhiteSpace(post.Contents))
+                ModelState.AddModelError("Contents", "Nội dung không được để trống");
 
             if (ModelState.IsValid)
             {
@@ -161,6 +190,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            _notyf.Error("Chỉnh sửa thất bại, vui lòng kiểm tra lại thông tin");
             return View(post);
         }
 
