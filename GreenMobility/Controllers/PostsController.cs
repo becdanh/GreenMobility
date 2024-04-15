@@ -4,21 +4,21 @@ using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
 namespace GreenMobility.Controllers
 {
-    public class BlogsController : Controller
+    public class PostsController : Controller
     {
         private readonly GreenMobilityContext _context;
 
-        public BlogsController(GreenMobilityContext context)
+        public PostsController(GreenMobilityContext context)
         {
             _context = context;
         }
 
         // GET: Blogs/Index
-        [Route("blog.html", Name = "Blog")]
+        [Route("post.html", Name = "Post")]
         public async Task<IActionResult> Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
-            var pageSize = 10;
+            var pageSize = 2;
             var lsPosts = _context.Posts
                 .AsNoTracking()
                 .Where(x => x.Published == true)
@@ -29,7 +29,7 @@ namespace GreenMobility.Controllers
             return View(models);
         }
         // GET: Blogs/Details/5
-        [Route("/Blogs/{Alias}-{id}", Name = "PostsDetails")]
+        [Route("/post/{Alias}-{id}.html", Name = "PostsDetails")]
         public IActionResult Details(int id)
         {
             var post = _context.Posts.AsNoTracking().SingleOrDefault(x => x.PostId == id);
