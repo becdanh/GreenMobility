@@ -7,7 +7,7 @@
     int PageNext = PageCurrent + 1;
 }
 <main class="main-content">
-    <div class="breadcrumb-area breadcrumb-height" data-bg-image="assets/images/breadcrumb/bg/rentbike.jpg">
+    <div class="breadcrumb-area breadcrumb-height" data-bg-image="assets/images/breadcrumb/bg/becdanhphoto.png">
         <div class="container h-100">
             <div class="row h-100">
                 <div class="col-lg-12">
@@ -29,12 +29,13 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="product-topbar">
-                        <ul>
+                        <ul class="list-unstyled d-flex justify-content-center">
                             <li class="page-count">
-                                <span>23</span> Product Found of <span>50</span>
+                                <span>Có tổng @Model.TotalItemCount xe đạp ở @parking.ParkingName</span>
                             </li>
                         </ul>
                     </div>
+
                     <div class="tab-content text-charcoal pt-8">
                         <div class="tab-pane fade show active" id="grid-view" role="tabpanel" aria-labelledby="grid-view-tab">
                             <div class="product-grid-view row">
@@ -46,13 +47,13 @@
                                             <div class="product-item">
                                                 <div class="product-img img-zoom-effect">
                                                     <a>
-                                                        <img class="img-full" src="~/images/bicycles/@item.Photo" alt="@item.Alias">
+                                                        <img class="img-full" src="~/images/bicycles/@item.Photo" alt="@item.Alias" style="object-fit: contain;">
                                                     </a>
                                                     <div class="product-add-action">
                                                         <ul>
                                                             <li>
-                                                                <a>
-                                                                    <i class="pe-7s-cart add-to-cart" data-bicycle-id="@item.BicycleId"></i>
+                                                                <a class="add-to-cart" data-bicycle-id="@item.BicycleId">
+                                                                    <i class="pe-7s-cart"></i>
                                                                     <input type="hidden" id="bicycleId_@item.BicycleId" value="@item.BicycleId" />
                                                                 </a>
                                                             </li>
@@ -101,8 +102,8 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $(".add-to-cart").click(function () {
-                var bicycleId = $(this).data("bicycle-id"); // Lấy id của sản phẩm
+            $(document).on('click', '.add-to-cart', function () {
+                var bicycleId = $(this).data("bicycle-id");
                 $.ajax({
                     url: '/api/cart/add',
                     type: "POST",
@@ -112,8 +113,12 @@
                     },
                     success: function (response) {
                         if (response.success) {
+                            alert("Thêm sản phẩm vào giỏ hàng thành công 😍");
                             loadHeaderCart();
                             location.reload();
+
+                        } else {
+                            alert("Sản phẩm đã có trong giỏ hàng 😥");
                         }
                     },
                     error: function (error) {
@@ -126,5 +131,4 @@
             }
         });
     </script>
-
 }

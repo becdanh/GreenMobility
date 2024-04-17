@@ -12,7 +12,7 @@ namespace GreenMobility.Controllers.Components
     {
         public IViewComponentResult Invoke()
         {
-            var cart = HttpContext.Session.Get<List<CartItemVM>>("GioHang");
+            var cart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
             return View(cart);
         }
     }

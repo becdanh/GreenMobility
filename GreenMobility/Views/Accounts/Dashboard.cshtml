@@ -111,7 +111,7 @@
             $(".xemdonhang").click(function () {
                 var madonhang = $(this).attr("data-madonhang")
                 $.ajax({
-                    url: '/Rental/Details',
+                    url: '/RentalDetails/Details',
                     datatype: "json",
                     type: "POST",
                     data: { id: madonhang },

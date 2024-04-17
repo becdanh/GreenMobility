@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenMobility.Controllers
 {
     [Authorize]
-    public class RentalController : Controller
+    public class RentalDetailsController : Controller
     {
         private readonly GreenMobilityContext _context;
         public INotyfService _notyf { get; }
-        public RentalController(GreenMobilityContext context, INotyfService notyf)
+        public RentalDetailsController(GreenMobilityContext context, INotyfService notyf)
         {
             _context = context;
             _notyf = notyf;
