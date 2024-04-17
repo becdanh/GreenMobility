@@ -47,6 +47,7 @@
         <div class="container">
             <form asp-controller="Checkout" asp-action="Index" method="post">
                 <input hidden asp-for="CustomerId" />
+                <input type="hidden" name="ParkingID" value="@ViewBag.ParkingID">
                 <div class="row">
                     <div class="col-lg-6 col-12">
 
@@ -98,11 +99,11 @@
                                     <tfoot>
                                         <tr class="order-total">
                                             <th>Thời gian bắt đầu</th>
-                                            <td><strong><span class="amount"></span></strong></td>
+                                            <td><strong><span class="amount">@Carts.First().PickupTime</span></strong></td>
                                         </tr>
                                         <tr class="order-total">
                                             <th>Thời gian thuê</th>
-                                            <td><strong><span class="amount"></span></strong></td>
+                                            <td><strong><span class="amount">@Carts.First().RentalHours</span></strong></td>
                                         </tr>
                                         <tr class="order-total">
                                             <th>Tổng đơn thuê</th>

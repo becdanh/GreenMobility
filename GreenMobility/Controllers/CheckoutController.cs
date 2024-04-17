@@ -7,7 +7,6 @@ using GreenMobility.Extension;
 using Microsoft.EntityFrameworkCore;
 using AspNetCoreHero.ToastNotification.Notyf;
 using GreenMobility.Helpper;
-using GreenMobility.ModelViews;
 namespace GreenMobility.Controllers
 {
     public class CheckoutController : Controller
@@ -21,11 +20,11 @@ namespace GreenMobility.Controllers
             _notyf = notyf;
         }
 
-        public List<CartItemVM> GioHang
+        public List<CartItemVM> RentalCart
         {
             get
             {
-                var gh = HttpContext.Session.Get<List<CartItemVM>>("GioHang");
+                var gh = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
                 if (gh == default(List<CartItemVM>))
                 {
                     gh = new List<CartItemVM>();
@@ -36,10 +35,10 @@ namespace GreenMobility.Controllers
 
         // GET Checkout/Index
         [Route("checkout.html", Name = "Checkout")]
-        public IActionResult Index(string returnUrl = null)
+        public IActionResult Index(string returnUrl = null, int? parkingID = null)
         {
             // lấy giỏ hàng ra để xử lý
-            var cart = HttpContext.Session.Get<List<CartItemVM>>("GioHang");
+            var cart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
             var taikhoanID = HttpContext.Session.GetString("CustomerId");
             CheckoutVM model = new CheckoutVM();
             if (taikhoanID != null)
@@ -50,15 +49,20 @@ namespace GreenMobility.Controllers
                 model.Email = khachhang.Email;
                 model.Phone = khachhang.Phone;
             }
+            if (parkingID != null)
+            {
+                cart = cart.Where(x => x.PickupParking == parkingID).ToList();
+            }
+            ViewBag.ParkingID = parkingID;
             ViewBag.GioHang = cart;
             return View(model);
         }
         [HttpPost]
         [Route("checkout.html", Name = "Checkout")]
-        public IActionResult Index()
+        public IActionResult Index(int? ParkingID)
         {
             //Lay ra gio hang de xu ly
-            var cart = HttpContext.Session.Get<List<CartItemVM>>("GioHang");
+            var cart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
             var taikhoanID = HttpContext.Session.GetString("CustomerId");
             CheckoutVM model = new CheckoutVM();
             if (taikhoanID != null)
@@ -70,6 +74,11 @@ namespace GreenMobility.Controllers
                 model.Phone = khachhang.Phone;
                 _context.Update(khachhang);
                 _context.SaveChanges();
+            }
+            if (ParkingID != null)
+            {
+                // Lọc giỏ hàng chỉ chứa các mặt hàng thuộc ParkingID
+                cart = cart.Where(x => x.PickupParking == ParkingID).ToList();
             }
             if (ModelState.IsValid)
             {
@@ -99,8 +108,9 @@ namespace GreenMobility.Controllers
                 }
                 _context.SaveChanges();
                 //clear gio hang
-                HttpContext.Session.Remove("GioHang");
+                HttpContext.Session.Remove("RentalCart");
                 //Xuat thong bao
+                UpdateBicycleStatus(cart);
                 _notyf.Success("Đơn hàng đặt thành công");
                 //cap nhat thong tin khach hang
                 return RedirectToAction("Success");
@@ -134,6 +144,27 @@ namespace GreenMobility.Controllers
             {
                 return View();
             }
+        }
+
+        private void UpdateBicycleStatus(List<CartItemVM> cart)
+        {
+            foreach (var item in cart)
+            {
+                // Lấy thông tin xe từ cơ sở dữ liệu
+                var bicycle = _context.Bicycles.FirstOrDefault(x => x.BicycleId == item.bicycle.BicycleId);
+
+                if (bicycle != null)
+                {
+                    // Cập nhật trạng thái của xe thành 3 (đã đặt)
+                    bicycle.BicycleStatusId = 3;
+
+                    // Cập nhật lại thông tin xe trong cơ sở dữ liệu
+                    _context.Update(bicycle);
+                }
+            }
+
+            // Lưu các thay đổi vào cơ sở dữ liệu
+            _context.SaveChanges();
         }
     }
 }

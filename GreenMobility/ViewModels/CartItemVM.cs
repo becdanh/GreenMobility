@@ -12,5 +12,21 @@ namespace GreenMobility.ModelViews
         public double TotalMoney => RentalHours * bicycle.RentalPrice.Value;
 
         public int PickupParking => bicycle.ParkingId.Value;
+
+        public string ParkingName => GetParkingNameById(bicycle.ParkingId.Value);
+
+        private string GetParkingNameById(int parkingId)
+        {
+            string parkingName = "Unknown";
+            using (var dbContext = new GreenMobilityContext())
+            {
+                var parking = dbContext.Parkings.FirstOrDefault(p => p.ParkingId == parkingId);
+                if (parking != null)
+                {
+                    parkingName = parking.ParkingName;
+                }
+            }
+            return parkingName;
+        }
     }
 }

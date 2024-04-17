@@ -9,24 +9,22 @@ namespace GreenMobility.Controllers
     public class RentalCartController : Controller
     {
         private readonly GreenMobilityContext _context;
-
-        public INotyfService _notifyService { get; }
-        public RentalCartController(GreenMobilityContext context, INotyfService notifyService)
+        private readonly INotyfService _notyf;
+        public RentalCartController(GreenMobilityContext context, INotyfService notyf)
         {
             _context = context;
-            _notifyService = notifyService;
+            _notyf = notyf;
         }
-        // Khởi tạo giỏ hàng
-        public List<CartItemVM> GioHang
+        public List<CartItemVM> RentalCart
         {
             get
             {
-                var gh = HttpContext.Session.Get<List<CartItemVM>>("GioHang");
-                if (gh == default(List<CartItemVM>))
+                var rentalCart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
+                if (rentalCart == default(List<CartItemVM>))
                 {
-                    gh = new List<CartItemVM>();
+                    rentalCart = new List<CartItemVM>();
                 }
-                return gh;
+                return rentalCart;
             }
         }
 
@@ -36,11 +34,10 @@ namespace GreenMobility.Controllers
         {
             try
             {
-                List<CartItemVM> gioHang = GioHang;
+                List<CartItemVM> rentalCart = RentalCart;
                 // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-                if (gioHang.Any(p => p.bicycle.BicycleId == bicycleId))
+                if (rentalCart.Any(p => p.bicycle.BicycleId == bicycleId))
                 {
-                    _notifyService.Error("Sản phẩm đã tồn tại trong giỏ hàng");
                     return Json(new { success = false });
                 }
 
@@ -48,27 +45,21 @@ namespace GreenMobility.Controllers
                 Bicycle hh = _context.Bicycles.SingleOrDefault(p => p.BicycleId == bicycleId);
                 if (hh == null)
                 {
-                    _notifyService.Error("Không tìm thấy sản phẩm");
                     return Json(new { success = false });
                 }
 
-                //Thêm sản phẩm vào giỏ hàng
                 CartItemVM item = new CartItemVM
                 {
                     bicycle = hh,
                     PickupTime = DateTime.Now,
                     RentalHours = 1
                 };
-                gioHang.Add(item);//thêm vào giỏ
-
-                //lưu lại session
-                HttpContext.Session.Set<List<CartItemVM>>("GioHang", gioHang);
-                _notifyService.Success("Thêm sản phẩm vào giỏ hàng thành công");
+                rentalCart.Add(item);
+                HttpContext.Session.Set<List<CartItemVM>>("RentalCart", rentalCart);;
                 return Json(new { success = true });
             }
             catch
             {
-                _notifyService.Error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
                 return Json(new { success = false });
             }
         }
@@ -79,14 +70,14 @@ namespace GreenMobility.Controllers
         {
             try
             {
-                List<CartItemVM> cartItems = GioHang;
+                List<CartItemVM> cartItems = RentalCart;
                 foreach (var item in cartItems)
                 {
                     item.RentalHours = rentalHour;
                     item.PickupTime = pickupTime;
                 }
                 // Lưu lại session
-                HttpContext.Session.Set<List<CartItemVM>>("GioHang", cartItems);
+                HttpContext.Session.Set<List<CartItemVM>>("RentalCart", cartItems);
                 return Json(new { success = true });
             }
             catch
@@ -101,7 +92,7 @@ namespace GreenMobility.Controllers
         {
             try
             {
-                List<CartItemVM> cartItems = GioHang;
+                List<CartItemVM> cartItems = RentalCart;
                 int rentalHour = 0;
                 DateTime pickupTime = DateTime.Now;
 
@@ -131,13 +122,13 @@ namespace GreenMobility.Controllers
         {
             try
             {
-                List<CartItemVM> gioHang = GioHang;
-                CartItemVM item = gioHang.SingleOrDefault(p => p.bicycle.BicycleId == bicycleId);
+                List<CartItemVM> rentalCart = RentalCart;
+                CartItemVM item = rentalCart.SingleOrDefault(p => p.bicycle.BicycleId == bicycleId);
                 if (item != null)
                 {
-                    gioHang.Remove(item);
+                    rentalCart.Remove(item);
                     // Lưu lại session sau khi xóa mục khỏi giỏ hàng
-                    HttpContext.Session.Set<List<CartItemVM>>("GioHang", gioHang);
+                    HttpContext.Session.Set<List<CartItemVM>>("RentalCart", rentalCart);
                     return Json(new { success = true });
                 }
                 else
@@ -155,8 +146,7 @@ namespace GreenMobility.Controllers
         [Route("cart.html", Name = "Cart")]
         public IActionResult Index()
         {
-            return View(GioHang);
+            return View(RentalCart);
         }
     }
 }
-

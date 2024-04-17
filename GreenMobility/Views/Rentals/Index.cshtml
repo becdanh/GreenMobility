@@ -1,9 +1,11 @@
 ﻿@model PagedList.Core.IPagedList<GreenMobility.Models.Parking>
 @{
+    ViewData["Title"] = "Thuê xe: page " + ViewBag.CurrentPage;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int CurrentPage = ViewBag.CurrentPage;
 }
 <main class="main-content">
-    <div class="breadcrumb-area breadcrumb-height" data-bg-image="assets/images/breadcrumb/bg/rentbike12.jpg">
+    <div class="breadcrumb-area breadcrumb-height" data-bg-image="assets/images/breadcrumb/bg/becdanhphoto.png">
         <div class="container h-100">
             <div class="row h-100">
                 <div class="col-lg-12">
@@ -29,7 +31,7 @@
                             <li class="product-view-wrap">
                             </li>
                             <li class="page-count">
-                                <span>23</span> Product Found of <span>50</span>
+                                <span>Có tổng @Model.TotalItemCount bãi đỗ</span>
                             </li>
                             <li class="short">
                             </li>
@@ -42,12 +44,13 @@
                                 {
                                     foreach (var item in Model)
                                     {
+                                        int bicycleCount = ViewBag.BicycleCounts.ContainsKey(item.ParkingId) ? ViewBag.BicycleCounts[item.ParkingId] : 0;
                                         string url = $"/{item.Alias}";
                                         <div class="col-lg-3 col-sm-6 mb-6">
                                             <div class="product-item">
                                                 <div class="product-img img-zoom-effect">
                                                     <a href="@url">
-                                                        <img class="img-full" src="~/images/parkings/baixe.jpg" alt="@item.Alias">
+                                                        <img class="img-fluid" src="~/images/parkings/@item.Photo" alt="@item.Alias" style="object-fit: cover;">
                                                     </a>
                                                 </div>
                                                 <div class="product-content">
@@ -55,6 +58,7 @@
                                                     <div class="price-box pb-1">
                                                         <span class="new-price">@item.Address</span>
                                                     </div>
+                                                    <div class="bicycle-count">Số xe: @bicycleCount</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -66,16 +70,24 @@
                     <div class="pagination-area pt-10">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <span class="fa fa-chevron-left"></span>
+                                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 })" aria-label="Previous">
+                                        <span class="fa fa-chevron-left" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
                                     </a>
                                 </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <span class="fa fa-chevron-right"></span>
+
+                                @for (int i = 1; i <= Model.PageCount; i++)
+                                {
+                                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                                        <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                                    </li>
+                                }
+
+                                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageNumber })" aria-label="Next">
+                                        <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
                                     </a>
                                 </li>
                             </ul>

@@ -7,10 +7,10 @@ using PagedList.Core;
 namespace GreenMobility.Controllers
 {
 
-    public class BicyclesController : Controller
+    public class RentalsController : Controller
     {
         private readonly GreenMobilityContext _context;
-        public BicyclesController(GreenMobilityContext context)
+        public RentalsController(GreenMobilityContext context)
         {
             _context = context;
         }
@@ -19,16 +19,26 @@ namespace GreenMobility.Controllers
         public async Task<IActionResult> Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
-            var pageSize = 10;
+            var pageSize = 8;
             var lsParkings = _context.Parkings
                 .AsNoTracking()
-                .OrderByDescending(x => x.ParkingName);
+                .OrderByDescending(x => x.ParkingName)
+                .Include(p => p.Bicycles);
 
             PagedList<Parking> models = new PagedList<Parking>(lsParkings, pageNumber, pageSize);
 
+            Dictionary<int, int> bicycleCounts = new Dictionary<int, int>();
+            foreach (var parking in models)
+            {
+                int bicycleCount = parking.Bicycles.Count(x => x.BicycleStatusId == 1);
+                bicycleCounts.Add(parking.ParkingId, bicycleCount);
+            }
+
             ViewBag.CurrentPage = pageNumber;
+            ViewBag.BicycleCounts = bicycleCounts;
             return View(models);
         }
+
 
         [Route("/{Alias}", Name = "ListBicycle")]
         public IActionResult List(string Alias, int page = 1)
@@ -40,7 +50,7 @@ namespace GreenMobility.Controllers
                 var LsBicycles = _context.Bicycles
                     .AsNoTracking()
                     .Include(x => x.Parking)
-                    .Where(x => x.ParkingId == parking.ParkingId)
+                    .Where(x => x.ParkingId == parking.ParkingId && x.BicycleStatusId == 1)
                     .OrderByDescending(x => x.DateCreated);
                 PagedList<Bicycle> models = new PagedList<Bicycle>(LsBicycles, page, pageSize);
                 ViewBag.CurrentPage = page;
