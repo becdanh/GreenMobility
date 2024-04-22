@@ -1,7 +1,7 @@
 ﻿@model GreenMobility.ModelViews.RegisterVM
 
 @{
-    ViewData["Title"] = "Đăng ký tài khoản";
+    ViewData["Title"] = @_localization.Getkey("Register");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -13,35 +13,35 @@
                     <form asp-action="Register">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="login-form">
-                            <h4 class="login-title">Đăng ký tài khoản</h4>
+                            <h4 class="login-title">@_localization.Getkey("Register")</h4>
                             <div class="row">
-                                <div class="col-md-12">
-                                    <label>Họ và tên*</label>
+                                <div class="col-md-12 mb-4">
+                                    <label>@_localization.Getkey("FullName")</label>
                                     <input type="text" asp-for="FullName" placeholder="Name">
                                     <span asp-validation-for="FullName" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-12">
-                                    <label>Email*</label>
+                                <div class="col-md-12 mb-4">
+                                    <label>@_localization.Getkey("EmailAddress")</label>
                                     <input type="email" asp-for="Email" placeholder="Email Address">
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-12">
-                                    <label>Số điện thoại*</label>
+                                <div class="col-md-12 mb-4">
+                                    <label>@_localization.Getkey("Phone")</label>
                                     <input type="tel" asp-for="Phone" placeholder="Phone">
                                     <span asp-validation-for="Phone" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
-                                    <label>Mật khẩu</label>
+                                <div class="col-md-6 mb-4">
+                                    <label>@_localization.Getkey("Password")</label>
                                     <input type="password" asp-for="Password" placeholder="Password">
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
-                                    <label>Xác nhận mật khẩu</label>
+                                <div class="col-md-6 mb-4">
+                                    <label>@_localization.Getkey("ConfirmPassword")</label>
                                     <input type="password" asp-for="ConfirmPassword" placeholder="Confirm Password">
                                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                                 </div>
-                                <div class="col-12">
-                                    <button class="btn btn-custom-size lg-size btn-secondary btn-primary-hover rounded-0">Đăng ký</button>
+                                <div class="col-12 mb-4">
+                                    <button class="btn btn-custom-size lg-size btn-secondary btn-primary-hover rounded-0">@_localization.Getkey("Register")</button>
                                 </div>
                             </div>
                         </div>
