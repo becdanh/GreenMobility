@@ -1,28 +1,48 @@
 ﻿@using Microsoft.AspNetCore.Http;
 
 <header class="main-header_area position-relative">
+    <div class="header-top border-bottom d-none d-md-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="header-top-left">
+                        <ul class="dropdown-wrap text-matterhorn">
+                            <li class="dropdown">
+                                <button class="btn btn-link dropdown-toggle ht-btn fa fa-language" type="button" id="languageButton" data-bs-toggle="dropdown">
+                                    @_localization.Getkey("Language").Value
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="languageButton">
+                                    <li>
+                                        <a asp-controller="Home"
+                                           asp-action="ChangeLanguage"
+                                           asp-route-culture="vi-VN" class="dropdown-item">Tiếng Việt</a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Home"
+                                           asp-action="ChangeLanguage"
+                                           asp-route-culture="en-US" class="dropdown-item">English</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="header-top-right text-matterhorn">
+                        <p class="shipping mb-0">Green Mobility</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="header-middle py-5">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <div class="header-middle-wrap">
                         <a href="index.html" class="header-logo">
-                            <img src="~/assets/images/logo/dark.png" alt="Header Logo">
+                            <img src="~/assets/images/logo/becdanhlogo.png" alt="Header Logo">
                         </a>
-                        <div class="header-search-area d-none d-lg-block">
-                            <form action="#" class="header-searchbox">
-                                <select class="nice-select select-search-category wide">
-                                    <option value="all">All Category</option>
-                                    <option value="product-item">Product Item</option>
-                                    <option value="product-item-2">Product Item 02</option>
-                                    <option value="product-item-3">Product Item 03</option>
-                                    <option value="product-item-4">Product Item 04</option>
-                                    <option value="product-item-5">Product Item 05</option>
-                                </select>
-                                <input class="input-field" type="text" placeholder="Search Products">
-                                <button class="btn btn-outline-whisper btn-primary-hover" type="submit"><i class="pe-7s-search"></i></button>
-                            </form>
-                        </div>
                         <div class="header-right">
                             <ul>
                                 <li class="dropdown d-none d-md-block">
@@ -36,13 +56,13 @@
                                         }
                                         @if (taikhoanID != null)
                                         {
-                                            <li><a class="dropdown-item" href="/tai-khoan-cua-toi.html">Tài khoản của tôi</a></li>
-                                            <li><a class="dropdown-item" href="dang-xuat.html">Đăng xuất</a></li>
+                                            <li><a class="dropdown-item" href="/tai-khoan-cua-toi.html">@_localization.Getkey("MyAccount")</a></li>
+                                            <li><a class="dropdown-item" href="dang-xuat.html">@_localization.Getkey("Logout")</a></li>
                                         }
                                         else
                                         {
-                                            <li><a class="dropdown-item" href="/dang-ky.html">Đăng ký tài khoản</a></li>
-                                            <li><a class="dropdown-item" href="/dang-nhap.html">Đăng nhập</a></li>
+                                            <li><a class="dropdown-item" href="/dang-ky.html">@_localization.Getkey("Register")</a></li>
+                                            <li><a class="dropdown-item" href="/dang-nhap.html">@_localization.Getkey("Login")</a></li>
                                         }
 
                                     </ul>
@@ -69,13 +89,13 @@
                             <nav class="main-nav">
                                 <ul>
                                     <li class="drop-holder">
-                                        <a href="/">Trang chủ</a>
+                                        <a href="/">@_localization.Getkey("Home").Value</a>
                                     </li>
                                     <li>
-                                        <a href="/rental.html">Thuê xe</a>
+                                        <a href="/rental.html">@_localization.Getkey("Rental").Value</a>
                                     </li>
                                     <li>
-                                        <a href="/post.html">Tin tức</a>
+                                        <a href="/post.html">@_localization.Getkey("Post").Value</a>
                                     </li>
                                 </ul>
                             </nav>

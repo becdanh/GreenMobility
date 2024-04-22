@@ -2,19 +2,19 @@
 @{
     var total = Model.RentalDetails.Sum(x => x.TotalMoney).Value.ToString("#,##0");
 }
-<h3>Thông tin đơn hàng: #@Model.Rental.RentalId</h3>
+<h3>@_localization.Getkey("RentalInfor"): #@Model.Rental.RentalId</h3>
 <br />
-<p>Ngày đặt hàng: @Model.Rental.OrderTime</p>
-<p>Tổng giá trị đơn hàng: <strong> @total VNĐ</strong></p>
+<p>@_localization.Getkey("RentalDate"): @Model.Rental.OrderTime</p>
+<p>@_localization.Getkey("TotalMoney"): <strong> @total VNĐ</strong></p>
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <tbody>
             <tr>
                 <th>#</th>
-                <th>Sản phẩm</th>
-                <th>Biển số xe</th>
-                <th>Đơn giá</th>
-                <th>Thành tiền</th>
+                <th>@_localization.Getkey("BicycleName")</th>
+                <th>@_localization.Getkey("LicensePlate")</th>
+                <th>@_localization.Getkey("UnitPrice")</th>
+                <th>@_localization.Getkey("Amount")</th>
             </tr>
 
             @foreach (var item in Model.RentalDetails)

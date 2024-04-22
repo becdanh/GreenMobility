@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer.Localisation;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace GreenMobility.ModelViews
@@ -7,27 +8,26 @@ namespace GreenMobility.ModelViews
     {
         [Key]
         public int CustomerId { get; set; }
-        [Display(Name = "Họ Và Tên")]
-        [Required(ErrorMessage = "Vui lòng nhập Họ Tên")]
+        [Display(Name = "FullName")]
+        [Required(ErrorMessage = "FullNameRequired")]
         public string FullName { get; set; }
-        [Required(ErrorMessage = "Vui lòng nhập Email")]
+        [Required(ErrorMessage = "EmailRequired")]
         [MaxLength(150)]
         [DataType(DataType.EmailAddress)]
         [Remote(action: "ValidateEmail", controller: "Accounts")]
         public string Email { get; set; }
         [MaxLength(11)]
-        [Required(ErrorMessage = "Vui lòng nhập Số điện thoại")]
-        [Display(Name = "Điện thoại")]
+        [Required(ErrorMessage = "PhoneRequired")]
+        [Display(Name = "Phone")]
         [DataType(DataType.PhoneNumber)]
         [Remote(action: "ValidatePhone", controller: "Accounts")]
         public string Phone { get; set; }
-        [Display(Name = "Mật khẩu")]
-        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
-        [MinLength(5, ErrorMessage = "Bạn cần đặt mật khẩu tối thiểu 5 ký tự")]
+        [Display(Name = "Password")]
+        [Required(ErrorMessage = "PasswordRequired")]
+        [MinLength(5, ErrorMessage = "MinPassword")]
         public string Password { get; set; }
-        [MinLength(5, ErrorMessage = "Bạn cần đặt mật khẩu tối thiểu 5 ký tự")]
-        [Display(Name = "Nhập lại mật khẩu")]
-        [Compare("Password", ErrorMessage = "Vui lòng nhập mật khẩu giống nhau")]
+        [Display(Name = "ConfirmPassword")]
+        [Compare("Password", ErrorMessage = "ComparePassword")]
         public string ConfirmPassword { get; set; }
     }
 }
