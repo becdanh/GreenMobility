@@ -87,9 +87,10 @@ namespace GreenMobility.Controllers
                 donhang.CustomerId = model.CustomerId;
                 donhang.OrderTime = DateTime.Now;
                 donhang.RentalStatusId = 1;
+                donhang.RentalFee = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
                 donhang.TotalMoney = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
-                donhang.PickupTime = cart.First().PickupTime;
-                donhang.RentalHours = cart.First().RentalHours;
+                donhang.AppointmentTime = cart.First().PickupTime;
+                donhang.HoursRented = cart.First().RentalHours;
                 donhang.PickupParking = cart.First().PickupParking;
                 _context.Add(donhang);
                 _context.SaveChanges();
@@ -100,9 +101,9 @@ namespace GreenMobility.Controllers
                     RentalDetail rentalDetail = new RentalDetail();
                     rentalDetail.RentalId = donhang.RentalId;
                     rentalDetail.BicycleId = item.bicycle.BicycleId;
-                    rentalDetail.RentalHours = item.RentalHours;
-                    rentalDetail.PickupTime = item.PickupTime;
-                    rentalDetail.TotalMoney = item.TotalMoney;
+                    rentalDetail.HoursRented = item.RentalHours;
+                    rentalDetail.AppointmentTime = item.PickupTime;
+                    rentalDetail.RentalFee = item.TotalMoney;
                     rentalDetail.RentalPrice = item.bicycle.RentalPrice;
                     _context.Add(rentalDetail);
                 }

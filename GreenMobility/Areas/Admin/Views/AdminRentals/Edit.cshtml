@@ -1,62 +1,109 @@
-﻿@model GreenMobility.Models.Rental
-
-@{
-    ViewData["Title"] = "Edit";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+@model GreenMobility.Models.Rental
+@section Styles {
+    <link href="~/Adminassets/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/Adminassets/summernote/summernote.css" rel="stylesheet" />
 }
 
-<h1>Edit</h1>
-
-<h4>Rental</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="RentalId" />
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
-                <span asp-validation-for="CustomerId" class="text-danger"></span>
+<div class="modal-header">
+    <h5 class="modal-title">THÔNG TIN ĐƠN THUÊ</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">THÔNG TIN ĐƠN THUÊ #@Model.RentalId</h4>
+            <div class="table-responsive">
+                <table class="product-info-table m-t-20">
+                    <tbody>
+                        <tr>
+                            <td>ID:</td>
+                            <td class="text-dark font-weight-semibold">#@Model.RentalId</td>
+                        </tr>
+                        <tr>
+                            <td>Khách hàng:</td>
+                            <td>@Model.Customer.FullName</td>
+                        </tr>
+                        <tr>
+                            <td>Số điện thoại:</td>
+                            <td>@Model.Customer.Phone</td>
+                        </tr>
+                        <tr>
+                            <td>Hẹn nhận xe lúc:</td>
+                            <td>@Model.AppointmentTime</td>
+                        </tr>
+                        <tr>
+                            <td>Nhận xe lúc:</td>
+                            <td>@Model.PickupTime</td>
+                        </tr>                     
+                        <tr>
+                            <td>Số giờ thuê:</td>
+                            <td>@Model.HoursRented giờ</td>
+                        </tr>
+                        <tr>
+                            <td>Tổng tiền thuê:</td>
+                            <td>@Model.RentalFee.ToString("#,##0") VNĐ</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderTime" class="control-label"></label>
-                <input asp-for="OrderTime" class="form-control" />
-                <span asp-validation-for="OrderTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmployeeId" class="control-label"></label>
-                <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId"></select>
-                <span asp-validation-for="EmployeeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalMoney" class="control-label"></label>
-                <input asp-for="TotalMoney" class="form-control" />
-                <span asp-validation-for="TotalMoney" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RentalStatusId" class="control-label"></label>
-                <select asp-for="RentalStatusId" class="form-control" asp-items="ViewBag.RentalStatusId"></select>
-                <span asp-validation-for="RentalStatusId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Surcharge" class="control-label"></label>
-                <input asp-for="Surcharge" class="form-control" />
-                <span asp-validation-for="Surcharge" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Note" class="control-label"></label>
-                <input asp-for="Note" class="form-control" />
-                <span asp-validation-for="Note" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <form asp-area="Admin" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@Model.RentalId" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="RentalId" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Chọn trạng thái đơn hàng</label>
+                            <select class="form-control" asp-for="RentalStatusId" asp-items="@ViewBag.Status" required>
+                                <option value="0" disabled selected>Chọn trạng thái đơn hàng</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-semibold" for="Surcharge">Tiền phụ phí</label>
+                            <input type="text" class="form-control" asp-for="Surcharge">
+                            <span asp-validation-for="Surcharge" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Ghi chú</h4>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="summernote" asp-for="Note"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+            </form>
+        </div>  
     </div>
 </div>
+@section Scripts {
+    <script src="~/Adminassets/vendors/select2/select2.min.js"></script>
+    <script src="~/Adminassets/js/pages/e-commerce-product-edit.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.1/jquery.validate.min.js"></script>
+    <script src="~/Adminassets/summernote/summernote-bs4.js"></script>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+    <script>
+        $('#modal-header').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var url = button.attr("href");
+            var modal = $(this);
+            modal.find('.modal-content').load(url);
+        });
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 200,
+                minHeight: null,
+                maxHeight: null,
+            });
+        });
+    </script>
+} 

@@ -13,11 +13,11 @@ public partial class Rental
 
     public int? EmployeeId { get; set; }
 
-    public double? TotalMoney { get; set; }
+    public double RentalFee { get; set; }
 
     public int? RentalStatusId { get; set; }
 
-    public decimal? Surcharge { get; set; }
+    public double? Surcharge { get; set; }
 
     public string? Note { get; set; }
 
@@ -25,9 +25,15 @@ public partial class Rental
 
     public int? ReturnParking { get; set; }
 
+    public DateTime? AppointmentTime { get; set; }
+
+    public int? HoursRented { get; set; }
+
+    public double? TotalMoney { get; set; }
+
     public DateTime? PickupTime { get; set; }
 
-    public int? RentalHours { get; set; }
+    public DateTime? ReturnTime { get; set; }
 
     public virtual Customer? Customer { get; set; }
 

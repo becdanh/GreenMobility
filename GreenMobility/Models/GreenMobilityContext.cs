@@ -150,6 +150,7 @@ public partial class GreenMobilityContext : DbContext
         modelBuilder.Entity<Rental>(entity =>
         {
             entity.Property(e => e.RentalId).HasColumnName("RentalID");
+            entity.Property(e => e.AppointmentTime).HasColumnType("datetime");
             entity.Property(e => e.CustomerId)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("CustomerID");
@@ -162,7 +163,8 @@ public partial class GreenMobilityContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.PickupTime).HasColumnType("datetime");
             entity.Property(e => e.RentalStatusId).HasColumnName("RentalStatusID");
-            entity.Property(e => e.Surcharge).HasColumnType("money");
+            entity.Property(e => e.ReturnTime).HasColumnType("datetime");
+            entity.Property(e => e.Surcharge).HasDefaultValue(0.0);
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Rentals)
                 .HasForeignKey(d => d.CustomerId)
@@ -188,8 +190,8 @@ public partial class GreenMobilityContext : DbContext
         modelBuilder.Entity<RentalDetail>(entity =>
         {
             entity.Property(e => e.RentalDetailId).HasColumnName("RentalDetailID");
+            entity.Property(e => e.AppointmentTime).HasColumnType("datetime");
             entity.Property(e => e.BicycleId).HasColumnName("BicycleID");
-            entity.Property(e => e.PickupTime).HasColumnType("datetime");
             entity.Property(e => e.RentalId).HasColumnName("RentalID");
 
             entity.HasOne(d => d.Bicycle).WithMany(p => p.RentalDetails)

@@ -11,13 +11,13 @@ public partial class RentalDetail
 
     public int BicycleId { get; set; }
 
-    public DateTime? PickupTime { get; set; }
+    public DateTime? AppointmentTime { get; set; }
 
-    public int? RentalHours { get; set; }
+    public int? HoursRented { get; set; }
 
     public double? RentalPrice { get; set; }
 
-    public double? TotalMoney { get; set; }
+    public double? RentalFee { get; set; }
 
     public virtual Bicycle Bicycle { get; set; } = null!;
 

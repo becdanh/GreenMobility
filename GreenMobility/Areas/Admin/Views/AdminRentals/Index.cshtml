@@ -5,16 +5,21 @@
     ViewData["Title"] = "Danh sách đơn thuê xe: page " + CurrentPage;
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-<div class="page-header">
-    <h2 class="header-title">Quản lý đơn thuê xe </h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <span class="breadcrumb-item active">Danh sách đơn thuê xe : Trang @CurrentPage</span>
-        </nav>
+@section Styles {
+    <link href="~/Adminassets/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/Adminassets/summernote/summernote.css" rel="stylesheet" />
+}
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý đơn thuê xe </h2>
+            <nav class="breadcrumb breadcrumb-dash">
+                <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                <span class="breadcrumb-item active">Danh sách đơn thuê xe : Trang @CurrentPage</span>
+            </nav>
+        </div>
     </div>
 </div>
-
 <div class="card">
     <div class="card-body">
         <div class="row m-b-30">
@@ -27,7 +32,7 @@
                         </div>
                     </div>
                     <div class="m-b-10">
-                        <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.TrangThai">
+                        <select class="custom-select" id="status" name="status" style="min-width: 180px;" asp-items="ViewBag.Status">
                             <option value="" disabled selected>Chọn trạng thái</option>
                             <option value="0" selected>Tất cả trạng thái</option>
                         </select>
@@ -64,7 +69,7 @@
                             <td>@item.TotalMoney</td>
                             <td>@item.RentalStatus.Description</td>
                             <td class="text-right">
-                                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@item.RentalId">
+                                <a data-target="#modal-header" data-toggle="modal" class="btn btn-icon btn-hover btn-sm btn-rounded" asp-area="Admin" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@item.RentalId">
                                     <i class="anticon anticon-edit"></i>
                                 </a>
                                 <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminRentals" asp-action="Details" asp-route-id="@item.RentalId">
@@ -85,8 +90,65 @@
             </div>
 
             <div class="col-sm-12 col-md-7 text-right">
-                <p>Tổng số xe: @Model.TotalItemCount</p>
+                <p>Tổng số đơn thuê: @Model.TotalItemCount</p>
             </div>
         </div>
     </div>
 </div>
+<div id="modal-header" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Adminassets/vendors/select2/select2.min.js"></script>
+    <script src="~/Adminassets/js/pages/e-commerce-product-edit.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.1/jquery.validate.min.js"></script>
+    <script src="~/Adminassets/summernote/summernote-bs4.js"></script>
+
+    <script>
+        $('#modal-header').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var url = button.attr("href");
+            var modal = $(this);
+            modal.find('.modal-content').load(url);
+        });
+        jQuery(document).ready(function () {
+            $('.summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
+                height: 200,
+                minHeight: null,
+                maxHeight: null,
+            });
+            $("#status, #keyword").change(function () {
+                var status = $("#status").children(":selected").val();
+                var keyword = $("#keyword").val();
+                status = parseFloat(status);
+                $('#status option').removeAttr('selected');
+                $("#status > [value = " + status + "]").attr("selected", true);
+                $.ajax({
+                    url: '/Admin/AdminRentals/FilterAndSearch',
+                    dataType: "json",
+                    type: 'GET',
+                    data: { status: status, keyword: keyword },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+        $(function () {
+            var status = @ViewBag.CurrentStatus;
+            $("#status").val(status);
+            var keyword = "@ViewBag.CurrentKeyword";
+            $("#keyword").val(keyword);
+        });
+    </script>
+} 
