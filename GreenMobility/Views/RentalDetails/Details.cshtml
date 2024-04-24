@@ -1,6 +1,6 @@
 ﻿@model GreenMobility.ViewModels.RentalVM
 @{
-    var total = Model.RentalDetails.Sum(x => x.TotalMoney).Value.ToString("#,##0");
+    var total = Model.RentalDetails.Sum(x => x.RentalFee).Value.ToString("#,##0");
 }
 <h3>@_localization.Getkey("RentalInfor"): #@Model.Rental.RentalId</h3>
 <br />
@@ -24,7 +24,7 @@
                     <td>@item.Bicycle.BicycleName</td>
                     <td>@item.Bicycle.LicensePlate</td>
                     <td>@item.Bicycle.RentalPrice.Value.ToString("#,##0") VNĐ</td>
-                    <td>@item.TotalMoney.Value.ToString("#,##0") VNĐ</td>
+                    <td>@item.RentalFee.Value.ToString("#,##0") VNĐ</td>
                 </tr>
             }
         </tbody>
