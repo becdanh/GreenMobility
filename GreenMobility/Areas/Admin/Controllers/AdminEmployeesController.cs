@@ -95,12 +95,13 @@ namespace GreenMobility.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsRoles"] = new SelectList(_context.Roles, "RoleId", "RoleName");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId")] Employee employee, IFormFile fPhoto)
+        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId,RoleId")] Employee employee, IFormFile fPhoto)
         {
             if (string.IsNullOrWhiteSpace(employee.FullName))
                 ModelState.AddModelError("FullName", "Họ và tên không được để trống");
@@ -119,6 +120,9 @@ namespace GreenMobility.Areas.Admin.Controllers
 
             if (employee.ParkingId == 0)
                 ModelState.AddModelError("ParkingId", "Vui lòng chọn bãi đỗ làm việc");
+
+            if (employee.RoleId == 0)
+                ModelState.AddModelError("RoleId", "Vui lòng chọn quyền truy cập");
 
             if (PhoneExists(employee.Phone))
                 ModelState.AddModelError("Phone", "Số điện thoại đã tồn tại");
@@ -150,6 +154,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
             _notyf.Error("Tạo mới thất bại, vui lòng kiểm tra lại thông tin");
             ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsRoles"] = new SelectList(_context.Roles, "RoleId", "RoleName");
             return View(employee);
         }
 
@@ -167,6 +172,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return NotFound();
             }
             ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsRoles"] = new SelectList(_context.Roles, "RoleId", "RoleName");
             return View(employee);
         }
 
@@ -175,7 +181,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId")] Employee employee, IFormFile fPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId,RoleId")] Employee employee, IFormFile fPhoto)
         {
             if (id != employee.EmployeeId)
             {
@@ -198,6 +204,9 @@ namespace GreenMobility.Areas.Admin.Controllers
 
             if (employee.ParkingId == 0)
                 ModelState.AddModelError("ParkingId", "Vui lòng chọn bãi đỗ làm việc");
+
+            if (employee.RoleId == 0)
+                ModelState.AddModelError("RoleId", "Vui lòng chọn quyền truy cập");
 
             if (PhoneExistsExceptCurrent(employee.Phone, id))
                 ModelState.AddModelError("Phone", "Số điện thoại đã tồn tại");
@@ -240,6 +249,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
             _notyf.Error("Chỉnh sửa thất bại, vui lòng kiểm tra lại thông tin");
             ViewData["lsParkings"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsRoles"] = new SelectList(_context.Roles, "RoleId", "RoleName");
             return View(employee);
         }
 

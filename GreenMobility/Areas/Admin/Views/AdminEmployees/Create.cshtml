@@ -105,9 +105,18 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Bãi đỗ làm việc</h4>
+                    <h4 class="card-title">Thông tin công việc</h4>
                 </div>
                 <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label class="font-weight-semibold" for="RoleId">Quyền truy cập</label>
+                            <select class="custom-select" asp-for="RoleId" style="min-width: 200px;" asp-items="ViewBag.lsRoles">
+                                <option value="0" selected>Chọn quyền truy cập</option>
+                            </select>
+                            @Html.ValidationMessage("RoleId", new { @style = "color:#f00" })
+                        </div>
+                    </div>
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             <label class="font-weight-semibold" for="ParkingId">Bãi đỗ</label>

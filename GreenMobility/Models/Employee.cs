@@ -29,7 +29,11 @@ public partial class Employee
 
     public DateTime? DateModified { get; set; }
 
+    public int RoleId { get; set; }
+
     public virtual Parking? Parking { get; set; }
 
     public virtual ICollection<Rental> Rentals { get; set; } = new List<Rental>();
+
+    public virtual Role Role { get; set; } = null!;
 }

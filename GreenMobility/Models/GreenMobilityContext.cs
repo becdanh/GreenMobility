@@ -33,6 +33,8 @@ public partial class GreenMobilityContext : DbContext
 
     public virtual DbSet<RentalStatus> RentalStatuses { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=DESKTOP-2BDMKVT\\SQLEXPRESS1;Database=GreenMobility;User Id=sa;Password=1;TrustServerCertificate=True");
@@ -112,10 +114,16 @@ public partial class GreenMobilityContext : DbContext
             entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.Phone).HasMaxLength(255);
             entity.Property(e => e.Photo).HasMaxLength(255);
+            entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
             entity.HasOne(d => d.Parking).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.ParkingId)
                 .HasConstraintName("FK_Employees_Parkings");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Employees_Roles");
         });
 
         modelBuilder.Entity<Parking>(entity =>
@@ -211,6 +219,14 @@ public partial class GreenMobilityContext : DbContext
 
             entity.Property(e => e.RentalStatusId).HasColumnName("RentalStatusID");
             entity.Property(e => e.Description).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.Property(e => e.RoleId)
+                .ValueGeneratedNever()
+                .HasColumnName("RoleID");
+            entity.Property(e => e.RoleName).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);
