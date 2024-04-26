@@ -1,6 +1,6 @@
 ﻿using GreenMobility.Models;
 
-namespace GreenMobility.ModelViews
+namespace GreenMobility.ViewModels
 {
     public class CartItemVM
     {

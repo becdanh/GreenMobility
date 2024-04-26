@@ -2,7 +2,7 @@
 using AspNetCoreHero.ToastNotification.Notyf;
 using GreenMobility.Helpper;
 using GreenMobility.Models;
-using GreenMobility.ModelViews;
+using GreenMobility.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
