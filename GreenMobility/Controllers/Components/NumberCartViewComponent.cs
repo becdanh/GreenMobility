@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GreenMobility.ModelViews;
+using GreenMobility.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GreenMobility.Extension;

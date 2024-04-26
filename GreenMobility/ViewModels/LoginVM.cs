@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GreenMobility.ModelViews
+namespace GreenMobility.ViewModels
 {
     public class LoginVM
     {

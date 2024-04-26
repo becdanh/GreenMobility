@@ -1,6 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using GreenMobility.Models;
-using GreenMobility.ModelViews;
+using GreenMobility.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using GreenMobility.Extension;

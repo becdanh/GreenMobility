@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace GreenMobility.ModelViews
+namespace GreenMobility.ViewModels
 {
     public class RegisterVM
     {
