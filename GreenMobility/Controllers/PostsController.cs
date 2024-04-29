@@ -12,9 +12,6 @@ namespace GreenMobility.Controllers
         {
             _context = context;
         }
-
-        // GET: Blogs/Index
-        [Route("post.html", Name = "Post")]
         public async Task<IActionResult> Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
@@ -28,8 +25,8 @@ namespace GreenMobility.Controllers
             ViewBag.CurrentPage = pageNumber;
             return View(models);
         }
-        // GET: Blogs/Details/5
-        [Route("/post/{Alias}-{id}.html", Name = "PostsDetails")]
+
+        [Route("/{Alias}-{id}.html", Name = "PostsDetails")]
         public IActionResult Details(int id)
         {
             var post = _context.Posts.AsNoTracking().SingleOrDefault(x => x.PostId == id);

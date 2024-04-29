@@ -45,7 +45,7 @@
                                     foreach (var item in Model)
                                     {
                                         int bicycleCount = ViewBag.BicycleCounts.ContainsKey(item.ParkingId) ? ViewBag.BicycleCounts[item.ParkingId] : 0;
-                                        string url = $"/{item.Alias}";
+                                        string url = $"/bicycles/{item.Alias}-{item.ParkingId}.html";
                                         <div class="col-lg-3 col-sm-6 mb-6">
                                             <div class="product-item">
                                                 <div class="product-img img-zoom-effect">

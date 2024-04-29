@@ -1,4 +1,4 @@
-using AspNetCoreHero.ToastNotification;
+﻿using AspNetCoreHero.ToastNotification;
 using GreenMobility.Models;
 using GreenMobility.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Localizer
 builder.Services.AddSingleton<LanguageService>();
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
 builder.Services.AddMvc().AddViewLocalization().AddDataAnnotationsLocalization(options =>
     options.DataAnnotationLocalizerProvider = (type, factory) =>
     {
@@ -50,15 +52,21 @@ builder.Services.AddSingleton<HtmlEncoder>(
            HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.All }));
 
 builder.Services.AddSession();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(p =>
     {
-        //p.Cookie.Name = "UserLoginCookie";
-        //p.ExpireTimeSpan = TimeSpan.FromDays(1);
         p.LoginPath = "/dang-nhap.html";
-        //p.LogoutPath = "/dang-xuat/html";
         p.AccessDeniedPath = "/not-found.html";
     });
+
+builder.Services.AddAuthentication("AdminCookieAuthenticationScheme")
+    .AddCookie("AdminCookieAuthenticationScheme", options =>
+    {
+        options.LoginPath = "/Admin/AdminAccounts/Login";
+        options.AccessDeniedPath = "/admin/access-denied";
+    });
+
 
 builder.Services.AddNotyf(config =>
 {
@@ -73,7 +81,7 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
-/*app.UseHttpsRedirection();*/
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 app.UseRouting();
@@ -82,9 +90,9 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-/*app.MapControllerRoute(
+app.MapControllerRoute(
     name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");*/
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

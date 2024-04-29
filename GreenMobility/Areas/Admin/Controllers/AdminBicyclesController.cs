@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GreenMobility.Models;
 using PagedList.Core;
-using GreenMobility.Helpper;
+using GreenMobility.Helper;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class AdminBicyclesController : Controller
     {
         private readonly GreenMobilityContext _context;

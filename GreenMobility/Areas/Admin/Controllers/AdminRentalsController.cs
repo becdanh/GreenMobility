@@ -9,10 +9,12 @@ using GreenMobility.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PagedList.Core;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class AdminRentalsController : Controller
     {
         private readonly GreenMobilityContext _context;

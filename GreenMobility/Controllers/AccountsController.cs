@@ -1,6 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using AspNetCoreHero.ToastNotification.Notyf;
-using GreenMobility.Helpper;
+using GreenMobility.Helper;
 using GreenMobility.Models;
 using GreenMobility.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -12,7 +12,6 @@ using GreenMobility.Extension;
 
 namespace GreenMobility.Controllers
 {
-    [Authorize]
     public class AccountsController : Controller
     {
         private readonly GreenMobilityContext _context;

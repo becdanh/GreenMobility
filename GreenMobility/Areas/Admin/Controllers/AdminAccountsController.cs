@@ -26,25 +26,21 @@ namespace GreenMobility.Areas.Admin.Controllers
         }
 
         [AllowAnonymous]
-        [Route("admin-login.html", Name = "Login")]
-        public IActionResult AdminLogin(string returnUrl = null)
+        public IActionResult Login(string ReturnUrl = null)
         {
-            var accountID = HttpContext.Session.GetString("EmployeeId");
-            if (accountID != null) return RedirectToAction("Index", "Home", new { Area = "Admin" });
-            ViewBag.ReturnUrl = returnUrl;
+            var EmployeeId = HttpContext.Session.GetString("EmployeeId");
+            if (EmployeeId != null) return RedirectToAction("Index", "Home", new { Area = "Admin" });
+            ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
         [HttpPost]
         [AllowAnonymous]
-        [Route("admin-login.html", Name = "Login")]
-        public async Task<IActionResult> AdminLogin(LoginVM model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginVM model, string ReturnUrl = null)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-
-
                     Employee employee = _context.Employees
                     .Include(p => p.Role)
                     .SingleOrDefault(p => p.Email.ToLower() == model.UserName.ToLower().Trim());
@@ -64,12 +60,11 @@ namespace GreenMobility.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
 
 
-                    var accountID = HttpContext.Session.GetString("EmployeeId");
+                    var EmployeeId = HttpContext.Session.GetString("EmployeeId");
 
-                    HttpContext.Session.SetString("E", employee.EmployeeId.ToString());
+                    HttpContext.Session.SetString("EmployeeId", employee.EmployeeId.ToString());
 
-                    //identity
-                    var userClaims = new List<Claim>
+                    var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, employee.FullName),
                         new Claim(ClaimTypes.Email, employee.Email),
@@ -77,20 +72,25 @@ namespace GreenMobility.Areas.Admin.Controllers
                         new Claim("RoleId", employee.RoleId.ToString()),
                         new Claim(ClaimTypes.Role, employee.Role.RoleName)
                     };
-                    var grandmaIdentity = new ClaimsIdentity(userClaims, "User Identity");
-                    var userPrincipal = new ClaimsPrincipal(new[] { grandmaIdentity });
-                    await HttpContext.SignInAsync(userPrincipal);
 
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "adminLogin");
+                    ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    await HttpContext.SignInAsync(claimsPrincipal);
+                    _notyf.Success("Đăng nhập thành công");
 
+                    if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
+                    }
 
                     return RedirectToAction("Index", "Home", new { Area = "Admin" });
                 }
             }
             catch
             {
-                return RedirectToAction("AdminLogin", "AdminAccounts", new { Area = "Admin" });
+                return RedirectToAction("Login", "AdminAccounts", new { Area = "Admin" });
             }
-            return RedirectToAction("AdminLogin", "AdminAccounts", new { Area = "Admin" });
+            return RedirectToAction("Login", "AdminAccounts", new { Area = "Admin" });
         }
         [Route("logout.html", Name = "Logout")]
         public IActionResult AdminLogout()
@@ -99,11 +99,11 @@ namespace GreenMobility.Areas.Admin.Controllers
             {
                 HttpContext.SignOutAsync();
                 HttpContext.Session.Remove("EmployeeId");
-                return RedirectToAction("AdminLogin", "AdminAccounts", new { Area = "Admin" });
+                return RedirectToAction("Login", "AdminAccounts", new { Area = "Admin" });
             }
             catch
             {
-                return RedirectToAction("AdminLogin", "Account", new { Area = "Admin" });
+                return RedirectToAction("AdminLogin", "AdminAccounts", new { Area = "Admin" });
             }
         }
     }

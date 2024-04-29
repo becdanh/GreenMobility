@@ -9,13 +9,15 @@ using GreenMobility.Models;
 using Microsoft.Extensions.Hosting;
 using PagedList.Core;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using GreenMobility.Helpper;
+using GreenMobility.Helper;
 using AspNetCoreHero.ToastNotification.Notyf;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class AdminPostsController : Controller
     {
         private readonly GreenMobilityContext _context;
