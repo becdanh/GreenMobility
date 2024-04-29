@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using GreenMobility.Models;
 using PagedList.Core;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using GreenMobility.Helpper;
+using GreenMobility.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminEmployeesController : Controller
     {
         private readonly GreenMobilityContext _context;

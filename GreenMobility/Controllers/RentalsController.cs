@@ -40,13 +40,11 @@ namespace GreenMobility.Controllers
         }
 
 
-        [Route("/{Alias}", Name = "ListBicycle")]
-        public IActionResult List(string Alias, int page = 1)
+        [Route("/bicycles/{Alias}-{id}.html", Name = "ListBicycle")]
+        public IActionResult List(int id, int page = 1)
         {
-            try
-            {
                 var pageSize = 5;
-                var parking = _context.Parkings.AsNoTracking().SingleOrDefault(x => x.Alias == Alias);
+                var parking = _context.Parkings.AsNoTracking().SingleOrDefault(x => x.ParkingId == id);
                 var LsBicycles = _context.Bicycles
                     .AsNoTracking()
                     .Include(x => x.Parking)
@@ -57,12 +55,6 @@ namespace GreenMobility.Controllers
                 ViewBag.CurrentParking = parking;
                 ViewData["Parking"] = new SelectList(_context.Parkings, "ParkingId", "Address");
                 return View(models);
-            }
-
-            catch
-            {
-                return RedirectToAction("Index", "Home");
-            }
         }
     }
 }
