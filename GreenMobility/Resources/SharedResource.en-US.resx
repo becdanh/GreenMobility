@@ -139,7 +139,10 @@
     <value>Confirm Password</value>
   </data>
   <data name="EmailAddress" xml:space="preserve">
-    <value>Email Address</value>
+    <value>Email</value>
+  </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>Email already exists.</value>
   </data>
   <data name="EmailRequired" xml:space="preserve">
     <value>Please enter your email.</value>
@@ -186,6 +189,9 @@
   <data name="Phone" xml:space="preserve">
     <value>Phone</value>
   </data>
+  <data name="PhoneAlreadyExists" xml:space="preserve">
+    <value>Phone already exists.</value>
+  </data>
   <data name="PhoneRequired" xml:space="preserve">
     <value>Please enter your phone number</value>
   </data>
@@ -201,8 +207,14 @@
   <data name="RentalDate" xml:space="preserve">
     <value>Rental Date</value>
   </data>
+  <data name="RentalInfor" xml:space="preserve">
+    <value>Rental information</value>
+  </data>
   <data name="RentalList" xml:space="preserve">
     <value>Rental List</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save changes</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
@@ -215,6 +227,9 @@
   </data>
   <data name="UnitPrice" xml:space="preserve">
     <value>Unit Price</value>
+  </data>
+  <data name="UpdateProfile" xml:space="preserve">
+    <value>Update profile</value>
   </data>
   <data name="View" xml:space="preserve">
     <value>View</value>

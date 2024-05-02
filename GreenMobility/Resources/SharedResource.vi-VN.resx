@@ -139,7 +139,10 @@
     <value>Xác nhận mật khẩu</value>
   </data>
   <data name="EmailAddress" xml:space="preserve">
-    <value>Địa chỉ Email</value>
+    <value>Email</value>
+  </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>Email đã tồn tại.</value>
   </data>
   <data name="EmailRequired" xml:space="preserve">
     <value>Vui lòng nhập địa chỉ email.</value>
@@ -186,6 +189,9 @@
   <data name="Phone" xml:space="preserve">
     <value>Số điện thoại</value>
   </data>
+  <data name="PhoneAlreadyExists" xml:space="preserve">
+    <value>Số điện thoại đã tồn tại.</value>
+  </data>
   <data name="PhoneRequired" xml:space="preserve">
     <value>Vui lòng nhập số điện thoại.</value>
   </data>
@@ -207,6 +213,9 @@
   <data name="RentalList" xml:space="preserve">
     <value>Danh sách đơn thuê</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Lưu thay đổi</value>
+  </data>
   <data name="Status" xml:space="preserve">
     <value>Trạng thái</value>
   </data>
@@ -218,6 +227,9 @@
   </data>
   <data name="UnitPrice" xml:space="preserve">
     <value>Đơn giá</value>
+  </data>
+  <data name="UpdateProfile" xml:space="preserve">
+    <value>Thay đổi thông tin tài khoản</value>
   </data>
   <data name="View" xml:space="preserve">
     <value>Xem chi tiết</value>

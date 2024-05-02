@@ -40,7 +40,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <div class="header-middle-wrap">
-                        <a href="index.html" class="header-logo">
+                        <a href="/" class="header-logo">
                             <img src="~/assets/images/logo/becdanhlogo.png" alt="Header Logo">
                         </a>
                         <div class="header-right">
@@ -56,13 +56,13 @@
                                         }
                                         @if (taikhoanID != null)
                                         {
-                                            <li><a class="dropdown-item" href="/tai-khoan-cua-toi.html">@_localization.Getkey("MyAccount")</a></li>
-                                            <li><a class="dropdown-item" href="dang-xuat.html">@_localization.Getkey("Logout")</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">@_localization.Getkey("MyAccount")</a></li>
+                                            <li><a class="dropdown-item" href="/logout.html">@_localization.Getkey("Logout")</a></li>
                                         }
                                         else
                                         {
-                                            <li><a class="dropdown-item" href="/dang-ky.html">@_localization.Getkey("Register")</a></li>
-                                            <li><a class="dropdown-item" href="/dang-nhap.html">@_localization.Getkey("Login")</a></li>
+                                            <li><a class="dropdown-item" href="/register.html">@_localization.Getkey("Register")</a></li>
+                                            <li><a class="dropdown-item" href="/login.html">@_localization.Getkey("Login")</a></li>
                                         }
 
                                     </ul>
@@ -89,13 +89,13 @@
                             <nav class="main-nav">
                                 <ul>
                                     <li class="drop-holder">
-                                        <a href="/">@_localization.Getkey("Home").Value</a>
+                                        <a href="/">@_localization.Getkey("Home")</a>
                                     </li>
                                     <li>
-                                        <a href="/rental.html">@_localization.Getkey("Rental").Value</a>
+                                        <a href="/rental.html">@_localization.Getkey("Rental")</a>
                                     </li>
                                     <li>
-                                        <a href="/Posts">@_localization.Getkey("Post").Value</a>
+                                        <a href="/Posts">@_localization.Getkey("Post")</a>
                                     </li>
                                 </ul>
                             </nav>
