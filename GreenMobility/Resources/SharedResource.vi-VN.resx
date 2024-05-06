@@ -216,6 +216,9 @@
   <data name="ReadOur" xml:space="preserve">
     <value>Mời đọc</value>
   </data>
+  <data name="RecentPost" xml:space="preserve">
+    <value>Bài viết gần đây</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>Đăng ký tài khoản</value>
   </data>

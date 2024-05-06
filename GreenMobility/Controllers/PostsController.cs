@@ -12,6 +12,8 @@ namespace GreenMobility.Controllers
         {
             _context = context;
         }
+
+        [Route("posts", Name = "Post")]
         public async Task<IActionResult> Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
@@ -26,7 +28,7 @@ namespace GreenMobility.Controllers
             return View(models);
         }
 
-        [Route("/{Alias}-{id}.html", Name = "PostsDetails")]
+        [Route("/posts/{Alias}-{id}", Name = "PostsDetails")]
         public IActionResult Details(int id)
         {
             var post = _context.Posts.AsNoTracking().SingleOrDefault(x => x.PostId == id);
@@ -34,13 +36,13 @@ namespace GreenMobility.Controllers
             {
                 RedirectToAction("Index");
             }
-            var lsBaiVietLienQuan = _context.Posts
+            var lsRecentPosts = _context.Posts
                 .AsNoTracking()
                 .Where(x => x.Published == true && x.PostId != id)
                 .Take(3)
                 .OrderByDescending(x => x.CreatedDate)
                 .ToList();
-            ViewBag.BaiVietLienQuan = lsBaiVietLienQuan;
+            ViewBag.RecentPost = lsRecentPosts;
             return View(post);
         }
     }

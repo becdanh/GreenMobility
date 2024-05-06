@@ -208,13 +208,16 @@
     <value>Please enter your phone number</value>
   </data>
   <data name="Post" xml:space="preserve">
-    <value>Post</value>
+    <value>Posts</value>
   </data>
   <data name="ReadMore" xml:space="preserve">
     <value>Read More</value>
   </data>
   <data name="ReadOur" xml:space="preserve">
     <value>Read Our</value>
+  </data>
+  <data name="RecentPost" xml:space="preserve">
+    <value>Recent Post</value>
   </data>
   <data name="Register" xml:space="preserve">
     <value>Register</value>
