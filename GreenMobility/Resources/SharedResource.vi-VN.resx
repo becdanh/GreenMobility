@@ -129,6 +129,12 @@
   <data name="BicycleName" xml:space="preserve">
     <value>Tên xe đạp</value>
   </data>
+  <data name="Booking" xml:space="preserve">
+    <value>Đặt xe</value>
+  </data>
+  <data name="BookingRidingPayment" xml:space="preserve">
+    <value>Đặt xe - Đi xe - Thanh toán</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Đổi mật khẩu</value>
   </data>
@@ -162,6 +168,9 @@
   <data name="Language" xml:space="preserve">
     <value>Ngôn ngữ</value>
   </data>
+  <data name="LatestBlog" xml:space="preserve">
+    <value>Thông tin mới nhất</value>
+  </data>
   <data name="LicensePlate" xml:space="preserve">
     <value>Biển số</value>
   </data>
@@ -186,6 +195,9 @@
   <data name="PasswordRequired" xml:space="preserve">
     <value>Vui lòng nhập nhập khẩu.</value>
   </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Thanh toán</value>
+  </data>
   <data name="Phone" xml:space="preserve">
     <value>Số điện thoại</value>
   </data>
@@ -197,6 +209,12 @@
   </data>
   <data name="Post" xml:space="preserve">
     <value>Tin tức</value>
+  </data>
+  <data name="ReadMore" xml:space="preserve">
+    <value>Xem thêm</value>
+  </data>
+  <data name="ReadOur" xml:space="preserve">
+    <value>Mời đọc</value>
   </data>
   <data name="Register" xml:space="preserve">
     <value>Đăng ký tài khoản</value>
@@ -213,11 +231,36 @@
   <data name="RentalList" xml:space="preserve">
     <value>Danh sách đơn thuê</value>
   </data>
+  <data name="RentalNow" xml:space="preserve">
+    <value>Thuê xe ngay</value>
+  </data>
+  <data name="Riding" xml:space="preserve">
+    <value>Đi xe</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Lưu thay đổi</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Trạng thái</value>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Bước</value>
+  </data>
+  <data name="Step1Desc" xml:space="preserve">
+    <value>Đăng nhập hoặc tạo một tài khoản mới nếu cần.
+Chọn địa điểm thuê xe, sau đó chọn các xe và thời gian bạn muốn thuê.</value>
+  </data>
+  <data name="Step2Desc" xml:space="preserve">
+    <value>Sau khi đặt xe thành công, bạn sẽ nhận được thông tin về các xe có sẵn, cùng với tổng chi phí ước tính.
+Khi đến lấy xe, kiểm tra thông tin và bắt đầu hành trình của bạn.</value>
+  </data>
+  <data name="Step3Desc" xml:space="preserve">
+    <value>Khi kết thúc chuyến đi, nhân viên sẽ tính toán tổng cước phí dựa trên thời gian thuê và các khoản phụ phí (nếu có).
+Thanh toán có thể được thực hiện qua các phương tiện thanh toán trực tuyến hoặc bằng tiền mặt trực tiếp với nhân viên.
+Xác nhận và kiểm tra chi tiết thanh toán trên ứng dụng hoặc trang web để hoàn tất quá trình thuê xe.</value>
+  </data>
+  <data name="ThankYou" xml:space="preserve">
+    <value>Cảm ơn quý khách đã lựa chọn đồng hành cùng Green Mobility.</value>
   </data>
   <data name="Total" xml:space="preserve">
     <value>Có tổng</value>
@@ -230,6 +273,9 @@
   </data>
   <data name="UpdateProfile" xml:space="preserve">
     <value>Thay đổi thông tin tài khoản</value>
+  </data>
+  <data name="UsageInstructions" xml:space="preserve">
+    <value>Cách sử dụng</value>
   </data>
   <data name="View" xml:space="preserve">
     <value>Xem chi tiết</value>
