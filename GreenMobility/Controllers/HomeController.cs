@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using PagedList.Core;
+using System.Drawing.Printing;
 
 namespace GreenMobility.Controllers
 {
@@ -11,16 +14,26 @@ namespace GreenMobility.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private LanguageService _localization;
-        public HomeController(ILogger<HomeController> logger, LanguageService localization)
+        private readonly GreenMobilityContext _context;
+        public HomeController(ILogger<HomeController> logger, LanguageService localization, GreenMobilityContext context)
         {
             _logger = logger;
             _localization = localization;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             var currentCulture = Thread.CurrentThread.CurrentCulture.Name;
-            return View();
+
+            var lsPosts = _context.Posts
+                .AsNoTracking()
+            .Where(x => x.Published == true)
+                .OrderByDescending(x => x.PostId)
+                .Take(3)
+                .ToList();
+
+            return View(lsPosts);
         }
 
         public IActionResult ChangeLanguage(string culture)
