@@ -25,44 +25,10 @@ namespace GreenMobility.Controllers
             _notyf = notyf;
             _localization = localization;
         }
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ValidatePhone(string Phone)
-        {
-            try
-            {
-                var khachhang = _context.Customers.AsNoTracking().SingleOrDefault(x => x.Phone.ToLower() == Phone.ToLower());
-                if (khachhang != null)
-                    return Json(data: "Số điện thoại : " + Phone + "đã được sử dụng");
-
-                return Json(data: true);
-
-            }
-            catch
-            {
-                return Json(data: true);
-            }
-        }
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ValidateEmail(string Email)
-        {
-            try
-            {
-                var khachhang = _context.Customers.AsNoTracking().SingleOrDefault(x => x.Email.ToLower() == Email.ToLower());
-                if (khachhang != null)
-                    return Json(data: "Email : " + Email + " đã được sử dụng");
-                return Json(data: true);
-            }
-            catch
-            {
-                return Json(data: true);
-            }
-        }
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("register.html", Name = "DangKy")]
+        [Route("register", Name = "DangKy")]
         public IActionResult Register()
         {
             return View();
@@ -70,57 +36,63 @@ namespace GreenMobility.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("register.html", Name = "DangKy")]
-        public async Task<IActionResult> Register(RegisterVM taikhoan)
+        [Route("register", Name = "DangKy")]
+        public async Task<IActionResult> Register(RegisterVM account)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    string salt = Utilities.GetRandomKey();
-                    Customer khachhang = new Customer
-                    {
-                        FullName = taikhoan.FullName,
-                        Phone = taikhoan.Phone.Trim().ToLower(),
-                        Email = taikhoan.Email.Trim().ToLower(),
-                        Password = (taikhoan.Password + salt.Trim()).ToMD5(),
-                        IsLocked = false,
-                        Salt = salt,
-                        CreateDate = DateTime.Now
-                    };
-                    try
-                    {
-                        _context.Add(khachhang);
-                        await _context.SaveChangesAsync();
-                        //Lưu Session MaKh
-                        HttpContext.Session.SetString("CustomerId", khachhang.CustomerId.ToString());
-                        var taikhoanID = HttpContext.Session.GetString("CustomerId");
+            if (EmailExists(account.Email))
+                ModelState.AddModelError("Email", _localization.Getkey("EmailAlreadyExists"));
 
-                        //Identity
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name,khachhang.FullName),
-                            new Claim("CustomerId", khachhang.CustomerId.ToString())
-                        };
-                        ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "login");
-                        ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                        await HttpContext.SignInAsync(claimsPrincipal);
-                        _notyf.Success("Đăng ký thành công");
-                        return RedirectToAction("Profile", "Account");
-                    }
-                    catch
-                    {
-                        return RedirectToAction("Register", "Account");
-                    }
-                }
-                else
+            if (PhoneExists(account.Phone))
+                ModelState.AddModelError("Phone", _localization.Getkey("PhoneAlreadyExists"));
+
+            if (ModelState.IsValid)
+            {
+
+
+                if (PhoneExists(account.Phone))
                 {
-                    return View(taikhoan);
+                    ModelState.AddModelError("Phone", _localization.Getkey("PhoneAlreadyExists"));
+                    return View(account);
+                }
+
+                string salt = Utilities.GetRandomKey();
+                Customer customer = new Customer
+                {
+                    FullName = account.FullName,
+                    Phone = account.Phone.Trim().ToLower(),
+                    Email = account.Email.Trim().ToLower(),
+                    Password = (account.Password + salt.Trim()).ToMD5(),
+                    IsLocked = false,
+                    Salt = salt,
+                    CreateDate = DateTime.Now
+                };
+                try
+                {
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
+
+                    HttpContext.Session.SetString("CustomerId", customer.CustomerId.ToString());
+                    var accountId = HttpContext.Session.GetString("CustomerId");
+
+                    var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name,customer.FullName),
+                            new Claim("CustomerId", customer.CustomerId.ToString())
+                        };
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "login");
+                    ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    await HttpContext.SignInAsync(claimsPrincipal);
+                    _notyf.Success("Đăng ký thành công");
+                    return RedirectToAction("Profile", "Account");
+                }
+                catch
+                {
+                    return RedirectToAction("Register", "Account");
                 }
             }
-            catch
+            else
             {
-                return View(taikhoan);
+                return View(account);
             }
         }
         [AllowAnonymous]
@@ -148,7 +120,7 @@ namespace GreenMobility.Controllers
             string pass = (customer.Password + khachhang.Salt.Trim()).ToMD5();
             if (khachhang.Password != pass)
             {
-                _notyf.Success("Thông tin đăng nhập chưa chính xác");
+                _notyf.Error("Thông tin đăng nhập chưa chính xác");
                 return View(customer);
             }
             //kiem tra xem account co bi disable hay khong
@@ -192,6 +164,7 @@ namespace GreenMobility.Controllers
         }
 
         [HttpGet]
+        [Route("/profile", Name = "Profile")]
         public IActionResult Profile()
         {
             var customerId = HttpContext.Session.GetString("CustomerId");
@@ -206,6 +179,7 @@ namespace GreenMobility.Controllers
         }
 
         [HttpPost]
+        [Route("/profile", Name = "Profile")]
         public async Task<IActionResult> Profile(Customer model)
         {
             try
@@ -264,6 +238,7 @@ namespace GreenMobility.Controllers
             }
         }
 
+        [Route("/rentallist", Name = "RentalList")]
         public IActionResult RentalList()
         {
             var accountId = HttpContext.Session.GetString("CustomerId");
@@ -284,48 +259,73 @@ namespace GreenMobility.Controllers
             return RedirectToAction("Login");
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ChangePassword()
+        {
+            var accountId = HttpContext.Session.GetString("CustomerId");
+            if (accountId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View();
+        }
+
         [HttpPost]
         public IActionResult ChangePassword(ChangePasswordVM model)
         {
-            try
+            var accountId = HttpContext.Session.GetString("CustomerId");
+            if (accountId == null)
             {
-                var taikhoanID = HttpContext.Session.GetString("CustomerId");
-                if (taikhoanID == null)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-                if (ModelState.IsValid)
-                {
-                    var taikhoan = _context.Customers.Find(Convert.ToInt32(taikhoanID));
-                    if (taikhoan == null) return RedirectToAction("Login", "Account");
-                    var pass = (model.PasswordNow.Trim() + taikhoan.Salt.Trim()).ToMD5();
-                    {
-                        string passnew = (model.Password.Trim() + taikhoan.Salt.Trim()).ToMD5();
-                        taikhoan.Password = passnew;
-                        _context.Update(taikhoan);
-                        _context.SaveChanges();
-                        _notyf.Success("Đổi mật khẩu thành công");
-                        return RedirectToAction("Profile", "Account");
-                    }
-                }
+                return RedirectToAction("Login", "Account");
             }
-            catch
+
+            var account = _context.Customers.Find(Convert.ToInt32(accountId));
+            if (account == null) return RedirectToAction("Login", "Account");
+
+            if (!string.IsNullOrEmpty(model.CurrentPassword) && (model.CurrentPassword + account.Salt.Trim()).ToMD5() != account.Password)
             {
-                _notyf.Success("Thay đổi mật khẩu không thành công");
+                ModelState.AddModelError("CurrentPassword", _localization.Getkey("IncorrectCurrentPassword"));
+            }
+
+            if (!string.IsNullOrEmpty(model.NewPassword) && model.NewPassword.ToMD5() == account.Password)
+            {
+                ModelState.AddModelError("NewPassword", _localization.Getkey("CompareCurrentAndNewPassword"));
+            }
+
+            if (ModelState.IsValid)
+            {
+
+                string passnew = (model.NewPassword.Trim() + account.Salt.Trim()).ToMD5();
+                account.Password = passnew;
+                _context.Customers.Update(account);
+                _context.SaveChanges();
+                _notyf.Success("Thay đổi mật khẩu thành công");
                 return RedirectToAction("Profile", "Account");
             }
-            _notyf.Success("Thay đổi mật khẩu không thành công");
-            return RedirectToAction("Profile", "Account");
+            _notyf.Error("Thay đổi mật khẩu không thành công");
+            return View();
+
         }
 
+        private bool EmailExists(string email)
+        {
+            return _context.Customers.Any(p => p.Email == email);
+        }
+
+        private bool PhoneExists(string phone)
+        {
+            return _context.Customers.Any(p => p.Phone == phone);
+        }
         private bool EmailExistsExceptCurrent(string email, int id)
         {
-            return _context.Employees.Any(p => p.Email == email && p.EmployeeId != id);
+            return _context.Customers.Any(p => p.Email == email && p.CustomerId != id);
         }
+
 
         private bool PhoneExistsExceptCurrent(string phone, int id)
         {
-            return _context.Employees.Any(p => p.Phone == phone && p.EmployeeId != id);
+            return _context.Customers.Any(p => p.Phone == phone && p.CustomerId != id);
         }
     }
 }

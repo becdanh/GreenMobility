@@ -57,11 +57,11 @@
                                         @if (taikhoanID != null)
                                         {
                                             <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">@_localization.Getkey("MyAccount")</a></li>
-                                            <li><a class="dropdown-item" href="/logout.html">@_localization.Getkey("Logout")</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">@_localization.Getkey("Logout")</a></li>
                                         }
                                         else
                                         {
-                                            <li><a class="dropdown-item" href="/register.html">@_localization.Getkey("Register")</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Register">@_localization.Getkey("Register")</a></li>
                                             <li><a class="dropdown-item" href="/login.html">@_localization.Getkey("Login")</a></li>
                                         }
 
