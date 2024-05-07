@@ -144,6 +144,9 @@
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Confirm Password</value>
   </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
   <data name="EmailAddress" xml:space="preserve">
     <value>Email</value>
   </data>
@@ -185,6 +188,9 @@
   </data>
   <data name="MyAccount" xml:space="preserve">
     <value>My Account</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
   </data>
   <data name="Parking" xml:space="preserve">
     <value>parkings</value>

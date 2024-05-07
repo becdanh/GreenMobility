@@ -14,13 +14,11 @@ namespace GreenMobility.ViewModels
         [Required(ErrorMessage = "EmailRequired")]
         [MaxLength(150)]
         [DataType(DataType.EmailAddress)]
-        [Remote(action: "ValidateEmail", controller: "Accounts")]
         public string Email { get; set; }
         [MaxLength(11)]
         [Required(ErrorMessage = "PhoneRequired")]
         [Display(Name = "Phone")]
         [DataType(DataType.PhoneNumber)]
-        [Remote(action: "ValidatePhone", controller: "Accounts")]
         public string Phone { get; set; }
         [Display(Name = "Password")]
         [Required(ErrorMessage = "PasswordRequired")]

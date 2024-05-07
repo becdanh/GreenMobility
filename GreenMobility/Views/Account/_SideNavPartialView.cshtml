@@ -6,7 +6,7 @@
         <a class="nav-link" asp-controller="Account" asp-action="RentalList">@_localization.Getkey("RentalList")</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#account-details" role="tab">@_localization.Getkey("ChangePassword")</a>
+        <a class="nav-link" asp-controller="Account" asp-action="ChangePassword">@_localization.Getkey("ChangePassword")</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="/logout.html" role="tab" aria-selected="false">@_localization.Getkey("Logout")</a>
