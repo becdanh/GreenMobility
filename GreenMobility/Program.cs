@@ -58,13 +58,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         p.LoginPath = "/login.html";
         p.AccessDeniedPath = "/not-found.html";
+        p.Cookie.Name = "AuthenticationCookie";
     });
 
-builder.Services.AddAuthentication("AdminCookieAuthenticationScheme")
-    .AddCookie("AdminCookieAuthenticationScheme", options =>
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie("AdminCookie", options =>
     {
         options.LoginPath = "/Admin/AdminAccounts/Login";
         options.AccessDeniedPath = "/admin/access-denied";
+        options.Cookie.Name = "AdminAuthenticationCookie";
     });
 
 

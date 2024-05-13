@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "AdminCookie")]
     public class AdminBicyclesController : Controller
     {
         private readonly GreenMobilityContext _context;

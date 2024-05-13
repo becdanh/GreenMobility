@@ -11,12 +11,12 @@
             <div class="row h-100">
                 <div class="col-lg-12">
                     <div class="breadcrumb-item">
-                        <h2 class="breadcrumb-heading">Giỏ thuê</h2>
+                        <h2 class="breadcrumb-heading">@_localization.Getkey("RentalCart")</h2>
                         <ul>
                             <li>
-                                <a href="/">Trang chủ<i class="pe-7s-angle-right"></i></a>
+                                <a href="/">@_localization.Getkey("Home")<i class="pe-7s-angle-right"></i></a>
                             </li>
-                            <li>Giỏ thuê</li>
+                            <li>@_localization.Getkey("RentalCart")</li>
                         </ul>
                     </div>
                 </div>
@@ -29,108 +29,97 @@
                 <div class="col-12">
                     @if (Model != null && Model.Count() > 0)
                     {
-                        @foreach (var parkingGroup in Model.GroupBy(x => x.bicycle.ParkingId))
-                        {
-                            <div class="table-content table-responsive">
-                                <h2>@parkingGroup.First().ParkingName</h2>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th class="product_remove">Xóa</th>
-                                            <th class="product-thumbnail">Ảnh đại diện</th>
-                                            <th class="cart-product-name">Sản phẩm</th>
-                                            <th class="cart-product-name">Biển số xe</th>
-                                            <th class="product-quantity">Giá thuê</th>
-                                            <th class="product-quantity">Thời gian thuê</th>
-                                            <th class="product-subtotal">Thành tiền</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model != null && Model.Count() > 0)
+                        <div class="table-content table-responsive">
+                            <h2>@Model.First().ParkingName</h2>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="product_remove">@_localization.Getkey("Delete")</th>
+                                        <th class="product-thumbnail">@_localization.Getkey("Image")</th>
+                                        <th class="cart-product-name">@_localization.Getkey("Bicycle")</th>
+                                        <th class="cart-product-name">@_localization.Getkey("LicensePlate")</th>
+                                        <th class="product-quantity">@_localization.Getkey("RentalPrice")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+                                        foreach (var item in Model)
                                         {
-                                            foreach (var item in parkingGroup)
-                                            {
-                                                <tr>
-                                                    <td class="product_remove">
-                                                        <input type="button" value="X" class="removecart btn btn-primary" data-mahh="@item.bicycle.BicycleId" />
-                                                    </td>
-                                                    <td class="product-thumbnail">
-                                                        <a href="javascript:void(0)">
-                                                            <img src="~/images/bicycles/@item.bicycle.Photo" alt="@item.bicycle.BicycleName" style="height:112px;width:124px">
-                                                        </a>
-                                                    </td>
-                                                    <td class="product-name">@item.bicycle.BicycleName</td>
-                                                    <td class="product-name">@item.bicycle.LicensePlate</td>
-                                                    <td class="quantity">@item.bicycle.RentalPrice</td>
-                                                    <td class="quantity">@item.RentalHours</td>
-                                                    <td class="product-subtotal"><span class="amount">@item.TotalMoney.ToString("#,##0") VNĐ</span></td>
-                                                </tr>
-                                            }
+                                            <tr>
+                                                <td class="product_remove">
+                                                    <input type="button" value="X" class="removecart btn btn-primary" data-mahh="@item.bicycle.BicycleId" />
+                                                </td>
+                                                <td class="product-thumbnail">
+                                                    <a href="javascript:void(0)">
+                                                        <img src="~/images/bicycles/@item.bicycle.Photo" alt="@item.bicycle.BicycleName" style="height:112px;width:124px">
+                                                    </a>
+                                                </td>
+                                                <td class="product-name">@item.bicycle.BicycleName</td>
+                                                <td class="product-name">@item.bicycle.LicensePlate</td>
+                                                <td class="product-subtotal">@item.bicycle.RentalPrice</td>
+                                            </tr>
                                         }
-                                    </tbody>
-                                </table>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="cart-page-total">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateAndPickupModal">
+                                    @_localization.Getkey("UpdateRentalInfor")
+                                </button>
                             </div>
-                            <div class="row">
-                                <div class="cart-page-total">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateAndPickupModal">
-                                        Cập nhật thời gian thuê và nhận xe
-                                    </button>
-                                </div>
-                                <!-- Modal -->
-                                <div class="modal fade" id="updateAndPickupModal" tabindex="-1" aria-labelledby="updateAndPickupModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="updateAndPickupModalLabel">Cập nhật thời gian thuê và nhận xe</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="updateAndPickupModal" tabindex="-1" aria-labelledby="updateAndPickupModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="updateAndPickupModalLabel">@_localization.Getkey("UpdateRentalInfor")</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="rentalHours">@_localization.Getkey("RentalHours")</label>
+                                                <input type="number" class="form-control" id="rentalHours">
                                             </div>
-                                            <div class="modal-body">
-                                                <div class="form-group">
-                                                    <label for="rentalHour">Thời gian thuê:</label>
-                                                    <input type="number" class="form-control" id="rentalHour">
-                                                </div>
-                                                <br />
-                                                <div class="form-group">
-                                                    <label for="pickupTime">Thời gian lấy xe:</label>
-                                                    <input type="datetime-local" class="form-control" id="pickupTime">
-                                                </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <label for="appointmentTime">@_localization.Getkey("AppointmentTime")</label>
+                                                <input type="datetime-local" class="form-control" id="appointmentTime">
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                <button type="button" class="btn btn-primary" id="updateAndPickupConfirmBtn">Xác nhận</button>
-                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@_localization.Getkey("Close")</button>
+                                            <button type="button" class="btn btn-primary" id="updateAndPickupConfirmBtn">@_localization.Getkey("Submit")</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-5 ml-auto">
-                                    <div class="cart-page-total">
-                                        <h2>Tổng đơn hàng</h2>
-                                        <ul>
-                                            <li>Thành tiền <span>@parkingGroup.Sum(x => x.TotalMoney).ToString("#,##0") VNĐ</span></li>
-                                        </ul>
-                                        @{
-                                            var taikhoanID = Context.Session.GetString("CustomerId");
-                                            if (taikhoanID != null)
-                                            {
-                                                <input type="hidden" name="ParkingID" value="@parkingGroup.Key" />
-                                                <a href="/checkout.html?parkingID=@parkingGroup.Key" class="btn btn-secondary btn-primary-hover">Đến Trang Thanh toán</a>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 ml-auto">
+                                <div class="cart-page-total">
+                                    <h2>@_localization.Getkey("CartTotals")</h2>
+                                    <ul>
+                                        <li>@_localization.Getkey("AppointmentTime") <span>@Model.First().AppointmentTime.ToString("dd/MM/yyyy HH:mm")</span></li>
+                                        <li>@_localization.Getkey("RentalHours")<span>@Model.First().RentalHours @_localization.Getkey("Hours")</span></li>
+                                        <li>@_localization.Getkey("TotalMoney")<span>@Model.Sum(x => x.TotalMoney).ToString("#,##0") VNĐ</span></li>
+                                    </ul>
+                                    @{
+                                        var taikhoanID = Context.Session.GetString("CustomerId");
+                                        <a asp-controller="Checkout" asp-action="Index" id="checkoutButton" class="btn btn-secondary btn-primary-hover">@_localization.Getkey("GoToCheckout")</a>
 
-                                            }
-                                            else
-                                            {
-                                                <a href="/login.html?returnUrl=/checkout.html" class="btn btn-secondary btn-primary-hover">Đến Trang Thanh toán</a>
-                                            }
-                                        }
-                                    </div>
+                                    }
                                 </div>
                             </div>
-                        }
+                        </div>
+
                     }
                     else
                     {
-                        <p>Chưa có xe nào được thuê. Cùng nhau tích cực đạp xe nhé</p>
+                        <p>@_localization.Getkey("NoBikeInCart")</p>
+                        <a asp-controller="Rentals" asp-action="Index" class="btn btn-primary">@_localization.Getkey("GoToRental")</a>
                     }
                 </div>
             </div>
@@ -146,14 +135,14 @@
             $(".removecart").click(function () {
                 var bicycleid = $(this).attr("data-mahh");
                 $.ajax({
-                    url: "/api/cart/remove", // Đúng đường dẫn tới action Remove
+                    url: "/api/cart/remove",
                     type: "POST",
                     dataType: "JSON",
-                    data: { bicycleId: bicycleid }, // Truyền dữ liệu chính xác
+                    data: { bicycleId: bicycleid },
                     success: function (result) {
                         if (result.success) {
                             loadHeaderCart();
-                            location.reload(); // Tải lại trang sau khi xóa
+                            location.reload();
                         }
                     },
                     error: function (rs) {
@@ -163,20 +152,20 @@
             });
             $(function () {
                 $('#updateAndPickupConfirmBtn').click(function () {
-                    var rentalHour = $('#rentalHour').val();
-                    var pickupTime = $('#pickupTime').val();
+                    var rentalHours = $('#rentalHours').val();
+                    var appointmentTime = $('#appointmentTime').val();
                     $.ajax({
                         url: '/api/cart/update',
                         type: 'POST',
                         data: {
-                            rentalHour: rentalHour,
-                            pickupTime: pickupTime
+                            rentalHours: rentalHours,
+                            appointmentTime: appointmentTime
                         },
                         success: function (response) {
                             if (response.success) {
                                 location.reload(); // Tải lại trang sau khi cập nhật
                             } else {
-                                alert('Có lỗi xảy ra khi cập nhật thông tin giỏ hàng');
+                                alert(response.message);
                             }
                         },
                         error: function () {
@@ -192,8 +181,8 @@
                     type: 'GET',
                     success: function (response) {
                         if (response.success) {
-                            $('#rentalHour').val(response.rentalHour);
-                            $('#pickupTime').val(response.pickupTime);
+                            $('#rentalHours').val(response.rentalHours);
+                            $('#appointmentTime').val(response.appointmentTime);
                         } else {
                             alert('Có lỗi xảy ra khi lấy thông tin giỏ hàng');
                         }
@@ -201,6 +190,25 @@
                     error: function () {
                         alert('Có lỗi xảy ra khi gửi yêu cầu lấy thông tin giỏ hàng');
                     }
+                });
+            });
+            $(document).ready(function () {
+                $("#checkoutButton").click(function () {
+                    $.ajax({
+                        url: "/api/cart/checkhours",
+                        type: "GET",
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = "/checkout";
+                            } else {
+                                alert(response.message);
+                                location.reload();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Có lỗi xảy ra khi kiểm tra số giờ thuê");
+                        }
+                    });
                 });
             });
         });

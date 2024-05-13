@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Mua hàng";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    List<GreenMobility.ViewModels.CartItemVM> Carts = ViewBag.GioHang;
+    List<GreenMobility.ViewModels.CartItemVM> Carts = ViewBag.Cart;
 }
 @section Styles {
     <style type="text/css">
@@ -22,21 +22,18 @@
     </style>
 }
 
-
-
-
 <main class="main-content">
     <div class="breadcrumb-area breadcrumb-height" data-bg-image="/assets/images/banner/2-1-1920x523.jpg">
         <div class="container h-100">
             <div class="row h-100">
                 <div class="col-lg-12">
                     <div class="breadcrumb-item">
-                        <h2 class="breadcrumb-heading">THÔNG TIN MUA HÀNG</h2>
+                        <h2 class="breadcrumb-heading">@_localization.Getkey("Checkout")</h2>
                         <ul>
                             <li>
-                                <a href="/">Trang chủ <i class="pe-7s-angle-right"></i></a>
+                                <a href="/">@_localization.Getkey("Home")<i class="pe-7s-angle-right"></i></a>
                             </li>
-                            <li>THÔNG TIN MUA HÀNG</li>
+                            <li>@_localization.Getkey("Checkout")</li>
                         </ul>
                     </div>
                 </div>
@@ -47,43 +44,43 @@
         <div class="container">
             <form asp-controller="Checkout" asp-action="Index" method="post">
                 <input hidden asp-for="CustomerId" />
-                <input type="hidden" name="ParkingID" value="@ViewBag.ParkingID">
                 <div class="row">
                     <div class="col-lg-6 col-12">
 
                         <div class="checkbox-form">
-                            <h3>THÔNG TIN ĐƠN THUÊ</h3>
+                            <h3>@_localization.Getkey("RentalInfor")</h3>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="checkout-form-list">
-                                        <label>Họ và Tên</label>
-                                        <input asp-for="FullName" placeholder="Họ và Tên" type="text">
+                                        <label>@_localization.Getkey("FullName")</label>
+                                        <input asp-for="FullName" placeholder="Họ và Tên" type="text" disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="checkout-form-list">
-                                        <label>Số điện thoại <span class="required">*</span></label>
-                                        <input asp-for="Phone" placeholder="Số điện thoại" type="text">
+                                        <label>@_localization.Getkey("Phone")</label>
+                                        <input asp-for="Phone" placeholder="Số điện thoại" type="text" disabled>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                                                            @if (Carts != null && Carts.Count() > 0)
+                                        {
                     <div class="col-lg-6 col-12">
                         <div class="your-order">
-                            <h3>THÔNG TIN ĐƠN THUÊ</h3>
+                            <h3>@_localization.Getkey("YourRental")</h3>
                             <div class="your-order-table table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th class="cart-product-name">XE THUÊ</th>
-                                            <th class="cart-product-total">THÀNH TIỀN</th>
+                                            <th class="cart-product-name">@_localization.Getkey("Bicycle")</th>
+                                            <th class="cart-product-total">@_localization.Getkey("TotalMoney")</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (Carts.Count() > 0)
-                                        {
-                                            foreach (var item in Carts)
+
+                                            @foreach (var item in Carts)
                                             {
                                                 <tr class="cart_item">
                                                     <td class="cart-product-name">
@@ -92,21 +89,25 @@
                                                     <td class="cart-product-total"><span class="amount">@item.TotalMoney.ToString("#,##0") VNĐ</span></td>
                                                 </tr>
                                             }
-                                        }
+                                        
 
 
                                     </tbody>
                                     <tfoot>
                                         <tr class="order-total">
-                                            <th>Thời gian bắt đầu</th>
-                                            <td><strong><span class="amount">@Carts.First().PickupTime</span></strong></td>
+                                            <th>@_localization.Getkey("ParkingCO")</th>
+                                            <td><strong><span class="amount">@Carts.First().ParkingName</span></strong></td>
                                         </tr>
                                         <tr class="order-total">
-                                            <th>Thời gian thuê</th>
-                                            <td><strong><span class="amount">@Carts.First().RentalHours</span></strong></td>
+                                            <th>@_localization.Getkey("AppointmentTimeCO")</th>
+                                            <td><strong><span class="amount">@Carts.First().AppointmentTime</span></strong></td>
                                         </tr>
                                         <tr class="order-total">
-                                            <th>Tổng đơn thuê</th>
+                                            <th>@_localization.Getkey("RentalHoursCO")</th>
+                                            <td><strong><span class="amount">@Carts.First().RentalHours @_localization.Getkey("Hours")</span></strong></td>
+                                        </tr>
+                                        <tr class="order-total">
+                                            <th>@_localization.Getkey("RentalTotalCO")</th>
                                             <td><strong><span class="amount">@Carts.Sum(x => x.TotalMoney).ToString("#,##0") VNĐ</span></strong></td>
                                         </tr>
                                     </tfoot>
@@ -119,26 +120,32 @@
                                             <div class="card-header" id="#payment-1">
                                                 <h5 class="panel-title">
                                                     <a href="javascript:void(0)" class="" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true">
-                                                        Thanh toán khi giao hàng (COD)
+                                                        @_localization.Getkey("COD")
                                                     </a>
                                                 </h5>
                                             </div>
                                             <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
                                                 <div class="card-body">
                                                     <p>
-                                                        Khách hàng sẽ thanh toán khi nhận hàng
+                                                        @_localization.Getkey("CustomersWillPay")
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="order-button-payment">
-                                        <input value="XÁC NHẬN ĐẶT HÀNG" type="submit">
+                                        <input value=@_localization.Getkey("Submit") type="submit">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    }
+                    else
+                    {
+                        <p>@_localization.Getkey("NoBikeInCart")</p>
+                        <a asp-controller="Rentals" asp-action="Index" class="btn btn-primary">@_localization.Getkey("GoToRental")</a>
+                    }
                 </div>
             </form>
 

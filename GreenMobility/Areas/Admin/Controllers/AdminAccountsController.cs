@@ -2,6 +2,7 @@
 using GreenMobility.Areas.Admin.ViewModels;
 using GreenMobility.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -60,9 +61,10 @@ namespace GreenMobility.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
 
 
-                    var EmployeeId = HttpContext.Session.GetString("EmployeeId");
+                    
 
                     HttpContext.Session.SetString("EmployeeId", employee.EmployeeId.ToString());
+                    var EmployeeId = HttpContext.Session.GetString("EmployeeId");
 
                     var claims = new List<Claim>
                     {
@@ -73,9 +75,9 @@ namespace GreenMobility.Areas.Admin.Controllers
                         new Claim(ClaimTypes.Role, employee.Role.RoleName)
                     };
 
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "adminLogin");
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                    await HttpContext.SignInAsync(claimsPrincipal);
+                    await HttpContext.SignInAsync("AdminCookie", claimsPrincipal);
                     _notyf.Success("Đăng nhập thành công");
 
                     if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
@@ -92,18 +94,17 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
             return RedirectToAction("Login", "AdminAccounts", new { Area = "Admin" });
         }
-        [Route("logout.html", Name = "Logout")]
-        public IActionResult AdminLogout()
+        public IActionResult Logout()
         {
             try
             {
-                HttpContext.SignOutAsync();
-                HttpContext.Session.Remove("EmployeeId");
+                HttpContext.Session.Clear();
+                HttpContext.SignOutAsync("AdminCookie");
                 return RedirectToAction("Login", "AdminAccounts", new { Area = "Admin" });
             }
             catch
             {
-                return RedirectToAction("AdminLogin", "AdminAccounts", new { Area = "Admin" });
+                return RedirectToAction("Login", "AdminAccounts", new { Area = "Admin" });
             }
         }
     }

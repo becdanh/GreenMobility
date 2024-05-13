@@ -7,164 +7,146 @@ using GreenMobility.Extension;
 using Microsoft.EntityFrameworkCore;
 using AspNetCoreHero.ToastNotification.Notyf;
 using GreenMobility.Helper;
+using Microsoft.AspNetCore.Authorization;
+using GreenMobility.Services;
+
 namespace GreenMobility.Controllers
 {
+    [Authorize]
     public class CheckoutController : Controller
     {
         private readonly GreenMobilityContext _context;
+        private LanguageService _localization;
         public INotyfService _notyf { get; }
 
-        public CheckoutController(GreenMobilityContext context, INotyfService notyf)
+        public CheckoutController(GreenMobilityContext context, INotyfService notyf, LanguageService localization)
         {
             _context = context;
             _notyf = notyf;
+            _localization = localization;
         }
 
         public List<CartItemVM> RentalCart
         {
             get
             {
-                var gh = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
-                if (gh == default(List<CartItemVM>))
+                var cart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
+                if (cart == default(List<CartItemVM>))
                 {
-                    gh = new List<CartItemVM>();
+                    cart = new List<CartItemVM>();
                 }
-                return gh;
+                return cart;
             }
         }
 
-        // GET Checkout/Index
-        [Route("checkout.html", Name = "Checkout")]
-        public IActionResult Index(string returnUrl = null, int? parkingID = null)
+        [Route("checkout", Name = "Checkout")]
+        public IActionResult Index()
         {
-            // lấy giỏ hàng ra để xử lý
             var cart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
-            var taikhoanID = HttpContext.Session.GetString("CustomerId");
+            var accountId = HttpContext.Session.GetString("CustomerId");
+
             CheckoutVM model = new CheckoutVM();
-            if (taikhoanID != null)
+            if (accountId != null)
             {
-                var khachhang = _context.Customers.AsNoTracking().SingleOrDefault(x => x.CustomerId == Convert.ToInt32(taikhoanID));
-                model.CustomerId = khachhang.CustomerId;
-                model.FullName = khachhang.FullName;
-                model.Email = khachhang.Email;
-                model.Phone = khachhang.Phone;
+                var customer = _context.Customers.AsNoTracking().SingleOrDefault(x => x.CustomerId == Convert.ToInt32(accountId));
+                model.CustomerId = customer.CustomerId;
+                model.FullName = customer.FullName;
+                model.Email = customer.Email;
+                model.Phone = customer.Phone;
             }
-            if (parkingID != null)
-            {
-                cart = cart.Where(x => x.PickupParking == parkingID).ToList();
-            }
-            ViewBag.ParkingID = parkingID;
-            ViewBag.GioHang = cart;
+
+            ViewBag.Cart = cart;
             return View(model);
         }
+
         [HttpPost]
-        [Route("checkout.html", Name = "Checkout")]
-        public IActionResult Index(int? ParkingID)
+        [Route("checkout", Name = "Checkout")]
+        
+        public IActionResult Index(CheckoutVM model)
         {
-            //Lay ra gio hang de xu ly
             var cart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
-            var taikhoanID = HttpContext.Session.GetString("CustomerId");
-            CheckoutVM model = new CheckoutVM();
-            if (taikhoanID != null)
+            var accountId = HttpContext.Session.GetString("CustomerId");
+
+            var bikesToRemove = new List<CartItemVM>();
+            foreach (var item in cart)
             {
-                var khachhang = _context.Customers.AsNoTracking().SingleOrDefault(x => x.CustomerId == Convert.ToInt32(taikhoanID));
-                model.CustomerId = khachhang.CustomerId;
-                model.FullName = khachhang.FullName;
-                model.Email = khachhang.Email;
-                model.Phone = khachhang.Phone;
-                _context.Update(khachhang);
-                _context.SaveChanges();
+                var bicycle = _context.Bicycles.FirstOrDefault(x => x.BicycleId == item.bicycle.BicycleId);
+
+                if (item.RentalHours == 0)
+                {
+                    _notyf.Warning("One or more bicycles in the cart have rental hours equal to 0");
+                    return RedirectToAction("Index", "RentalCart");
+                }
+
+                if (bicycle != null)
+                {
+                    if (bicycle.BicycleStatusId != 1)
+                    {
+                        bikesToRemove.Add(item);
+                    }
+                }
             }
-            if (ParkingID != null)
+
+            foreach (var item in bikesToRemove)
             {
-                // Lọc giỏ hàng chỉ chứa các mặt hàng thuộc ParkingID
-                cart = cart.Where(x => x.PickupParking == ParkingID).ToList();
+                cart.Remove(item);
             }
+
+            if (bikesToRemove.Count > 0)
+            {
+                HttpContext.Session.Set("RentalCart", cart);
+                _notyf.Warning("One or more bicycles in the cart are no longer available and have been removed.");
+                return RedirectToAction("Index", "RentalCart");
+            }
+
             if (ModelState.IsValid)
             {
-                //Khoi tao don hang
-                Rental donhang = new Rental();
-                donhang.CustomerId = model.CustomerId;
-                donhang.OrderTime = DateTime.Now;
-                donhang.RentalStatusId = 1;
-                donhang.RentalFee = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
-                donhang.TotalMoney = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
-                donhang.AppointmentTime = cart.First().PickupTime;
-                donhang.HoursRented = cart.First().RentalHours;
-                donhang.PickupParking = cart.First().PickupParking;
-                _context.Add(donhang);
+                Rental order = new Rental();
+                order.CustomerId = model.CustomerId;
+                order.OrderTime = DateTime.Now;
+                order.RentalStatusId = 1;
+                order.RentalFee = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
+                order.TotalMoney = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
+                order.AppointmentTime = cart.First().AppointmentTime;
+                order.HoursRented = cart.First().RentalHours;
+                order.PickupParking = cart.First().PickupParking;
+                _context.Add(order);
                 _context.SaveChanges();
-                //tao danh sach don hang
 
                 foreach (var item in cart)
                 {
                     RentalDetail rentalDetail = new RentalDetail();
-                    rentalDetail.RentalId = donhang.RentalId;
+                    rentalDetail.RentalId = order.RentalId;
                     rentalDetail.BicycleId = item.bicycle.BicycleId;
                     rentalDetail.HoursRented = item.RentalHours;
-                    rentalDetail.AppointmentTime = item.PickupTime;
+                    rentalDetail.AppointmentTime = item.AppointmentTime;
                     rentalDetail.RentalFee = item.TotalMoney;
                     rentalDetail.RentalPrice = item.bicycle.RentalPrice;
                     _context.Add(rentalDetail);
                 }
                 _context.SaveChanges();
-                //clear gio hang
                 HttpContext.Session.Remove("RentalCart");
-                //Xuat thong bao
                 UpdateBicycleStatus(cart);
-                _notyf.Success("Đơn hàng đặt thành công");
-                //cap nhat thong tin khach hang
-                return RedirectToAction("Success");
+                _notyf.Success("Order placed successfully");
+                return RedirectToAction("RentalList", "Account");
             }
 
-            ViewBag.GioHang = cart;
+            ViewBag.Cart = cart;
             return View(model);
-
-        }
-        [Route("dat-hang-thanh-cong.html", Name = "Success")]
-        public IActionResult Success()
-        {
-            try
-            {
-                var taikhoanID = HttpContext.Session.GetString("CustomerId");
-                if (string.IsNullOrEmpty(taikhoanID))
-                {
-                    return RedirectToAction("Login", "Accounts", new { returnUrl = "/dat-hang-thanh-cong.html" });
-                }
-                var khachhang = _context.Customers.AsNoTracking().SingleOrDefault(x => x.CustomerId == Convert.ToInt32(taikhoanID));
-                var donhang = _context.Rentals
-                    .Where(x => x.CustomerId == Convert.ToInt32(taikhoanID))
-                    .FirstOrDefault();
-                CheckoutSuccessVM successVM = new CheckoutSuccessVM();
-                successVM.FullName = khachhang.FullName;
-                successVM.RentalID = donhang.RentalId;
-                successVM.Phone = khachhang.Phone;
-                return View(successVM);
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         private void UpdateBicycleStatus(List<CartItemVM> cart)
         {
             foreach (var item in cart)
             {
-                // Lấy thông tin xe từ cơ sở dữ liệu
                 var bicycle = _context.Bicycles.FirstOrDefault(x => x.BicycleId == item.bicycle.BicycleId);
 
                 if (bicycle != null)
                 {
-                    // Cập nhật trạng thái của xe thành 3 (đã đặt)
                     bicycle.BicycleStatusId = 3;
-
-                    // Cập nhật lại thông tin xe trong cơ sở dữ liệu
                     _context.Update(bicycle);
                 }
             }
-
-            // Lưu các thay đổi vào cơ sở dữ liệu
             _context.SaveChanges();
         }
     }

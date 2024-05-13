@@ -4,8 +4,30 @@
 }
 <h3>@_localization.Getkey("RentalInfor"): #@Model.Rental.RentalId</h3>
 <br />
-<p>@_localization.Getkey("RentalDate"): @Model.Rental.OrderTime</p>
-<p>@_localization.Getkey("TotalMoney"): <strong> @total VNĐ</strong></p>
+<div class="row">
+    <div class="col">
+        <p>@_localization.Getkey("RentalDate"): @Model.Rental.OrderTime</p>
+        <p>@_localization.Getkey("BicyclePickupArea"): @Model.Rental.PickupParkingNavigation.ParkingName</p>
+        @if (@Model.Rental.RentalStatusId == 3)
+        {
+            <p>@_localization.Getkey("BicycleReturnArea"): @Model.Rental.ReturnParkingNavigation.ParkingName</p>
+        }
+    </div>
+    <div class="col">
+        <p>@_localization.Getkey("RentalDuration"): @Model.Rental.HoursRented @_localization.Getkey("Hours")</p>
+        @if (@Model.Rental.RentalStatusId == 2)
+        {
+            <p>@_localization.Getkey("RentalDate"): @Model.Rental.PickupTime</p>
+        }
+        @if (@Model.Rental.RentalStatusId == 3)
+        {
+            <p>@_localization.Getkey("PickupTime"): @Model.Rental.PickupTime</p>
+            <p>@_localization.Getkey("ReturnTime"): @Model.Rental.ReturnTime</p>
+        }
+        <p>@_localization.Getkey("TotalMoney"): <strong> @total VNĐ</strong></p>
+    </div>
+</div>
+<br />
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
         <tbody>

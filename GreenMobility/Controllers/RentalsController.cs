@@ -1,4 +1,5 @@
 ﻿using GreenMobility.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,6 @@ using PagedList.Core;
 
 namespace GreenMobility.Controllers
 {
-
     public class RentalsController : Controller
     {
         private readonly GreenMobilityContext _context;
@@ -15,7 +15,7 @@ namespace GreenMobility.Controllers
             _context = context;
         }
 
-        [Route("rental.html", Name = "Rental")]
+        [Route("rentals", Name = "Rental")]
         public async Task<IActionResult> Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
@@ -40,7 +40,7 @@ namespace GreenMobility.Controllers
         }
 
 
-        [Route("/bicycles/{Alias}-{id}.html", Name = "ListBicycle")]
+        [Route("rentals/{Alias}-{id}", Name = "ListBicycle")]
         public IActionResult List(int id, int page = 1)
         {
                 var pageSize = 5;

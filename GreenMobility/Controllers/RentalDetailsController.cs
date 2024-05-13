@@ -32,6 +32,8 @@ namespace GreenMobility.Controllers
                 if (khachhang == null) return NotFound();
                 var rental = await _context.Rentals
                     .Include(x => x.RentalStatus)
+                    .Include(x => x.PickupParkingNavigation)
+                    .Include(x => x.ReturnParkingNavigation)
                     .FirstOrDefaultAsync(m => m.RentalId == id && Convert.ToInt32(CustomerId) == m.CustomerId);
                 if (rental == null) return NotFound();
 

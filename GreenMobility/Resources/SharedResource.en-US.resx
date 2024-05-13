@@ -123,11 +123,29 @@
   <data name="Amount" xml:space="preserve">
     <value>Amount</value>
   </data>
+  <data name="AppointmentTime" xml:space="preserve">
+    <value>Appointment time</value>
+  </data>
+  <data name="AppointmentTimeCO" xml:space="preserve">
+    <value>Appointment Time</value>
+  </data>
+  <data name="Bicycle" xml:space="preserve">
+    <value>Bicycle</value>
+  </data>
+  <data name="BicycleAlready" xml:space="preserve">
+    <value>The bicycle is already in the cart 😥</value>
+  </data>
   <data name="BicycleAt" xml:space="preserve">
     <value>bicycles at</value>
   </data>
   <data name="BicycleName" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="BicyclePickupArea" xml:space="preserve">
+    <value>Bicycle pick-up area</value>
+  </data>
+  <data name="BicycleReturnArea" xml:space="preserve">
+    <value>Bicycle return area</value>
   </data>
   <data name="Booking" xml:space="preserve">
     <value>Booking</value>
@@ -135,8 +153,17 @@
   <data name="BookingRidingPayment" xml:space="preserve">
     <value>Booking - Riding - Payment</value>
   </data>
+  <data name="CartTotals" xml:space="preserve">
+    <value>Cart totals</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Change Password</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="COD" xml:space="preserve">
+    <value>Payment upon vehicle return (COD)</value>
   </data>
   <data name="ComparePassword" xml:space="preserve">
     <value>Passwords do not match. Please try again.</value>
@@ -147,6 +174,12 @@
   <data name="CurrentPassword" xml:space="preserve">
     <value>Current password</value>
   </data>
+  <data name="CustomersWillPay" xml:space="preserve">
+    <value>Customers will pay upon returning the vehicle.</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="EmailAddress" xml:space="preserve">
     <value>Email</value>
   </data>
@@ -156,17 +189,32 @@
   <data name="EmailRequired" xml:space="preserve">
     <value>Please enter your email.</value>
   </data>
+  <data name="FailedRegistration" xml:space="preserve">
+    <value>Failed registration</value>
+  </data>
   <data name="FullName" xml:space="preserve">
     <value>Full Name</value>
   </data>
   <data name="FullNameRequired" xml:space="preserve">
     <value>Please enter your full name.</value>
   </data>
+  <data name="GoToCheckout" xml:space="preserve">
+    <value>Proceed to checkout page</value>
+  </data>
+  <data name="GoToRental" xml:space="preserve">
+    <value>Proceed To Rental Page</value>
+  </data>
   <data name="Hi" xml:space="preserve">
     <value>Hi</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Image</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
@@ -192,8 +240,17 @@
   <data name="NewPassword" xml:space="preserve">
     <value>New password</value>
   </data>
+  <data name="NoBikeInCart" xml:space="preserve">
+    <value>No bikes have been rented yet. Let's actively pedal!</value>
+  </data>
+  <data name="OnlyRent" xml:space="preserve">
+    <value>You can only rent from one parking lot at a time 😊</value>
+  </data>
   <data name="Parking" xml:space="preserve">
     <value>parkings</value>
+  </data>
+  <data name="ParkingCO" xml:space="preserve">
+    <value>Parking</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
@@ -213,6 +270,9 @@
   <data name="PhoneRequired" xml:space="preserve">
     <value>Please enter your phone number</value>
   </data>
+  <data name="PickupTime" xml:space="preserve">
+    <value>Date of bicycles pick-up</value>
+  </data>
   <data name="Post" xml:space="preserve">
     <value>Posts</value>
   </data>
@@ -231,8 +291,20 @@
   <data name="Rental" xml:space="preserve">
     <value>Rental</value>
   </data>
+  <data name="RentalCart" xml:space="preserve">
+    <value>Rental cart</value>
+  </data>
   <data name="RentalDate" xml:space="preserve">
     <value>Rental Date</value>
+  </data>
+  <data name="RentalDuration" xml:space="preserve">
+    <value>Rental duration (in hours)</value>
+  </data>
+  <data name="RentalHours" xml:space="preserve">
+    <value>Rental hours</value>
+  </data>
+  <data name="RentalHoursCO" xml:space="preserve">
+    <value>Rental Hours</value>
   </data>
   <data name="RentalInfor" xml:space="preserve">
     <value>Rental information</value>
@@ -242,6 +314,18 @@
   </data>
   <data name="RentalNow" xml:space="preserve">
     <value>Rental Now</value>
+  </data>
+  <data name="RentalPrice" xml:space="preserve">
+    <value>Rental price</value>
+  </data>
+  <data name="RentalTotal" xml:space="preserve">
+    <value>Rental total</value>
+  </data>
+  <data name="RentalTotalCO" xml:space="preserve">
+    <value>Rental Total </value>
+  </data>
+  <data name="ReturnTime" xml:space="preserve">
+    <value>Date of bicycles return</value>
   </data>
   <data name="Riding" xml:space="preserve">
     <value>Riding</value>
@@ -268,6 +352,18 @@ When picking up the vehicle, check the information and begin your journey.</valu
 Payment can be made through online payment methods or directly in cash to the staff.
 Confirm and review the payment details on the app or website to complete the vehicle rental process.</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="SuccessAdd" xml:space="preserve">
+    <value>Successfully added item to cart 😍</value>
+  </data>
+  <data name="SuccessfulRegistration" xml:space="preserve">
+    <value>Successful registration</value>
+  </data>
   <data name="ThankYou" xml:space="preserve">
     <value>Thank you for choosing to ride with Green Mobility.</value>
   </data>
@@ -283,11 +379,20 @@ Confirm and review the payment details on the app or website to complete the veh
   <data name="UpdateProfile" xml:space="preserve">
     <value>Update profile</value>
   </data>
+  <data name="UpdateRentalHours" xml:space="preserve">
+    <value>Please update the rental information.</value>
+  </data>
+  <data name="UpdateRentalInfor" xml:space="preserve">
+    <value>Update Rental Information</value>
+  </data>
   <data name="UsageInstructions" xml:space="preserve">
     <value>Usage Instructions</value>
   </data>
   <data name="View" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="YourRental" xml:space="preserve">
+    <value>Your rental</value>
   </data>
   <data name="ZeroBicycle" xml:space="preserve">
     <value>There are no bicycles at</value>

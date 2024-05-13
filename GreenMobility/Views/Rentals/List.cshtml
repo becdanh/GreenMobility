@@ -15,10 +15,39 @@
                         <h2 class="breadcrumb-heading">@parking.ParkingName</h2>
                         <ul>
                             <li>
-                                <a href="index.html">@_localization.Getkey("Home")<i class="pe-7s-angle-right"></i></a>
+                                <a sp-controller="Home" asp-action="Index">@_localization.Getkey("Home")<i class="pe-7s-angle-right"></i></a>
+                            </li>
+                            <li>
+                                <a sp-controller="Rentals" asp-action="Index">@_localization.Getkey("Rental")<i class="pe-7s-angle-right"></i></a>
                             </li>
                             <li>@parking.ParkingName</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="about-banner different-bg-position section-space-y-axis-100" data-bg-image="/assets/images/about/banner/1-1-1920x598.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-5">
+                    <div class="parallax-img-wrap">
+                        <div class="papaya">
+                            <div class="scene fill">
+                                <div class="expand-width" data-depth="0.2">
+                                    <img src="~/images/parkings/@parking.Photo" alt="Banner Images">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7 align-self-center">
+                    <div class="about-banner-content">
+                        <div class="section-title">
+                            <span class="sub-title">Welcome To </span>
+                            <h2 class="title font-size-60 mb-6">@parking.ParkingName</h2>
+                            <p class="short-desc mb-0">Địa chỉ: @parking.Address</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -69,7 +98,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="product-content">
-                                                    <a class="product-name" href="single-product.html">@item.BicycleName</a>
+                                                    <a class="product-name" href="single-product.html">@item.LicensePlate</a>
                                                     <div class="price-box pb-1">
                                                         <span class="new-price">@item.RentalPrice.Value.ToString("#,##0") VNĐ</span>
                                                     </div>
@@ -121,12 +150,12 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            alert("Thêm sản phẩm vào giỏ hàng thành công 😍");
+                            alert(response.message);
                             loadHeaderCart();
                             location.reload();
 
                         } else {
-                            alert("Sản phẩm đã có trong giỏ hàng 😥");
+                            alert(response.message);
                         }
                     },
                     error: function (error) {

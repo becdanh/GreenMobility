@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "AdminCookie")]
     public class HomeController : Controller
     {
         public IActionResult Index()

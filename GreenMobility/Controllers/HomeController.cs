@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
 using System.Drawing.Printing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GreenMobility.Controllers
 {
