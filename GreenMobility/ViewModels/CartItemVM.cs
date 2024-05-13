@@ -6,7 +6,7 @@ namespace GreenMobility.ViewModels
     {
         public Bicycle bicycle { get; set; }
 
-        public DateTime PickupTime { get; set; }
+        public DateTime AppointmentTime { get; set; }
         public int RentalHours { get; set; }
 
         public double TotalMoney => RentalHours * bicycle.RentalPrice.Value;

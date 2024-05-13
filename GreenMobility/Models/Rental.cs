@@ -11,8 +11,6 @@ public partial class Rental
 
     public DateTime OrderTime { get; set; }
 
-    public int? EmployeeId { get; set; }
-
     public double RentalFee { get; set; }
 
     public int? RentalStatusId { get; set; }
@@ -35,15 +33,21 @@ public partial class Rental
 
     public DateTime? ReturnTime { get; set; }
 
+    public int? PickupEmployeeId { get; set; }
+
+    public int? ReturnEmployeeId { get; set; }
+
     public virtual Customer? Customer { get; set; }
 
-    public virtual Employee? Employee { get; set; }
+    public virtual Employee? PickupEmployee { get; set; }
 
     public virtual Parking? PickupParkingNavigation { get; set; }
 
     public virtual ICollection<RentalDetail> RentalDetails { get; set; } = new List<RentalDetail>();
 
     public virtual RentalStatus? RentalStatus { get; set; }
+
+    public virtual Employee? ReturnEmployee { get; set; }
 
     public virtual Parking? ReturnParkingNavigation { get; set; }
 }

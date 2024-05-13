@@ -123,11 +123,29 @@
   <data name="Amount" xml:space="preserve">
     <value>Tổng</value>
   </data>
+  <data name="AppointmentTime" xml:space="preserve">
+    <value>Thời gian hẹn lấy xe</value>
+  </data>
+  <data name="AppointmentTimeCO" xml:space="preserve">
+    <value>Thời Gian Hẹn Lấy Xe</value>
+  </data>
+  <data name="Bicycle" xml:space="preserve">
+    <value>Xe đạp</value>
+  </data>
+  <data name="BicycleAlready" xml:space="preserve">
+    <value>Xe đã có trong giỏ thuê 😥</value>
+  </data>
   <data name="BicycleAt" xml:space="preserve">
     <value>xe đạp ở</value>
   </data>
   <data name="BicycleName" xml:space="preserve">
     <value>Tên xe đạp</value>
+  </data>
+  <data name="BicyclePickupArea" xml:space="preserve">
+    <value>Bãi đỗ nhận xe</value>
+  </data>
+  <data name="BicycleReturnArea" xml:space="preserve">
+    <value>Bãi đỗ trả xe</value>
   </data>
   <data name="Booking" xml:space="preserve">
     <value>Đặt xe</value>
@@ -135,8 +153,20 @@
   <data name="BookingRidingPayment" xml:space="preserve">
     <value>Đặt xe - Đi xe - Thanh toán</value>
   </data>
+  <data name="CartTotals" xml:space="preserve">
+    <value>Tổng giỏ thuê</value>
+  </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>Đổi mật khẩu</value>
+  </data>
+  <data name="Checkout" xml:space="preserve">
+    <value>Thanh toán</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Đóng</value>
+  </data>
+  <data name="COD" xml:space="preserve">
+    <value>Thanh toán khi trả xe (COD)</value>
   </data>
   <data name="ComparePassword" xml:space="preserve">
     <value>Mật khẩu không khớp. Vui lòng nhập lại.</value>
@@ -147,6 +177,12 @@
   <data name="CurrentPassword" xml:space="preserve">
     <value>Mật khẩu hiện tại</value>
   </data>
+  <data name="CustomersWillPay" xml:space="preserve">
+    <value>Khách hàng sẽ thanh toán khi trả xe</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
   <data name="EmailAddress" xml:space="preserve">
     <value>Email</value>
   </data>
@@ -156,17 +192,32 @@
   <data name="EmailRequired" xml:space="preserve">
     <value>Vui lòng nhập địa chỉ email.</value>
   </data>
+  <data name="FailedRegistration" xml:space="preserve">
+    <value>Đăng ký thất bại</value>
+  </data>
   <data name="FullName" xml:space="preserve">
     <value>Họ và tên</value>
   </data>
   <data name="FullNameRequired" xml:space="preserve">
     <value>Vui lòng nhập họ và tên.</value>
   </data>
+  <data name="GoToCheckout" xml:space="preserve">
+    <value>Đến trang thanh toán</value>
+  </data>
+  <data name="GoToRental" xml:space="preserve">
+    <value>Đến Trang Thuê Xe</value>
+  </data>
   <data name="Hi" xml:space="preserve">
     <value>Xin chào</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Trang chủ</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>Giờ</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Ảnh</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Ngôn ngữ</value>
@@ -175,7 +226,7 @@
     <value>Thông tin mới nhất</value>
   </data>
   <data name="LicensePlate" xml:space="preserve">
-    <value>Biển số</value>
+    <value>Biển số xe</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Đăng nhập</value>
@@ -192,8 +243,17 @@
   <data name="NewPassword" xml:space="preserve">
     <value>Mật khẩu mới</value>
   </data>
+  <data name="NoBikeInCart" xml:space="preserve">
+    <value>Chưa có xe nào được thuê. Hãy tích cực đạp xe nhé!</value>
+  </data>
+  <data name="OnlyRent" xml:space="preserve">
+    <value>Mỗi lần chỉ có thể thuê từ một bãi xe duy nhất 😊</value>
+  </data>
   <data name="Parking" xml:space="preserve">
     <value>bãi đỗ</value>
+  </data>
+  <data name="ParkingCO" xml:space="preserve">
+    <value>Bãi Xe</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Mật khẩu</value>
@@ -213,6 +273,9 @@
   <data name="PhoneRequired" xml:space="preserve">
     <value>Vui lòng nhập số điện thoại.</value>
   </data>
+  <data name="PickupTime" xml:space="preserve">
+    <value>Ngày nhận xe</value>
+  </data>
   <data name="Post" xml:space="preserve">
     <value>Tin tức</value>
   </data>
@@ -231,8 +294,20 @@
   <data name="Rental" xml:space="preserve">
     <value>Thuê xe</value>
   </data>
+  <data name="RentalCart" xml:space="preserve">
+    <value>Giỏ thuê</value>
+  </data>
   <data name="RentalDate" xml:space="preserve">
     <value>Ngày tạo đơn thuê</value>
+  </data>
+  <data name="RentalDuration" xml:space="preserve">
+    <value>Số giờ thuê xe (tính bằng giờ)</value>
+  </data>
+  <data name="RentalHours" xml:space="preserve">
+    <value>Số giờ thuê</value>
+  </data>
+  <data name="RentalHoursCO" xml:space="preserve">
+    <value>Số Giờ Thuê</value>
   </data>
   <data name="RentalInfor" xml:space="preserve">
     <value>Thông tin đơn thuê</value>
@@ -242,6 +317,18 @@
   </data>
   <data name="RentalNow" xml:space="preserve">
     <value>Thuê xe ngay</value>
+  </data>
+  <data name="RentalPrice" xml:space="preserve">
+    <value>Giá thuê</value>
+  </data>
+  <data name="RentalTotal" xml:space="preserve">
+    <value>Tổng đơn thuê</value>
+  </data>
+  <data name="RentalTotalCO" xml:space="preserve">
+    <value>Tổng Đơn Thuê</value>
+  </data>
+  <data name="ReturnTime" xml:space="preserve">
+    <value>Ngày trả xe</value>
   </data>
   <data name="Riding" xml:space="preserve">
     <value>Đi xe</value>
@@ -268,6 +355,15 @@ Khi đến lấy xe, kiểm tra thông tin và bắt đầu hành trình của b
 Thanh toán có thể được thực hiện qua các phương tiện thanh toán trực tuyến hoặc bằng tiền mặt trực tiếp với nhân viên.
 Xác nhận và kiểm tra chi tiết thanh toán trên ứng dụng hoặc trang web để hoàn tất quá trình thuê xe.</value>
   </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="SuccessAdd" xml:space="preserve">
+    <value>Xe đã được thêm vào giỏ thuê thành công 😍</value>
+  </data>
+  <data name="SuccessfulRegistration" xml:space="preserve">
+    <value>Đăng ký thành công</value>
+  </data>
   <data name="ThankYou" xml:space="preserve">
     <value>Cảm ơn quý khách đã lựa chọn đồng hành cùng Green Mobility.</value>
   </data>
@@ -283,11 +379,20 @@ Xác nhận và kiểm tra chi tiết thanh toán trên ứng dụng hoặc tran
   <data name="UpdateProfile" xml:space="preserve">
     <value>Thay đổi thông tin tài khoản</value>
   </data>
+  <data name="UpdateRentalHours" xml:space="preserve">
+    <value>Vui lòng cập nhật thông tin thuê.</value>
+  </data>
+  <data name="UpdateRentalInfor" xml:space="preserve">
+    <value>Cập Nhật Thông Tin Thuê</value>
+  </data>
   <data name="UsageInstructions" xml:space="preserve">
     <value>Cách sử dụng</value>
   </data>
   <data name="View" xml:space="preserve">
     <value>Xem chi tiết</value>
+  </data>
+  <data name="YourRental" xml:space="preserve">
+    <value>Đơn thuê của bạn</value>
   </data>
   <data name="ZeroBicycle" xml:space="preserve">
     <value>Không có xe đạp nào ở</value>

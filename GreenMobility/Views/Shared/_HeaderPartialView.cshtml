@@ -50,11 +50,7 @@
                                         <i class="pe-7s-users"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingButton">
-                                        @{
-                                            var taikhoanID = Context.Session.GetString("CustomerId");
-
-                                        }
-                                        @if (taikhoanID != null)
+                                        @if (Context.Session.GetString("CustomerId") != null)
                                         {
                                             <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">@_localization.Getkey("MyAccount")</a></li>
                                             <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">@_localization.Getkey("Logout")</a></li>
@@ -89,13 +85,13 @@
                             <nav class="main-nav">
                                 <ul>
                                     <li class="drop-holder">
-                                        <a href="/">@_localization.Getkey("Home")</a>
+                                        <a asp-controller="Home" asp-action="Index">@_localization.Getkey("Home")</a>
                                     </li>
                                     <li>
-                                        <a href="/rental.html">@_localization.Getkey("Rental")</a>
+                                        <a asp-controller="Rentals" asp-action="Index">@_localization.Getkey("Rental")</a>
                                     </li>
                                     <li>
-                                        <a href="/posts">@_localization.Getkey("Post")</a>
+                                        <a asp-controller="Posts" asp-action="Index">@_localization.Getkey("Post")</a>
                                     </li>
                                 </ul>
                             </nav>

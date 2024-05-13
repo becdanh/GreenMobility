@@ -10,6 +10,7 @@
             <div class="row">
                 <div class="col-lg-6 pt-10 pt-lg-0">
                     <form method="post" asp-action="Login">
+                        <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="login-form">
                             <h4 class="login-title">@_localization.Getkey("Login")</h4>

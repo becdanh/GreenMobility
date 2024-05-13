@@ -28,7 +28,7 @@ namespace GreenMobility.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("register", Name = "DangKy")]
+        [Route("register", Name = "Register")]
         public IActionResult Register()
         {
             return View();
@@ -36,7 +36,7 @@ namespace GreenMobility.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("register", Name = "DangKy")]
+        [Route("register", Name = "Register")]
         public async Task<IActionResult> Register(RegisterVM account)
         {
             if (EmailExists(account.Email))
@@ -82,7 +82,7 @@ namespace GreenMobility.Controllers
                     ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "login");
                     ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                     await HttpContext.SignInAsync(claimsPrincipal);
-                    _notyf.Success("Đăng ký thành công");
+                    _notyf.Success(_localization.Getkey("SuccessfulRegistration"));
                     return RedirectToAction("Profile", "Account");
                 }
                 catch
@@ -92,87 +92,81 @@ namespace GreenMobility.Controllers
             }
             else
             {
+                _notyf.Error(_localization.Getkey("FailedRegistration"));
                 return View(account);
             }
         }
         [AllowAnonymous]
-        [Route("login.html", Name = "DangNhap")]
-        public IActionResult Login(string returnUrl = null)
+        [Route("login.html", Name = "Login")]
+        public IActionResult Login(string ReturnUrl = null)
         {
-            var taikhoanID = HttpContext.Session.GetString("CustomerId");
-            if (taikhoanID != null)
-            {
-                return RedirectToAction("Profile", "Account");
-            }
+            var customerId = HttpContext.Session.GetString("CustomerId");
+            if (customerId != null)
+                return RedirectToAction("Index", "Home");
+            ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
         [HttpPost]
         [AllowAnonymous]
-        [Route("login.html", Name = "DangNhap")]
-        public async Task<IActionResult> Login(LoginVM customer, string returnUrl)
+        [Route("login.html", Name = "Login")]
+        public async Task<IActionResult> Login(LoginVM model,string ReturnUrl = null)
         {
-            bool isEmail = Utilities.IsValidEmail(customer.UserName);
-            if (!isEmail) return View(customer);
+            bool isEmail = Utilities.IsValidEmail(model.UserName);
+            if (!isEmail) return View(model);
 
-            var khachhang = _context.Customers.AsNoTracking().SingleOrDefault(x => x.Email.Trim() == customer.UserName);
+            var customer = _context.Customers.AsNoTracking().SingleOrDefault(x => x.Email.Trim() == model.UserName);
 
-            if (khachhang == null) return RedirectToAction("Register");
-            string pass = (customer.Password + khachhang.Salt.Trim()).ToMD5();
-            if (khachhang.Password != pass)
+            if (customer == null) return RedirectToAction("Register");
+            string pass = (model.Password + customer.Salt.Trim()).ToMD5();
+            if (customer.Password != pass)
             {
                 _notyf.Error("Thông tin đăng nhập chưa chính xác");
-                return View(customer);
+                return View(model);
             }
             //kiem tra xem account co bi disable hay khong
 
-            if (khachhang.IsLocked == true)
+            if (customer.IsLocked == true)
             {
                 return RedirectToAction("ThongBao", "Account");
             }
 
             //Luu Session MaKh
-            HttpContext.Session.SetString("CustomerId", khachhang.CustomerId.ToString());
+            HttpContext.Session.SetString("CustomerId", customer.CustomerId.ToString());
             var taikhoanID = HttpContext.Session.GetString("CustomerId");
 
             //Identity
             var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name, khachhang.FullName),
-                        new Claim("CustomerId", khachhang.CustomerId.ToString())
+                        new Claim(ClaimTypes.Name, customer.FullName),
+                        new Claim("CustomerId", customer.CustomerId.ToString())
                     };
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "login");
             ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             await HttpContext.SignInAsync(claimsPrincipal);
             _notyf.Success("Đăng nhập thành công");
 
-            if (string.IsNullOrEmpty(returnUrl))
+            if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
             {
-                return RedirectToAction("Index", "Home");
+                return Redirect(ReturnUrl);
             }
-            else
-            {
-                return Redirect(returnUrl);
-            }
+
+            return RedirectToAction("Index", "Home");
         }
         [HttpGet]
-        [Route("logout.html", Name = "DangXuat")]
+        [Route("logout.html", Name = "Logout")]
         public IActionResult Logout()
-        {
+        {       
+            HttpContext.Session.Clear();
             HttpContext.SignOutAsync();
-            HttpContext.Session.Remove("CustomerId");
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         [Route("/profile", Name = "Profile")]
+        [Authorize]
         public IActionResult Profile()
         {
             var customerId = HttpContext.Session.GetString("CustomerId");
-            if (customerId == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
             var customer = _context.Customers.AsNoTracking().SingleOrDefault(x => x.CustomerId == Convert.ToInt32(customerId));
 
             return View(customer);
@@ -180,16 +174,12 @@ namespace GreenMobility.Controllers
 
         [HttpPost]
         [Route("/profile", Name = "Profile")]
+        [Authorize]
         public async Task<IActionResult> Profile(Customer model)
         {
             try
             {
                 var accountId = HttpContext.Session.GetString("CustomerId");
-
-                if (accountId == null)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
 
                 if (string.IsNullOrWhiteSpace(model.FullName))
                     ModelState.AddModelError("FullName", _localization.Getkey("FullNameRequired"));
@@ -239,6 +229,7 @@ namespace GreenMobility.Controllers
         }
 
         [Route("/rentallist", Name = "RentalList")]
+        [Authorize]
         public IActionResult RentalList()
         {
             var accountId = HttpContext.Session.GetString("CustomerId");
@@ -260,25 +251,20 @@ namespace GreenMobility.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Route("change-password", Name = "ChangePassword")]
+        [Authorize]
         public IActionResult ChangePassword()
         {
             var accountId = HttpContext.Session.GetString("CustomerId");
-            if (accountId == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
             return View();
         }
 
         [HttpPost]
+        [Route("change-password", Name = "ChangePassword")]
+        [Authorize]
         public IActionResult ChangePassword(ChangePasswordVM model)
         {
             var accountId = HttpContext.Session.GetString("CustomerId");
-            if (accountId == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
 
             var account = _context.Customers.Find(Convert.ToInt32(accountId));
             if (account == null) return RedirectToAction("Login", "Account");

@@ -162,15 +162,14 @@ public partial class GreenMobilityContext : DbContext
             entity.Property(e => e.CustomerId)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("CustomerID");
-            entity.Property(e => e.EmployeeId)
-                .HasDefaultValueSql("(NULL)")
-                .HasColumnName("EmployeeID");
             entity.Property(e => e.Note).HasMaxLength(255);
             entity.Property(e => e.OrderTime)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnType("datetime");
+            entity.Property(e => e.PickupEmployeeId).HasColumnName("PickupEmployeeID");
             entity.Property(e => e.PickupTime).HasColumnType("datetime");
             entity.Property(e => e.RentalStatusId).HasColumnName("RentalStatusID");
+            entity.Property(e => e.ReturnEmployeeId).HasColumnName("ReturnEmployeeID");
             entity.Property(e => e.ReturnTime).HasColumnType("datetime");
             entity.Property(e => e.Surcharge).HasDefaultValue(0.0);
 
@@ -178,9 +177,9 @@ public partial class GreenMobilityContext : DbContext
                 .HasForeignKey(d => d.CustomerId)
                 .HasConstraintName("FK_Rentals_Customers");
 
-            entity.HasOne(d => d.Employee).WithMany(p => p.Rentals)
-                .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK_Rentals_Employees");
+            entity.HasOne(d => d.PickupEmployee).WithMany(p => p.RentalPickupEmployees)
+                .HasForeignKey(d => d.PickupEmployeeId)
+                .HasConstraintName("FK_Rentals_Employees1");
 
             entity.HasOne(d => d.PickupParkingNavigation).WithMany(p => p.RentalPickupParkingNavigations)
                 .HasForeignKey(d => d.PickupParking)
@@ -189,6 +188,10 @@ public partial class GreenMobilityContext : DbContext
             entity.HasOne(d => d.RentalStatus).WithMany(p => p.Rentals)
                 .HasForeignKey(d => d.RentalStatusId)
                 .HasConstraintName("FK_Rentals_RentalStatus");
+
+            entity.HasOne(d => d.ReturnEmployee).WithMany(p => p.RentalReturnEmployees)
+                .HasForeignKey(d => d.ReturnEmployeeId)
+                .HasConstraintName("FK_Rentals_Employees2");
 
             entity.HasOne(d => d.ReturnParkingNavigation).WithMany(p => p.RentalReturnParkingNavigations)
                 .HasForeignKey(d => d.ReturnParking)

@@ -33,7 +33,9 @@ public partial class Employee
 
     public virtual Parking? Parking { get; set; }
 
-    public virtual ICollection<Rental> Rentals { get; set; } = new List<Rental>();
+    public virtual ICollection<Rental> RentalPickupEmployees { get; set; } = new List<Rental>();
+
+    public virtual ICollection<Rental> RentalReturnEmployees { get; set; } = new List<Rental>();
 
     public virtual Role Role { get; set; } = null!;
 }

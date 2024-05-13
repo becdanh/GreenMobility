@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace GreenMobility.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "AdminCookie")]
     public class AdminRentalsController : Controller
     {
         private readonly GreenMobilityContext _context;
@@ -76,7 +76,6 @@ namespace GreenMobility.Areas.Admin.Controllers
 
             var rental = await _context.Rentals
                 .Include(r => r.Customer)
-                .Include(r => r.Employee)
                 .Include(r => r.RentalStatus)
                 .FirstOrDefaultAsync(m => m.RentalId == id);
             if (rental == null)
@@ -94,30 +93,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(rental);
         }
 
-        public IActionResult Create()
-        {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeId");
-            ViewData["RentalStatusId"] = new SelectList(_context.RentalStatuses, "RentalStatusId", "RentalStatusId");
-            return View();
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RentalId,CustomerId,OrderTime,EmployeeId,AcceptTime,TotalMoney,RentalStatusId,Surcharge,Note")] Rental rental)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(rental);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", rental.CustomerId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeId", rental.EmployeeId);
-            ViewData["RentalStatusId"] = new SelectList(_context.RentalStatuses, "RentalStatusId", "RentalStatusId", rental.RentalStatusId);
-            return View(rental);
-        }
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

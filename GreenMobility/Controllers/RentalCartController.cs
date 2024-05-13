@@ -3,6 +3,7 @@ using GreenMobility.Models;
 using GreenMobility.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using GreenMobility.Extension;
+using GreenMobility.Services;
 
 namespace GreenMobility.Controllers
 {
@@ -10,10 +11,12 @@ namespace GreenMobility.Controllers
     {
         private readonly GreenMobilityContext _context;
         private readonly INotyfService _notyf;
-        public RentalCartController(GreenMobilityContext context, INotyfService notyf)
+        private LanguageService _localization;
+        public RentalCartController(GreenMobilityContext context, INotyfService notyf, LanguageService localization)
         {
             _context = context;
             _notyf = notyf;
+            _localization = localization;
         }
         public List<CartItemVM> RentalCart
         {
@@ -35,28 +38,51 @@ namespace GreenMobility.Controllers
             try
             {
                 List<CartItemVM> rentalCart = RentalCart;
+
+                if (rentalCart.Any())
+                {
+                    // Lấy ParkingID của sản phẩm đầu tiên trong giỏ hàng
+                    int firstItemParkingId = rentalCart.First().PickupParking;
+
+                    // Lấy thông tin sản phẩm mới thêm vào giỏ hàng
+                    Bicycle newBicycle = _context.Bicycles.SingleOrDefault(p => p.BicycleId == bicycleId);
+                    if (newBicycle == null)
+                    {
+                        return Json(new { success = false });
+                    }
+
+                    // Kiểm tra xem ParkingID của sản phẩm mới có giống với sản phẩm đầu tiên không
+                    if (newBicycle.ParkingId != firstItemParkingId)
+                    {
+                        string errorMessage = _localization.Getkey("OnlyRent");
+                        return Json(new { success = false, message = errorMessage });
+                    }
+                }
+
                 // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
                 if (rentalCart.Any(p => p.bicycle.BicycleId == bicycleId))
                 {
-                    return Json(new { success = false });
+                    string errorMessage = _localization.Getkey("BicycleAlready");
+                    return Json(new { success = false, message = errorMessage });
                 }
 
+
                 // Lấy thông tin sản phẩm từ cơ sở dữ liệu
-                Bicycle hh = _context.Bicycles.SingleOrDefault(p => p.BicycleId == bicycleId);
-                if (hh == null)
+                Bicycle bicycle = _context.Bicycles.SingleOrDefault(p => p.BicycleId == bicycleId);
+                if (bicycle == null)
                 {
                     return Json(new { success = false });
                 }
 
                 CartItemVM item = new CartItemVM
                 {
-                    bicycle = hh,
-                    PickupTime = DateTime.Now,
-                    RentalHours = 1
+                    bicycle = bicycle,
+                    AppointmentTime = DateTime.Now,
                 };
                 rentalCart.Add(item);
-                HttpContext.Session.Set<List<CartItemVM>>("RentalCart", rentalCart);;
-                return Json(new { success = true });
+                HttpContext.Session.Set<List<CartItemVM>>("RentalCart", rentalCart);
+                string successMessage = _localization.Getkey("SuccessAdd");
+                return Json(new { success = true, message = successMessage });
             }
             catch
             {
@@ -66,15 +92,23 @@ namespace GreenMobility.Controllers
 
         [HttpPost]
         [Route("api/cart/update")]
-        public IActionResult UpdateCartInfo(int rentalHour, DateTime pickupTime)
+        public IActionResult UpdateCartInfo(int rentalHours, DateTime appointmentTime)
         {
             try
             {
+                // Kiểm tra xem thời gian lấy xe có nằm trong khoảng cách 2 ngày từ hiện tại không
+                if (appointmentTime < DateTime.Now || appointmentTime > DateTime.Now.AddDays(2))
+                {
+                    string errorMessage = _localization.Getkey("InvalidAppointmentTime");
+                    return Json(new { success = false, message = errorMessage });
+                }
+
+                // Nếu thời gian hợp lệ, cập nhật thông tin giỏ hàng
                 List<CartItemVM> cartItems = RentalCart;
                 foreach (var item in cartItems)
                 {
-                    item.RentalHours = rentalHour;
-                    item.PickupTime = pickupTime;
+                    item.RentalHours = rentalHours;
+                    item.AppointmentTime = appointmentTime;
                 }
                 // Lưu lại session
                 HttpContext.Session.Set<List<CartItemVM>>("RentalCart", cartItems);
@@ -86,6 +120,7 @@ namespace GreenMobility.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("api/cart/getcartinfo")]
         public IActionResult GetCartInfo()
@@ -93,20 +128,20 @@ namespace GreenMobility.Controllers
             try
             {
                 List<CartItemVM> cartItems = RentalCart;
-                int rentalHour = 0;
-                DateTime pickupTime = DateTime.Now;
+                int rentalHours = 0;
+                DateTime appointmentTime = DateTime.Now;
 
                 if (cartItems.Any())
                 {
-                    rentalHour = cartItems.First().RentalHours;
-                    pickupTime = cartItems.First().PickupTime;
+                    rentalHours = cartItems.First().RentalHours;
+                    appointmentTime = cartItems.First().AppointmentTime;
                 }
 
                 return Json(new
                 {
                     success = true,
-                    rentalHour = rentalHour,
-                    pickupTime = pickupTime.ToString("yyyy-MM-ddTHH:mm")
+                    rentalHours = rentalHours,
+                    appointmentTime = appointmentTime.ToString("yyyy-MM-ddTHH:mm")
                 });
             }
             catch
@@ -142,8 +177,24 @@ namespace GreenMobility.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/cart/checkhours")]
+        public IActionResult CheckRentalHours()
+        {
+            List<CartItemVM> cartItems = RentalCart;
 
-        [Route("cart.html", Name = "Cart")]
+            if (cartItems.Any(x => x.RentalHours == 0))
+            {
+                string errorMessage = _localization.Getkey("UpdateRentalHours");
+                return Json(new { success = false, message = errorMessage });
+            }
+
+            return Json(new { success = true });
+        }
+
+
+
+        [Route("cart", Name = "Cart")]
         public IActionResult Index()
         {
             return View(RentalCart);
