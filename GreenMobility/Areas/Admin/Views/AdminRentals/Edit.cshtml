@@ -33,10 +33,13 @@
                             <td>Hẹn nhận xe lúc:</td>
                             <td>@Model.AppointmentTime</td>
                         </tr>
-                        <tr>
-                            <td>Nhận xe lúc:</td>
-                            <td>@Model.PickupTime</td>
-                        </tr>                     
+                        @if (@Model.RentalStatusId == 2 || Model.RentalStatusId == 3)
+                        {
+                            <tr>
+                                <td>Nhận xe lúc:</td>
+                                <td>@Model.PickupTime</td>
+                            </tr>
+                        }
                         <tr>
                             <td>Số giờ thuê:</td>
                             <td>@Model.HoursRented giờ</td>
@@ -80,7 +83,7 @@
                 </div>
                 <button type="submit" class="btn btn-success">Lưu thay đổi</button>
             </form>
-        </div>  
+        </div>
     </div>
 </div>
 @section Scripts {

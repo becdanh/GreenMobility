@@ -5,10 +5,6 @@
     ViewData["Title"] = "Danh sách đơn thuê xe: page " + CurrentPage;
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-@section Styles {
-    <link href="~/Adminassets/summernote/summernote-bs4.css" rel="stylesheet" />
-    <link href="~/Adminassets/summernote/summernote.css" rel="stylesheet" />
-}
 <div class="page-header no-gutters">
     <div class="row align-items-md-center">
         <div class="col-md-8">
@@ -39,20 +35,14 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-4 text-right">
-                <a class="btn btn-primary" asp-controller="AdminBicycles" asp-action="Create">
-                    <i class="anticon anticon-plus-circle m-r-5"></i>
-                    <span>Thêm mới xe</span>
-                </a>
-            </div>
         </div>
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Bãi đỗ</th>
                         <th>Ngày đặt</th>
                         <th>Tổng tiền</th>
                         <th>Trạng thái</th>
@@ -64,7 +54,8 @@
                     {
                         <tr>
                             <td>@item.RentalId</td>
-                            <td>@item.Customer.FullName</td>
+                            <td> <a asp-controller="AdminCustomers" asp-action="Details" asp-route-id="@item.Customer.CustomerId">@item.Customer.FullName</a></td>
+                            <td>@item.PickupParkingNavigation.ParkingName</td>
                             <td>@item.OrderTime</td>
                             <td>@item.TotalMoney</td>
                             <td>@item.RentalStatus.Description</td>
@@ -102,11 +93,6 @@
     </div>
 </div>
 @section Scripts {
-    <script src="~/Adminassets/vendors/select2/select2.min.js"></script>
-    <script src="~/Adminassets/js/pages/e-commerce-product-edit.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.1/jquery.validate.min.js"></script>
-    <script src="~/Adminassets/summernote/summernote-bs4.js"></script>
-
     <script>
         $('#modal-header').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
@@ -115,13 +101,6 @@
             modal.find('.modal-content').load(url);
         });
         jQuery(document).ready(function () {
-            $('.summernote').summernote({
-                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-                styleTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5'],
-                height: 200,
-                minHeight: null,
-                maxHeight: null,
-            });
             $("#status, #keyword").change(function () {
                 var status = $("#status").children(":selected").val();
                 var keyword = $("#keyword").val();

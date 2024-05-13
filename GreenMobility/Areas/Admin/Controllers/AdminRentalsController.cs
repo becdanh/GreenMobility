@@ -33,14 +33,16 @@ namespace GreenMobility.Areas.Admin.Controllers
             IQueryable<Rental> rentalQuery = _context.Rentals
                 .Include(r => r.Customer)
                 .Include(o => o.RentalStatus)
+                .Include(p => p.PickupParkingNavigation)
                 .AsNoTracking()
-                .OrderBy(x => x.OrderTime);
+                .OrderByDescending(x => x.OrderTime);
 
             if (!string.IsNullOrEmpty(keyword))
             {
                 keyword = keyword.Trim().ToLower();
                 rentalQuery = rentalQuery
                     .Where(x => x.Customer.FullName.Contains(keyword)
+                        || x.PickupParkingNavigation.ParkingName.Contains(keyword)
                             || x.Customer.Phone.Contains(keyword));
             }
             if (status != 0)
@@ -113,7 +115,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("RentalId,CustomerId,OrderTime,EmployeeId,PickupTime,TotalMoney,RentalStatusId,Surcharge,Note,RentalFee,HoursRented")] Rental rental)
+        public async Task<IActionResult> Edit(int id, [Bind("RentalId,CustomerId,OrderTime,PickupEmployeeId,ReturnEmployeeId,PickupTime,TotalMoney,RentalStatusId,Surcharge,Note,RentalFee,HoursRented,ReturnParking")] Rental rental)
         {
             if (id != rental.RentalId)
             {
@@ -140,7 +142,15 @@ namespace GreenMobility.Areas.Admin.Controllers
                         if (rent.RentalStatusId == 2)
                         {
                             rent.PickupTime = DateTime.Now;
+                            var employyeeIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "EmployeeId");
 
+                            if (employyeeIdClaim != null)
+                            {
+                                if (int.TryParse(employyeeIdClaim.Value, out int employeeId))
+                                {
+                                    rent.PickupEmployeeId = employeeId;
+                                }
+                            }
                             foreach (var detail in rent.RentalDetails)
                             {
                                 var bicycle = await _context.Bicycles.FirstOrDefaultAsync(b => b.BicycleId == detail.BicycleId);
@@ -154,6 +164,26 @@ namespace GreenMobility.Areas.Admin.Controllers
                         if (rent.RentalStatusId == 3)
                         {
                             rent.ReturnTime = DateTime.Now;
+
+                            var parkingIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "ParkingId");
+
+                            if (parkingIdClaim != null)
+                            {
+                                if (int.TryParse(parkingIdClaim.Value, out int parkingId))
+                                {
+                                    rent.ReturnParking = parkingId;
+                                }
+                            }
+
+                            var employyeeIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "EmployeeId");
+
+                            if (employyeeIdClaim != null)
+                            {
+                                if (int.TryParse(employyeeIdClaim.Value, out int employeeId))
+                                {
+                                    rent.ReturnEmployeeId = employeeId;
+                                }
+                            }
                             foreach (var detail in rent.RentalDetails)
                             {
                                 var bicycle = await _context.Bicycles.FirstOrDefaultAsync(b => b.BicycleId == detail.BicycleId);
@@ -167,6 +197,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
                         if (rent.RentalStatusId == 4)
                         {
+
                             foreach (var detail in rent.RentalDetails)
                             {
                                 var bicycle = await _context.Bicycles.FirstOrDefaultAsync(b => b.BicycleId == detail.BicycleId);

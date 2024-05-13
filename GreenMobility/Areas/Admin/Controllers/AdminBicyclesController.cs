@@ -55,7 +55,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             ViewBag.CurrentPage = pageNumber;
             ViewBag.CurrentStatus = status;
             ViewData["TrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description", status);
-            ViewBag.CurrentKeyword = keyword;
+            ViewBag.Keyword = keyword;
             return View(models);
         }
 
