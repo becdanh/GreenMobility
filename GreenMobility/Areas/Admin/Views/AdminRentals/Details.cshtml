@@ -5,24 +5,26 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
     List<RentalDetail> RentalDetails = ViewBag.rentalDetail;
 }
-
-<div class="page-header">
-    <h2 class="header-title">Quản lý đơn thuê xe</h2>
-    <div class="header-sub-title">
-        <nav class="breadcrumb breadcrumb-dash">
-            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
-            <a asp-area="Admin" asp-controller="AdminRentals" asp-action="Index" class="breadcrumb-item">Danh sách đơn thuê xe</a>
-            <span class="breadcrumb-item active">Thông tin đơn thuê xe : #@Model.RentalId</span>
-        </nav>
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý đơn thuê xe</h2>
+            <div class="header-sub-title">
+                <nav class="breadcrumb breadcrumb-dash">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                    <a asp-area="Admin" asp-controller="AdminRentals" asp-action="Index" class="breadcrumb-item">Danh sách đơn thuê xe</a>
+                    <span class="breadcrumb-item active">Thông tin đơn thuê xe : #@Model.RentalId</span>
+                </nav>
+            </div>
+        </div>
     </div>
 </div>
-
 <div class="card">
     <div class="card-body">
         <div id="invoice" class="p-h-30">
             <div class="row m-t-20 lh-2">
                 <div class="col-sm-6">
-                    <h3 class="p-l-10 m-t-10">THÔNG TIN ĐƠN HÀNG:</h3>
+                    <h3 class="p-l-10 m-t-10">THÔNG TIN ĐƠN THUÊ:</h3>
                     <address class="p-l-10 m-t-10">
                         <span class="font-weight-semibold text-dark">Họ và Tên: @Model.Customer.FullName</span><br>
                         <span>Số điện thoại: @Model.Customer.Phone</span>
@@ -31,15 +33,36 @@
                 <div class="col-sm-6">
                     <div class="m-t-80">
                         <div class="text-dark text-uppercase d-inline-block">
-                            <span class="font-weight-semibold text-dark">Mã đơn hàng :</span>
+                            <span class="font-weight-semibold text-dark">Mã đơn thuê :</span>
                         </div>
                         <div class="float-right">#@Model.RentalId</div>
                     </div>
                     <div class="text-dark text-uppercase d-inline-block">
-                        <span class="font-weight-semibold text-dark">Ngày đặt hàng :</span>
+                        <span class="font-weight-semibold text-dark">Ngày tạo đơn thuê :</span>
                     </div>
                     <div class="float-right">@Model.OrderTime</div>
                     <br />
+                    @if (Model.RentalStatusId == 3)
+                    {
+                        <div class="text-dark text-uppercase d-inline-block">
+                            <span class="font-weight-semibold text-dark">Thời gian nhận xe :</span>
+                        </div>
+                        <div class="float-right">@Model.PickupTime</div>
+                        <br />
+                        <div class="text-dark text-uppercase d-inline-block">
+                            <span class="font-weight-semibold text-dark">Thời gian trả xe :</span>
+                        </div>
+                        <div class="float-right">@Model.ReturnTime</div>
+                        <br />
+                    }
+                    @if (Model.RentalStatusId == 2)
+                    {
+                        <div class="text-dark text-uppercase d-inline-block">
+                            <span class="font-weight-semibold text-dark">Thời gian nhận xe :</span>
+                        </div>
+                        <div class="float-right">@Model.PickupTime</div>
+                        <br />
+                    }
                     <div class="text-dark text-uppercase d-inline-block">
                         <span class="font-weight-semibold text-dark">Trạng thái đơn hàng :</span>
                     </div>

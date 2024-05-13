@@ -638,7 +638,6 @@
     <None Include="wwwroot\adminassets\vendors\prism\prism-themes\LICENSE" />
     <None Include="wwwroot\adminassets\vendors\prism\prism-themes\README.md" />
     <None Include="wwwroot\adminassets\vendors\prism\prism.js" />
-    <None Include="wwwroot\adminassets\vendors\quill\quill.min.js" />
     <None Include="wwwroot\adminassets\vendors\select2\LICENSE" />
     <None Include="wwwroot\adminassets\vendors\select2\README.md" />
     <None Include="wwwroot\adminassets\vendors\select2\release.sh" />

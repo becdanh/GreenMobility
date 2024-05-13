@@ -27,7 +27,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int page = 1, int isActive = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 20;
+            var pageSize = 5;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });

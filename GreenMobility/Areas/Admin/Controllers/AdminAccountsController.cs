@@ -72,6 +72,8 @@ namespace GreenMobility.Areas.Admin.Controllers
                         new Claim(ClaimTypes.Email, employee.Email),
                         new Claim("EmployeeId", employee.EmployeeId.ToString()),
                         new Claim("RoleId", employee.RoleId.ToString()),
+                        new Claim("ParkingId", employee.ParkingId.ToString()),
+                        new Claim("Photo", employee.Photo.ToString()),
                         new Claim(ClaimTypes.Role, employee.Role.RoleName)
                     };
 
