@@ -24,11 +24,10 @@ namespace GreenMobility.Areas.Admin.Controllers
             _notyf = notyf;
         }
 
-        // GET: Admin/AdminCustomers
         public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 10;
+            var pageSize = 20;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
@@ -90,15 +89,11 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(customer);
         }
 
-        // GET: Admin/AdminCustomers/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/AdminCustomers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CustomerId,FullName,Phone,Email,Address,Password,Salt,CreateDate,LastLogin,IsLocked")] Customer customer)
@@ -112,7 +107,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(customer);
         }
 
-        // GET: Admin/AdminCustomers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -128,9 +122,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(customer);
         }
 
-        // POST: Admin/AdminCustomers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CustomerId,FullName,Phone,Email,Address,Password,Salt,CreateDate,LastLogin,IsLocked")] Customer customer)
@@ -163,38 +154,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(customer);
         }
 
-        // GET: Admin/AdminCustomers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
-        }
-
-        // POST: Admin/AdminCustomers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool CustomerExists(int id)
         {

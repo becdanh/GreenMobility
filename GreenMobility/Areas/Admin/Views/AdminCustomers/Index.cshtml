@@ -16,16 +16,6 @@
                 </nav>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="text-md-right">
-                <div>
-                    <a class="btn btn-primary" asp-controller="AdminCustomers" asp-action="Create">
-                        <i class="anticon anticon-plus-circle m-r-5"></i>
-                        <span>Thêm mới khách hàng</span>
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <div class="card">
@@ -41,7 +31,7 @@
                     </div>
                     <div class="d-md-flex">
                         <div class="m-b-10">
-                            <select class="custom-select" id="idstatus" name="idstatus" style="min-width: 180px;" asp-items="ViewBag.lsStatus">
+                            <select class="custom-select" id="status" name="status" style="min-width: 180px;" asp-items="ViewBag.lsStatus">
                                 <option value="" disabled selected>Chọn trạng thái</option>
                             </select>
                         </div>
@@ -120,8 +110,8 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $("#idstatus, #keyword").change(function () {
-                var status = $("#idstatus").children(":selected").val();
+            $("#status, #keyword").change(function () {
+                var status = $("#status").children(":selected").val();
                 var keyword = $("#keyword").val();
                 status = parseFloat(status);
                 $('#idstatus option').removeAttr('selected');
@@ -144,7 +134,7 @@
         });
         $(function () {
             var status = @ViewBag.CurrentStatus;
-            $("#idstatus").val(status);
+            $("#status").val(status);
             var keyword = "@ViewBag.Keyword";
             $("#keyword").val(keyword);
         });
