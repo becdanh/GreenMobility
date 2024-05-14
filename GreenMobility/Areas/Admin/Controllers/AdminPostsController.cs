@@ -32,7 +32,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 10;
+            var pageSize = 20;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
@@ -101,13 +101,16 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PostId,Title,Contents,Published,Alias,CreatedDate,Author,AccountId,Thumb")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
+        public async Task<IActionResult> Create([Bind("PostId,Title,Contents,Published,Alias,CreatedDate,AccountId,Thumb,ShortContents")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
         {
             if (string.IsNullOrWhiteSpace(post.Title))
                 ModelState.AddModelError("Title", "Tiêu đề không được để trống");
 
             if (string.IsNullOrWhiteSpace(post.Contents))
                 ModelState.AddModelError("Contents", "Nội dung không được để trống");
+
+            if (string.IsNullOrWhiteSpace(post.Contents))
+                ModelState.AddModelError("ShortContents", "Mô tả ngắn không được để trống");
 
             if (ModelState.IsValid)
             {
@@ -147,7 +150,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PostId,Title,Contents,Published,Alias,CreatedDate,Author,AccountId,Thumb")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
+        public async Task<IActionResult> Edit(int id, [Bind("PostId,Title,Contents,Published,Alias,CreatedDate,AccountId,Thumb,ShortContents")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
         {
             if (id != post.PostId)
             {
@@ -159,6 +162,9 @@ namespace GreenMobility.Areas.Admin.Controllers
 
             if (string.IsNullOrWhiteSpace(post.Contents))
                 ModelState.AddModelError("Contents", "Nội dung không được để trống");
+
+            if (string.IsNullOrWhiteSpace(post.Contents))
+                ModelState.AddModelError("ShortContents", "Mô tả ngắn không được để trống");
 
             if (ModelState.IsValid)
             {
@@ -196,7 +202,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(post);
         }
 
-        // GET: Admin/AdminPosts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Posts == null)
@@ -214,7 +219,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(post);
         }
 
-        // POST: Admin/AdminPosts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

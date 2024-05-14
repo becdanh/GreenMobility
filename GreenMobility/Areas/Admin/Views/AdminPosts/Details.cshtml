@@ -53,6 +53,10 @@
                             <td class="text-dark font-weight-semibold">@Model.Title</td>
                         </tr>
                         <tr>
+                            <td>Mô tả ngắn:</td>
+                            <td>@Model.ShortContents</td>
+                        </tr>
+                        <tr>
                             <td>Alias:</td>
                             <td>@Model.Alias</td>
                         </tr>
@@ -84,3 +88,12 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById("deleteForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (confirm("Bạn có chắc chắn muốn xóa tin tức này?")) {
+            this.submit();
+        }
+    });
+</script>

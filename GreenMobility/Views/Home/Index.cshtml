@@ -98,7 +98,7 @@
                     <div class="blog-item">
                         <div class="blog-img img-zoom-effect">
                             <a href="@url">
-                                <img class="img-full h-100" src="~/images/posts/@post.Thumb" alt="@post.Title">
+                                <img class="img-full h-100" src="~/images/posts/@post.Thumb" alt="@post.Title" style="width: 370px; height: 315px;">
                             </a>
                         </div>
                         <div class="blog-content">
@@ -110,6 +110,7 @@
                             <h5 class="title mb-4">
                                 <a href="@url">@post.Title</a>
                             </h5>
+                            <p class="short-desc mb-5">@post.ShortContents</p>
                             <div class="button-wrap">
                                 <a class="btn btn-custom-size btn-dark btn-lg rounded-0" href="@url">@_localization.Getkey("ReadMore")</a>
                             </div>
