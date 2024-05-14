@@ -57,8 +57,10 @@
                         </p>
                     </div>
                     <div>
-                        <label for="Thumb" class="btn btn-tone btn-primary">Chọn ảnh</label>
-                        <input type="file" name="fThumb" asp-for="Thumb" onchange="previewAvatar(event)" style="display: none;">
+                        <label for="fthumb" class="btn btn-tone btn-primary">
+                            <span>Chọn ảnh</span>
+                            <input type="file" id="fthumb" name="fthumb" asp-for="Thumb" onchange="previewAvatar(event)" style="display: none;">
+                        </label>
                     </div>
                 </div>
 
@@ -67,6 +69,11 @@
                     <label class="font-weight-semibold" for="Title">Tiêu đề:</label>
                     <input type="text" class="form-control" asp-for="Title" autofocus>
                     @Html.ValidationMessage("Title", "", new { @style = "color:#f00" })
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-semibold" for="ShortContents">Mô tả ngắn:</label>
+                    <input type="text" class="form-control" asp-for="ShortContents" autofocus>
+                    @Html.ValidationMessage("ShortContens", "", new { @style = "color:#f00" })
                 </div>
                 <div class="form-group d-flex align-items-center">
                     <div class="switch m-r-10">
@@ -90,7 +97,6 @@
 </form>
 
 @section Scripts {
-
     <script src="~/adminassets/vendors/select2/select2.min.js"></script>
     <script src="~/adminassets/js/pages/e-commerce-product-edit.js"></script>
     <script src="~/adminassets/summernote/summernote-bs4.js"></script>
@@ -105,9 +111,16 @@
                 height: 200,
                 minHeight: null,
                 maxHeight: null,
-                focus: true
             });
         });
+        function previewAvatar(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('avatarPreview');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
     </script>
 }
 

@@ -19,7 +19,7 @@ public partial class Post
 
     public DateTime? CreatedDate { get; set; }
 
-    public string? Author { get; set; }
-
     public int? AccountId { get; set; }
+
+    public string? ShortContents { get; set; }
 }

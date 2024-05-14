@@ -142,11 +142,9 @@ public partial class GreenMobilityContext : DbContext
             entity.Property(e => e.Alias)
                 .HasMaxLength(255)
                 .UseCollation("SQL_Latin1_General_CP1_CI_AS");
-            entity.Property(e => e.Author)
-                .HasMaxLength(255)
-                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Contents).UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.ShortContents).HasMaxLength(255);
             entity.Property(e => e.Thumb)
                 .HasMaxLength(255)
                 .UseCollation("SQL_Latin1_General_CP1_CI_AS");
