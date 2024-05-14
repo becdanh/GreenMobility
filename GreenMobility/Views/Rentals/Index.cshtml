@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Thuê xe: page " + ViewBag.CurrentPage;
     Layout = "~/Views/Shared/_Layout.cshtml";
-    int CurrentPage = ViewBag.CurrentPage;
 }
 <main class="main-content">
     <div class="breadcrumb-area breadcrumb-height" data-bg-image="assets/images/breadcrumb/bg/becdanhphoto.png">
@@ -26,16 +25,22 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="product-topbar">
-                        <ul>
-                            <li class="product-view-wrap">
-                            </li>
-                            <li class="page-count">
-                                <span>@_localization.Getkey("Total") @Model.TotalItemCount @_localization.Getkey("Parking")</span>
-                            </li>
-                            <li class="short">
-                            </li>
-                        </ul>
+                    <div class="row">
+                        <div class="col-lg-4 widgets-searchbox mb-9">
+                            <form id="widgets-searchbox" action="#">
+                                <input id="keyword" name="keyword" class="input-field" type="text" placeholder="Search">
+                                <button class="widgets-searchbox-btn" type="submit">
+                                    <i class="pe-7s-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-lg-8 product-topbar">
+                            <ul class="d-flex justify-content-center">
+                                <li class="page-count m-l-2 d-flex justify-content-center align-items-center">
+                                    <span>@_localization.Getkey("Total") @Model.TotalItemCount @_localization.Getkey("Parking")</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="tab-content text-charcoal pt-8">
                         <div class="tab-pane fade show active" id="grid-view" role="tabpanel" aria-labelledby="grid-view-tab">
@@ -67,34 +72,67 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pagination-area pt-10">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                                    <a class="page-link" href="@Url.Action("Index", new { page = Model.HasPreviousPage ? Model.PageNumber - 1 : 1 })" aria-label="Previous">
-                                        <span class="fa fa-chevron-left" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </a>
-                                </li>
-
-                                @for (int i = 1; i <= Model.PageCount; i++)
-                                {
-                                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                                        <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        <div class="pagination-area pt-10">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.HasPreviousPage ? Model.PageNumber - 1 : 1)" asp-route-keyword="@ViewBag.Keyword" aria-label="Previous">
+                                            <span class="fa fa-chevron-left" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </a>
                                     </li>
-                                }
 
-                                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                                    <a class="page-link" href="@Url.Action("Index", new { page = Model.HasNextPage ? Model.PageNumber + 1 : Model.PageNumber })" aria-label="Next">
-                                        <span class="fa fa-chevron-right" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                                    @for (int i = 1; i <= Model.PageCount; i++)
+                                    {
+                                        <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                                            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-keyword="@ViewBag.Keyword">@i</a>
+                                        </li>
+                                    }
+
+                                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.HasNextPage ? Model.PageNumber + 1 : Model.PageNumber)" asp-route-keyword="@ViewBag.Keyword" aria-label="Next">
+                                            <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </main>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#keyword").change(function () {
+                var keyword = $("#keyword").val();
+                status = parseFloat(status);
+                $('#status option').removeAttr('selected');
+                $("#status > [value = " + status + "]").attr("selected", true);
+                $.ajax({
+                    url: 'Rentals/Search',
+                    dataType: "json",
+                    type: 'GET',
+                    data: { keyword: keyword },
+                    success: function (response) {
+                        if (response.status === "success") {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+        $(function () {
+            var keyword = "@ViewBag.Keyword";
+            $("#keyword").val(keyword);
+        });
+    </script>
+}
