@@ -16,16 +16,26 @@ namespace GreenMobility.Controllers
         }
 
         [Route("rentals", Name = "Rental")]
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string keyword = "")
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
             var pageSize = 8;
-            var lsParkings = _context.Parkings
+
+            IQueryable<Parking> parkingQuery = _context.Parkings
                 .AsNoTracking()
                 .OrderByDescending(x => x.ParkingName)
                 .Include(p => p.Bicycles);
 
-            PagedList<Parking> models = new PagedList<Parking>(lsParkings, pageNumber, pageSize);
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                keyword = keyword.Trim().ToLower();
+                parkingQuery = parkingQuery
+                    .Where(x => x.ParkingName.ToLower().Contains(keyword)
+                            || x.Address.ToLower().Contains(keyword));
+            }
+            var lsParkings = await parkingQuery.ToListAsync();
+
+            PagedList<Parking> models = new PagedList<Parking>(lsParkings.AsQueryable(), pageNumber, pageSize);
 
             Dictionary<int, int> bicycleCounts = new Dictionary<int, int>();
             foreach (var parking in models)
@@ -33,10 +43,18 @@ namespace GreenMobility.Controllers
                 int bicycleCount = parking.Bicycles.Count(x => x.BicycleStatusId == 1);
                 bicycleCounts.Add(parking.ParkingId, bicycleCount);
             }
-
-            ViewBag.CurrentPage = pageNumber;
+            ViewBag.Keyword = keyword;
             ViewBag.BicycleCounts = bicycleCounts;
             return View(models);
+        }
+        public IActionResult Search(string keyword = "")
+        {
+            var url = $"/rentals?keyword={keyword}";
+            if (string.IsNullOrEmpty(keyword))
+            {
+                url = "/rentals";
+            }
+            return Json(new { status = "success", redirectUrl = url });
         }
 
 
