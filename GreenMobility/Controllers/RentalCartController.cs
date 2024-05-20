@@ -82,7 +82,7 @@ namespace GreenMobility.Controllers
                 rentalCart.Add(item);
                 HttpContext.Session.Set<List<CartItemVM>>("RentalCart", rentalCart);
                 string successMessage = _localization.Getkey("SuccessAdd");
-                return Json(new { success = true, message = successMessage });
+                return Json(new { success = true, message = successMessage });return Json(new { success = true, message = successMessage });
             }
             catch
             {

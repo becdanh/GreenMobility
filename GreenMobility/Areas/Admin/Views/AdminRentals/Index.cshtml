@@ -35,6 +35,49 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-4 text-right">
+                <button id="exportExcelButton" class="btn btn-primary"><i class="anticon anticon-file-excel m-r-5"></i><span>Xuất Excel</span></button>
+            </div>
+            <div id="exportExcelModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exportExcelModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exportExcelModalLabel">Chọn kiểu xuất Excel</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="exportOption">Chọn kiểu xuất Excel:</label>
+                                <select class="form-control" id="exportOption">
+                                    <option value="dateRange">Ngày</option>
+                                    <option value="month">Tháng</option>
+                                    <option value="year">Năm</option>
+                                </select>
+                            </div>
+                            <div class="form-group dateRange">
+                                <label for="fromDate">Từ ngày:</label>
+                                <input type="datetime-local" id="fromDate" name="fromDate" class="form-control" />
+                                <label for="toDate">Đến ngày:</label>
+                                <input type="datetime-local" id="toDate" name="toDate" class="form-control" />
+                            </div>
+                            <div class="form-group month" style="display: none;">
+                                <label for="month">Chọn tháng:</label>
+                                <input type="month" id="month" name="month" class="form-control" />
+                            </div>
+                            <div class="form-group year" style="display: none;">
+                                <label for="year">Chọn năm:</label>
+                                <input type="number" id="year" name="year" class="form-control" min="2000" max="2100" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="confirmExportButton">Xuất Excel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table">
@@ -122,6 +165,67 @@
                     }
                 });
             });
+
+            function getCurrentDateTime() {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = ('0' + (now.getMonth() + 1)).slice(-2);
+                var date = ('0' + now.getDate()).slice(-2);
+                var hours = ('0' + now.getHours()).slice(-2);
+                var minutes = ('0' + now.getMinutes()).slice(-2);
+                var currentDate = `${year}-${month}-${date}`;
+                var currentDateTime = `${currentDate}T${hours}:${minutes}`;
+                var currentMonth = `${year}-${month}`;
+                return { currentDateTime, currentMonth, year };
+            }
+
+            $("#exportExcelButton").click(function () {
+                var { currentDateTime, currentMonth, year } = getCurrentDateTime();
+                $("#fromDate").val(currentDateTime);
+                $("#toDate").val(currentDateTime);
+                $("#month").val(currentMonth);
+                $("#year").val(year);
+                $("#exportExcelModal").modal("show");
+            });
+
+            $("#exportOption").change(function () {
+                var exportOption = $(this).val();
+                $(".dateRange, .month, .year").hide();
+                if (exportOption === "dateRange") {
+                    $(".dateRange").show();
+                } else if (exportOption === "month") {
+                    $(".month").show();
+                } else if (exportOption === "year") {
+                    $(".year").show();
+                }
+            });
+
+            $("#confirmExportButton").click(function () {
+                var exportOption = $("#exportOption").val();
+                var fromDate = $("#fromDate").val();
+                var toDate = $("#toDate").val();
+                var month = $("#month").val();
+                var year = $("#year").val();
+
+                $.ajax({
+                    dataType: 'json',
+                    type: 'GET',
+                    url: '/Admin/AdminRentals/ExportExcel',
+                    data: { exportOption: exportOption, fromDate: fromDate, toDate: toDate, month: month, year: year },
+                    success: function (response) {
+                        if (response.success) {
+                            window.location.href = response.fileUrl;
+                        } else {
+                            alert("Đã xảy ra lỗi khi xuất Excel");
+                        }
+                        $("#exportExcelModal").modal("hide");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                        $("#exportExcelModal").modal("hide");
+                    }
+                });
+            });
         });
         $(function () {
             var status = @ViewBag.CurrentStatus;
@@ -129,5 +233,6 @@
             var keyword = "@ViewBag.CurrentKeyword";
             $("#keyword").val(keyword);
         });
+
     </script>
 } 

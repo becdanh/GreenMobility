@@ -13,7 +13,7 @@
                 <nav class="breadcrumb breadcrumb-dash">
                     <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
                     <a asp-area="Admin" asp-controller="AdminRentals" asp-action="Index" class="breadcrumb-item">Danh sách đơn thuê xe</a>
-                    <span class="breadcrumb-item active">Thông tin đơn thuê xe : #@Model.RentalId</span>
+                    <span class="breadcrumb-item active">Thông tin đơn thuê xe : </span>
                 </nav>
             </div>
         </div>
@@ -24,7 +24,7 @@
         <div id="invoice" class="p-h-30">
             <div class="row m-t-20 lh-2">
                 <div class="col-sm-6">
-                    <h3 class="p-l-10 m-t-10">THÔNG TIN ĐƠN THUÊ:</h3>
+                    <h3 class="p-l-10 m-t-10">THÔNG TIN ĐƠN THUÊ: #@Model.RentalId</h3>
                     <address class="p-l-10 m-t-10">
                         <span class="font-weight-semibold text-dark">Họ và Tên: @Model.Customer.FullName</span><br>
                         <span>Số điện thoại: @Model.Customer.Phone</span>

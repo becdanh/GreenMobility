@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using PagedList.Core;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Extensions.Hosting;
 
 namespace GreenMobility.Areas.Admin.Controllers
 {
@@ -19,10 +22,12 @@ namespace GreenMobility.Areas.Admin.Controllers
     {
         private readonly GreenMobilityContext _context;
         private readonly INotyfService _notyf;
-        public AdminRentalsController(GreenMobilityContext context, INotyfService notyf)
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public AdminRentalsController(GreenMobilityContext context, INotyfService notyf, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
             _notyf = notyf;
+            _hostEnvironment = hostEnvironment;
         }
 
         public async Task<IActionResult> Index(int? page, int status = 0, string keyword = "")
@@ -167,11 +172,13 @@ namespace GreenMobility.Areas.Admin.Controllers
 
                             var parkingIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "ParkingId");
 
+                            int? parkingId = null;
                             if (parkingIdClaim != null)
                             {
-                                if (int.TryParse(parkingIdClaim.Value, out int parkingId))
+                                if (int.TryParse(parkingIdClaim.Value, out int parsedParkingId))
                                 {
-                                    rent.ReturnParking = parkingId;
+                                    parkingId = parsedParkingId;
+                                    rent.ReturnParking = parsedParkingId;
                                 }
                             }
 
@@ -190,6 +197,10 @@ namespace GreenMobility.Areas.Admin.Controllers
                                 if (bicycle != null)
                                 {
                                     bicycle.BicycleStatusId = 1;
+                                    if (parkingId.HasValue)
+                                    {
+                                        bicycle.ParkingId = parkingId.Value;
+                                    }
                                     _context.Update(bicycle);
                                 }
                             }
@@ -205,6 +216,24 @@ namespace GreenMobility.Areas.Admin.Controllers
                                 {
                                     bicycle.BicycleStatusId = 1;
                                     _context.Update(bicycle);
+                                }
+                            }
+                        }
+
+                        if (rent.RentalStatusId == 6)
+                        {
+                            var employyeeIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "EmployeeId");
+                            if (employyeeIdClaim != null && int.TryParse(employyeeIdClaim.Value, out int employeeId))
+                            {
+                                var employee = await _context.Employees.FirstOrDefaultAsync(e => e.EmployeeId == employeeId);
+                                if (employee != null && employee.ParkingId == rent.PickupParking)
+                                {
+                                    rent.RentalStatusId = rental.RentalStatusId;
+                                }
+                                else
+                                {
+                                    _notyf.Error("Nhân viên không thuộc bãi đỗ xe này.");
+                                    return RedirectToAction("Index");
                                 }
                             }
                         }
@@ -230,6 +259,82 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
             ViewData["Status"] = new SelectList(_context.RentalStatuses, "RentalStatusId", "Description", rental.RentalStatusId);
             return PartialView("Edit", rental);
+        }
+
+        public async Task<IActionResult> ExportExcel(string exportOption, DateTime? fromDate, DateTime? toDate, string month, int? year)
+        {
+            IQueryable<Rental> rentalsQuery = _context.Rentals
+                .Include(r => r.Customer)
+                .Include(r => r.PickupParkingNavigation)
+                .Include(r => r.RentalStatus)
+                .Include(r => r.RentalDetails)
+                    .ThenInclude(rd => rd.Bicycle);
+
+            switch (exportOption)
+            {
+                case "dateRange":
+                    if (fromDate.HasValue)
+                    {
+                        rentalsQuery = rentalsQuery.Where(r => r.OrderTime >= fromDate.Value);
+                    }
+                    if (toDate.HasValue)
+                    {
+                        rentalsQuery = rentalsQuery.Where(r => r.OrderTime <= toDate.Value);
+                    }
+                    break;
+                case "month":
+                    if (!string.IsNullOrEmpty(month))
+                    {
+                        DateTime selectedMonth = DateTime.Parse(month);
+                        rentalsQuery = rentalsQuery.Where(r => r.OrderTime.Year == selectedMonth.Year && r.OrderTime.Month == selectedMonth.Month);
+                    }
+                    break;
+                case "year":
+                    if (year.HasValue)
+                    {
+                        rentalsQuery = rentalsQuery.Where(r => r.OrderTime.Year == year.Value);
+                    }
+                    break;
+            }
+
+            var rentals = await rentalsQuery.ToListAsync();
+
+            if (rentals == null || !rentals.Any())
+            {
+                _notyf.Error("Không có dữ liệu phù hợp để xuất.");
+                return NotFound();
+            }
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Rentals");
+
+                worksheet.Cell(1, 1).Value = "Rental ID";
+                worksheet.Cell(1, 2).Value = "Tên khách hàng";
+                worksheet.Cell(1, 3).Value = "Bãi đỗ";
+                worksheet.Cell(1, 4).Value = "Ngày đặt";
+                worksheet.Cell(1, 5).Value = "Tổng tiền";
+                worksheet.Cell(1, 6).Value = "Trạng thái";
+
+                int currentRow = 2;
+                foreach (var rental in rentals)
+                {
+                    worksheet.Cell(currentRow, 1).Value = rental.RentalId;
+                    worksheet.Cell(currentRow, 2).Value = rental.Customer.FullName;
+                    worksheet.Cell(currentRow, 3).Value = rental.PickupParkingNavigation.ParkingName;
+                    worksheet.Cell(currentRow, 4).Value = rental.OrderTime;
+                    worksheet.Cell(currentRow, 5).Value = rental.TotalMoney;
+                    worksheet.Cell(currentRow, 6).Value = rental.RentalStatus.Description;
+                    currentRow++;
+                }
+
+                string fileName = $"Export_Rentals_{DateTime.Now.Ticks}.xlsx";
+                var filePath = Path.Combine(_hostEnvironment.WebRootPath, "Resources", "ExportExcel", fileName);
+                workbook.SaveAs(filePath);
+
+                string fileUrl = $"{Request.Scheme}://{Request.Host}/Resources/ExportExcel/{fileName}";
+                return Json(new { success = true, message = "Xuất Excel thành công", fileUrl = fileUrl });
+            }
         }
 
         private bool RentalExists(int id)
