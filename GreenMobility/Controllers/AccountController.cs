@@ -294,6 +294,44 @@ namespace GreenMobility.Controllers
 
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CancelRental(int rentalId)
+        {
+            var rental = await _context.Rentals
+                .Include(r => r.RentalDetails)
+                .FirstOrDefaultAsync(r => r.RentalId == rentalId);
+
+            if (rental == null)
+            {
+                return NotFound();
+            }
+
+            if (rental.RentalStatusId != 1 && rental.RentalStatusId != 6)
+            {
+                _notyf.Error("Không thể hủy đơn hàng này.");
+                return RedirectToAction("RentalList", "Account");
+            }
+
+            rental.RentalStatusId = 5;
+
+            foreach (var detail in rental.RentalDetails)
+            {
+                var bicycle = await _context.Bicycles.FindAsync(detail.BicycleId);
+                if (bicycle != null)
+                {
+                    bicycle.BicycleStatusId = 1;
+                    _context.Update(bicycle);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            _notyf.Success("Đã hủy đơn thuê thành công");
+            return RedirectToAction("RentalList", "Account");
+        }
+
+
         private bool EmailExists(string email)
         {
             return _context.Customers.Any(p => p.Email == email);

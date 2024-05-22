@@ -153,6 +153,12 @@
   <data name="BookingRidingPayment" xml:space="preserve">
     <value>Đặt xe - Đi xe - Thanh toán</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="Cancle" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
   <data name="CartTotals" xml:space="preserve">
     <value>Tổng giỏ thuê</value>
   </data>

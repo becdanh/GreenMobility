@@ -153,6 +153,12 @@
   <data name="BookingRidingPayment" xml:space="preserve">
     <value>Booking - Riding - Payment</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Cancle" xml:space="preserve">
+    <value>Cancle</value>
+  </data>
   <data name="CartTotals" xml:space="preserve">
     <value>Cart totals</value>
   </data>
@@ -351,9 +357,6 @@ When picking up the vehicle, check the information and begin your journey.</valu
     <value>Upon completing the ride, the staff will calculate the total fare based on the rental duration and any additional fees.
 Payment can be made through online payment methods or directly in cash to the staff.
 Confirm and review the payment details on the app or website to complete the vehicle rental process.</value>
-  </data>
-  <data name="String1" xml:space="preserve">
-    <value />
   </data>
   <data name="Submit" xml:space="preserve">
     <value>Submit</value>

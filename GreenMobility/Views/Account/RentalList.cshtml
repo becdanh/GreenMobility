@@ -49,7 +49,11 @@
                                             <td>@item.RentalStatus.Description</td>
                                             <td>@item.TotalMoney?.ToString("#,##0") VNĐ</td>
                                             <td>
-                                                <a href="javascript:void(0)" class="viewrental" data-rentalid="@item.RentalId">@_localization.Getkey("View")</a>
+                                                <a href="javascript:void(0)" class="viewrental" data-rentalid="@item.RentalId">@_localization.Getkey("View")</a> |
+                                                @if (item.RentalStatusId == 1 || item.RentalStatusId == 6)
+                                                {
+                                                    <a href="javascript:void(0)" class="cancelrental" data-rentalid="@item.RentalId">@_localization.Getkey("Cancel")</a>
+                                                }
                                             </td>
                                         </tr>
                                     }
@@ -79,6 +83,21 @@
                     success: function (results) {
                         $("#records_table").html("");
                         $("#records_table").html(results);
+                    },
+                    error: function (xhr) {
+                        console.log(xhr);
+                    }
+                });
+            });
+            $(".cancelrental").click(function () {
+                var rentalId = $(this).attr("data-rentalid");
+                $.ajax({
+                    url: '/Account/CancelRental',
+                    type: "POST",
+                    data: { rentalId: rentalId },
+                    success: function (results) {
+                        console.log("Đã hủy đơn thuê thành công");
+                        window.location.reload(); // Reload trang sau khi hủy đơn thuê thành công
                     },
                     error: function (xhr) {
                         console.log(xhr);
