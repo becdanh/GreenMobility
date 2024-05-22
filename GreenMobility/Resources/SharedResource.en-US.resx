@@ -171,6 +171,9 @@
   <data name="COD" xml:space="preserve">
     <value>Payment upon vehicle return (COD)</value>
   </data>
+  <data name="CompareConfirmAndNewPassword" xml:space="preserve">
+    <value>The new password and confirmation password do not match</value>
+  </data>
   <data name="ComparePassword" xml:space="preserve">
     <value>Passwords do not match. Please try again.</value>
   </data>
@@ -179,6 +182,9 @@
   </data>
   <data name="CurrentPassword" xml:space="preserve">
     <value>Current password</value>
+  </data>
+  <data name="CurrentPasswordRequired" xml:space="preserve">
+    <value>Please enter the current password</value>
   </data>
   <data name="CustomersWillPay" xml:space="preserve">
     <value>Customers will pay upon returning the vehicle.</value>
@@ -246,6 +252,9 @@
   <data name="NewPassword" xml:space="preserve">
     <value>New password</value>
   </data>
+  <data name="NewPasswordRequired" xml:space="preserve">
+    <value>Please enter a new password</value>
+  </data>
   <data name="NoBikeInCart" xml:space="preserve">
     <value>No bikes have been rented yet. Let's actively pedal!</value>
   </data>
@@ -260,6 +269,9 @@
   </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
+  </data>
+  <data name="PasswordMinLenght" xml:space="preserve">
+    <value>The Password must be at least 5 characters long</value>
   </data>
   <data name="PasswordRequired" xml:space="preserve">
     <value>Please enter your password.</value>

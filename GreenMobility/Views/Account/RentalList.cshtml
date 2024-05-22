@@ -49,9 +49,10 @@
                                             <td>@item.RentalStatus.Description</td>
                                             <td>@item.TotalMoney?.ToString("#,##0") VNĐ</td>
                                             <td>
-                                                <a href="javascript:void(0)" class="viewrental" data-rentalid="@item.RentalId">@_localization.Getkey("View")</a> |
+                                                <a href="javascript:void(0)" class="viewrental" data-rentalid="@item.RentalId">@_localization.Getkey("View")</a>
                                                 @if (item.RentalStatusId == 1 || item.RentalStatusId == 6)
                                                 {
+                                                    <span> | </span>
                                                     <a href="javascript:void(0)" class="cancelrental" data-rentalid="@item.RentalId">@_localization.Getkey("Cancel")</a>
                                                 }
                                             </td>
