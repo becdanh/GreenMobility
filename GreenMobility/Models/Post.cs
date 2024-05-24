@@ -22,4 +22,6 @@ public partial class Post
     public int? AccountId { get; set; }
 
     public string? ShortContents { get; set; }
+
+    public bool? IsDeleted { get; set; }
 }

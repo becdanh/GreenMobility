@@ -24,6 +24,7 @@ namespace GreenMobility.Controllers
             IQueryable<Parking> parkingQuery = _context.Parkings
                 .AsNoTracking()
                 .OrderByDescending(x => x.ParkingName)
+                .Where(x => x.IsDeleted == false && x.IsActive == true)
                 .Include(p => p.Bicycles);
 
             if (!string.IsNullOrEmpty(keyword))
@@ -66,7 +67,7 @@ namespace GreenMobility.Controllers
                 var LsBicycles = _context.Bicycles
                     .AsNoTracking()
                     .Include(x => x.Parking)
-                    .Where(x => x.ParkingId == parking.ParkingId && x.BicycleStatusId == 1)
+                    .Where(x => x.ParkingId == parking.ParkingId && x.BicycleStatusId == 1 && x.IsDeleted == false)
                     .OrderByDescending(x => x.DateCreated);
                 PagedList<Bicycle> models = new PagedList<Bicycle>(LsBicycles, page, pageSize);
                 ViewBag.CurrentPage = page;

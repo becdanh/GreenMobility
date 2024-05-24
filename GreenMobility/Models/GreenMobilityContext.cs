@@ -131,6 +131,8 @@ public partial class GreenMobilityContext : DbContext
             entity.Property(e => e.ParkingId).HasColumnName("ParkingID");
             entity.Property(e => e.Address).HasMaxLength(50);
             entity.Property(e => e.Alias).HasMaxLength(50);
+            entity.Property(e => e.DateCreated).HasColumnType("datetime");
+            entity.Property(e => e.DateModified).HasColumnType("datetime");
             entity.Property(e => e.ParkingName).HasMaxLength(50);
             entity.Property(e => e.Photo).HasMaxLength(255);
         });

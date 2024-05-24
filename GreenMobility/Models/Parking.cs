@@ -17,6 +17,12 @@ public partial class Parking
 
     public string? Photo { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
+    public DateTime? DateCreated { get; set; }
+
+    public DateTime? DateModified { get; set; }
+
     public virtual ICollection<Bicycle> Bicycles { get; set; } = new List<Bicycle>();
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
