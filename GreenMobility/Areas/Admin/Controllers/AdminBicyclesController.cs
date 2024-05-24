@@ -29,12 +29,13 @@ namespace GreenMobility.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 3;
+            var pageSize = 20;
 
             IQueryable<Bicycle> bicycleQuery = _context.Bicycles
                 .AsNoTracking()
                 .Include(x => x.Parking)
-                .Include(x => x.BicycleStatus);
+                .Include(x => x.BicycleStatus)
+                .Where(x => x.IsDeleted == false);
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -42,6 +43,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 bicycleQuery = bicycleQuery
                     .Where(x => x.BicycleName.ToLower().Contains(keyword)
                             || x.Parking.Address.Contains(keyword)
+                            || x.Parking.ParkingName.Contains(keyword)
                             || x.LicensePlate.Contains(keyword));
             }
             if (status != 0)
@@ -54,7 +56,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             PagedList<Bicycle> models = new PagedList<Bicycle>(lsBicycles.AsQueryable(), pageNumber, pageSize);
             ViewBag.CurrentPage = pageNumber;
             ViewBag.CurrentStatus = status;
-            ViewData["TrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description", status);
+            ViewData["Status"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description", status);
             ViewBag.Keyword = keyword;
             return View(models);
         }
@@ -239,7 +241,6 @@ namespace GreenMobility.Areas.Admin.Controllers
         }
 
 
-        // POST: Admin/Bicycles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -252,8 +253,10 @@ namespace GreenMobility.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                _context.Bicycles.Remove(bicycle);
+                bicycle.IsDeleted = true;
+                _context.Update(bicycle);
                 await _context.SaveChangesAsync();
+
                 _notyf.Success("Xóa xe đạp thành công");
                 return RedirectToAction(nameof(Index));
             }
@@ -263,6 +266,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
 
         private bool BicycleExists(int id)
         {

@@ -42,7 +42,7 @@ namespace GreenMobility.Controllers
                 .Take(3)
                 .OrderByDescending(x => x.CreatedDate)
                 .ToList();
-            ViewBag.RecentPost = lsRecentPosts;
+            ViewBag.RecentPosts = lsRecentPosts;
             return View(post);
         }
     }
