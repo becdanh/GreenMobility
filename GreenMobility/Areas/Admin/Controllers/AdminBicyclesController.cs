@@ -92,14 +92,14 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            ViewData["lsBaiDo"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsBaiDo"] = new SelectList(_context.Parkings.Where(p => p.IsDeleted == false), "ParkingId", "ParkingName");
             ViewData["lsTrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId,RentalPrice")] Bicycle bicycle, IFormFile? fPhoto)
+        public async Task<IActionResult> Create([Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId,RentalPrice,IsDeleted")] Bicycle bicycle, IFormFile? fPhoto)
         {
             if (string.IsNullOrWhiteSpace(bicycle.BicycleName))
                 ModelState.AddModelError("BicycleName", "Tên xe không được để trống");
@@ -138,6 +138,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 bicycle.Alias = Utilities.SEOUrl(bicycle.LicensePlate);
                 bicycle.DateModified = DateTime.Now;
                 bicycle.DateCreated = DateTime.Now;
+                bicycle.IsDeleted = false;
 
                 _context.Add(bicycle);
                 await _context.SaveChangesAsync();
@@ -145,7 +146,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             _notyf.Error("Tạo mới thất bại, vui lòng kiểm tra lại thông tin");
-            ViewData["lsBaiDo"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsBaiDo"] = new SelectList(_context.Parkings.Where(p => p.IsDeleted == false), "ParkingId", "ParkingName");
             ViewData["lsTrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description");
             return View(bicycle);
 
@@ -164,14 +165,14 @@ namespace GreenMobility.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["lsBaiDo"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsBaiDo"] = new SelectList(_context.Parkings.Where(p => p.IsDeleted == false), "ParkingId", "ParkingName");
             ViewData["lsTrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description");
             return View(bicycle);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId,RentalPrice")] Bicycle bicycle, IFormFile? fPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("BicycleId,BicycleName,Description,ParkingId,LicensePlate,Photo,BicycleStatusId,RentalPrice,IsDeleted")] Bicycle bicycle, IFormFile? fPhoto)
         {
             if (id != bicycle.BicycleId)
             {
@@ -235,7 +236,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             _notyf.Error("Chỉnh sửa thất bại, vui lòng kiểm tra lại thông tin");
-            ViewData["lsBaiDo"] = new SelectList(_context.Parkings, "ParkingId", "ParkingName");
+            ViewData["lsBaiDo"] = new SelectList(_context.Parkings.Where(p => p.IsDeleted == false), "ParkingId", "ParkingName");
             ViewData["lsTrangThai"] = new SelectList(_context.BicycleStatuses, "BicycleStatusId", "Description");
             return View(bicycle);
         }

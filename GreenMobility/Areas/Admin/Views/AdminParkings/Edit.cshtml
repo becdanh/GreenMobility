@@ -8,6 +8,8 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="ParkingId" />
     <input type="hidden" asp-for="Photo" />
+    <input type="hidden" asp-for="DateCreated" />
+    <input type="hidden" asp-for="IsDeleted" />
     <div class="page-header no-gutters">
         <div class="row align-items-md-center">
             <div class="col-md-8">
@@ -27,7 +29,7 @@
                             <i class="anticon anticon-save"></i>
                             <span>Lưu</span>
                         </button>
-                        <a asp-area="Admin" asp-controller="AdminPosts" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                        <a asp-area="Admin" asp-controller="AdminParkings" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
                     </div>
                 </div>
             </div>

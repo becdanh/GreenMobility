@@ -27,7 +27,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int page = 1, int isActive = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 5;
+            var pageSize = 20;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
@@ -35,7 +35,9 @@ namespace GreenMobility.Areas.Admin.Controllers
             lsStatus.Add(new SelectListItem() { Text = "Khóa", Value = "2" });
             ViewData["lsStatus"] = lsStatus;
 
-            IQueryable<Parking> parkingQuery = _context.Parkings;
+            IQueryable<Parking> parkingQuery = _context.Parkings
+                .AsNoTracking()
+                .Where(x => x.IsDeleted == false);
 
             if (isActive == 1)
             {
@@ -79,7 +81,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
 
             var parking = await _context.Parkings
-                .FirstOrDefaultAsync(m => m.ParkingId == id);
+                .FirstOrDefaultAsync(m => m.ParkingId == id && m.IsDeleted == false);
             if (parking == null)
             {
                 return NotFound();
@@ -95,7 +97,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ParkingId,ParkingName,Address,IsActive,Photo")] Parking parking, IFormFile? fPhoto)
+        public async Task<IActionResult> Create([Bind("ParkingId,ParkingName,Address,IsActive,Photo,IsDeleted")] Parking parking, IFormFile? fPhoto)
         {
             if (string.IsNullOrWhiteSpace(parking.ParkingName))
                 ModelState.AddModelError("ParkingName", "Tên bãi đỗ không được để trống");
@@ -121,6 +123,10 @@ namespace GreenMobility.Areas.Admin.Controllers
                 if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
 
                 parking.Alias = Utilities.SEOUrl(parking.ParkingName);
+                parking.DateModified = DateTime.Now;
+                parking.DateCreated = DateTime.Now;
+                parking.IsDeleted = false;
+
                 _context.Add(parking);
                 await _context.SaveChangesAsync();
                 _notyf.Success("Tạo mới thành công");
@@ -136,8 +142,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
-            var parking = await _context.Parkings.FindAsync(id);
+            var parking = await _context.Parkings.FirstOrDefaultAsync(p => p.ParkingId == id && p.IsDeleted == false);
             if (parking == null)
             {
                 return NotFound();
@@ -147,7 +152,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ParkingId,ParkingName,Address,IsActive,Photo")] Parking parking, IFormFile? fPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("ParkingId,ParkingName,Address,IsActive,Photo,IsDeleted")] Parking parking, IFormFile? fPhoto)
         {
             if (id != parking.ParkingId)
             {
@@ -179,6 +184,8 @@ namespace GreenMobility.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(parking.Photo)) parking.Photo = "default.jpg";
 
                     parking.Alias = Utilities.SEOUrl(parking.ParkingName);
+                    parking.DateModified = DateTime.Now;
+
                     _context.Update(parking);
                     await _context.SaveChangesAsync();
                     _notyf.Success("Cập nhật bãi đỗ thành công");
@@ -206,14 +213,25 @@ namespace GreenMobility.Areas.Admin.Controllers
         {
             try
             {
+                var bicycles = await _context.Bicycles.Where(b => b.ParkingId == id).ToListAsync();
+                foreach (var bicycle in bicycles)
+                {
+                    bicycle.ParkingId = 2066;
+                    bicycle.BicycleStatusId = 4;
+                    _context.Update(bicycle);
+                }
+                await _context.SaveChangesAsync();
+
                 var parking = await _context.Parkings.FindAsync(id);
                 if (parking == null)
                 {
                     return NotFound();
                 }
 
-                _context.Parkings.Remove(parking);
+                parking.IsDeleted = true;
+                _context.Update(parking);
                 await _context.SaveChangesAsync();
+
                 _notyf.Success("Xóa bãi đỗ thành công");
                 return RedirectToAction(nameof(Index));
             }

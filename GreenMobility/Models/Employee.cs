@@ -31,6 +31,8 @@ public partial class Employee
 
     public int RoleId { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual Parking? Parking { get; set; }
 
     public virtual ICollection<Rental> RentalPickupEmployees { get; set; } = new List<Rental>();

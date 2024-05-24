@@ -25,5 +25,7 @@ public partial class Customer
 
     public bool IsLocked { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual ICollection<Rental> Rentals { get; set; } = new List<Rental>();
 }
