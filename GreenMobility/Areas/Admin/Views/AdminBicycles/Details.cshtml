@@ -80,12 +80,14 @@
         </div>
     </div>
 </div>
-<script>
-    document.getElementById("deleteForm").addEventListener("submit", function (event) {
-        event.preventDefault();
+@section scripts {
+    <script>
+        document.getElementById("deleteForm").addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        if (confirm("Bạn có chắc chắn muốn xóa xe đạp này?")) {
-            this.submit();
-        }
-    });
-</script>
+            if (confirm("Bạn có chắc chắn muốn xóa xe đạp này?")) {
+                this.submit();
+            }
+        });
+    </script>
+}

@@ -93,12 +93,12 @@
         <div class="row">
             @foreach (var post in Model)
             {
-                string url = $"/{post.Alias}-{post.PostId}.html";
+                string url = $"/posts/{post.Alias}-{post.PostId}";
                 <div class="col-lg-4">
                     <div class="blog-item">
                         <div class="blog-img img-zoom-effect">
                             <a href="@url">
-                                <img class="img-full h-100" src="~/images/posts/@post.Thumb" alt="@post.Title" style="width: 370px; height: 315px;">
+                                <img class="img-full h-100" src="~/images/posts/@post.Thumb" alt="@post.Title" style="width: 370px; height: 315px !important;">
                             </a>
                         </div>
                         <div class="blog-content">

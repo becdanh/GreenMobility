@@ -27,6 +27,8 @@ public partial class Bicycle
 
     public double? RentalPrice { get; set; }
 
+    public bool? IsDeleted { get; set; }
+
     public virtual BicycleStatus? BicycleStatus { get; set; }
 
     public virtual Parking? Parking { get; set; }

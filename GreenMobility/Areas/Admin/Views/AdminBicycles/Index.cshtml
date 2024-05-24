@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="m-b-10">
-                        <select class="custom-select" id="status" name="status" style="min-width: 180px;" asp-items="ViewBag.TrangThai">
+                        <select class="custom-select" id="status" name="status" style="min-width: 180px;" asp-items="ViewBag.Status">
                             <option value="" disabled selected>Chọn trạng thái</option>
                             <option value="0" selected>Tất cả trạng thái</option>
                         </select>
@@ -59,7 +59,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(Model != null)
+                    @if (Model != null && Model.Count > 0)
                     {
                         int OrdinalNumber = (CurrentPage - 1) * Model.PageSize;
                         @foreach (var item in Model)
@@ -67,35 +67,45 @@
                             <tr>
                                 <td>@(++OrdinalNumber)</td>
                                 <td>@item.BicycleName</td>
-                                <td>@item.LicensePlate</td>
+                                <td><a asp-controller="AdminBicycles" asp-action="Details" asp-route-id="@item.BicycleId">@item.LicensePlate</a></td>
                                 <td>@item.Parking.ParkingName</td>
                                 <td>@item.BicycleStatus.Description</td>
                                 <td class="text-right">
                                     <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Edit" asp-route-id="@item.BicycleId">
                                         <i class="anticon anticon-edit"></i>
                                     </a>
-                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminBicycles" asp-action="Details" asp-route-id="@item.BicycleId">
-                                        <i class="anticon anticon-eye"></i>
-                                    </a>
+                                    <form class="deleteForm" method="post" asp-controller="AdminBicycles" asp-action="Delete" asp-route-id="@item.BicycleId" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-icon btn-hover btn-sm btn-rounded">
+                                            <i class="anticon anticon-delete"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         }
                     }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-left">Chưa có dữ liệu</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <ul class="pagination">
+                        <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminBicycles" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
+                    </ul>
+                </div>
 
-        <div class="row">
-            <div class="col-sm-12 col-md-5">
-                <ul class="pagination">
-                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminBicycles" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
-                </ul>
+                <div class="col-sm-12 col-md-7 text-right">
+                    <p>Đang xem @Model.FirstItemOnPage đến @Model.LastItemOnPage trong tổng số @Model.TotalItemCount mục</p>
+                </div>
             </div>
-
-            <div class="col-sm-12 col-md-7 text-right">
-                <p>Tổng số xe: @Model.TotalItemCount</p>
-            </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -129,6 +139,12 @@
             $("#status").val(status);
             var keyword = "@ViewBag.Keyword";
             $("#keyword").val(keyword);
+        });
+        $('.deleteForm').on('submit', function (event) {
+            event.preventDefault();
+            if (confirm("Bạn có chắc chắn muốn xóa xe đạp này?")) {
+                this.submit();
+            }
         });
     </script>
 }

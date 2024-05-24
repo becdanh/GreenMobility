@@ -218,7 +218,9 @@ public partial class GreenMobilityContext : DbContext
         {
             entity.ToTable("RentalStatus");
 
-            entity.Property(e => e.RentalStatusId).HasColumnName("RentalStatusID");
+            entity.Property(e => e.RentalStatusId)
+                .ValueGeneratedNever()
+                .HasColumnName("RentalStatusID");
             entity.Property(e => e.Description).HasMaxLength(50);
         });
 
