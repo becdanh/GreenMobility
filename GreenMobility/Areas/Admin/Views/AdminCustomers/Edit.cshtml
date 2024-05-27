@@ -8,7 +8,10 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="CustomerId" />
     <input type="hidden" asp-for="Password" />
-    <div class="page-header no-gutters has-tab">
+    <input type="hidden" asp-for="IsDeleted" />
+    <input type="hidden" asp-for="Salt" />
+    <input type="hidden" asp-for="CreateDate" />
+    <div class="page-header no-gutters">
         <div class="row align-items-md-center">
             <div class="col-md-8">
                 <h2 class="header-title">Quản lý khách hàng</h2>
@@ -31,14 +34,14 @@
                     </div>
                 </div>
             </div>
-            <ul class="nav nav-tabs">
+@*             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link active" data-toggle="tab" href="#tab-account">Thông tin chi tiết</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#tab-network">Giấy tờ tùy thân</a>
                 </li>
-            </ul>
+            </ul> *@
         </div>
     </div>
     <div class="tab-content m-t-15">
@@ -78,12 +81,12 @@
                             <input type="text" class="form-control" asp-for="Address" placeholder="Địa chỉ">
                         </div>
                     </div>
-                    <div class="form-row">
+                    <div class="form-group d-flex align-items-center">
                         <div class="switch m-r-10">
                             <input type="checkbox" asp-for="IsLocked">
-                            <label for="IsWorking"></label>
+                            <label for="IsLocked"></label>
                         </div>
-                        <label>Làm việc</label>
+                        <label>Khóa</label>
                     </div>
                     @Html.ValidationMessage("Error", "", new { @style = "color:#f00" })
                 </div>

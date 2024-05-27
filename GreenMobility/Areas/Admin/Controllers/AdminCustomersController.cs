@@ -36,7 +36,8 @@ namespace GreenMobility.Areas.Admin.Controllers
             ViewData["lsStatus"] = lsStatus;
 
             IQueryable<Customer> customerQuery = _context.Customers
-                .AsNoTracking();
+                .AsNoTracking()
+                .Where(x => x.IsDeleted == false);
 
             if (status == 2)
             {
@@ -80,30 +81,24 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
 
             var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.CustomerId == id && m.IsDeleted == false);
+
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
-        }
+            var rentals = await _context.Rentals
+            .AsNoTracking()
+            .Where(r => r.CustomerId == id)
+            .Include(r => r.RentalStatus)
+            .Include(r => r.PickupParkingNavigation)
+            .OrderByDescending(r => r.OrderTime)
+            .ToListAsync();
 
-        public IActionResult Create()
-        {
-            return View();
-        }
+            ViewBag.Rentals = rentals;
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,FullName,Phone,Email,Address,Password,Salt,CreateDate,LastLogin,IsLocked")] Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
             return View(customer);
         }
 
@@ -114,7 +109,8 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(p => p.CustomerId == id && p.IsDeleted == false);
             if (customer == null)
             {
                 return NotFound();
@@ -124,7 +120,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,FullName,Phone,Email,Address,Password,Salt,CreateDate,LastLogin,IsLocked")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerId,FullName,Phone,Email,Address,Password,Salt,CreateDate,LastLogin,IsLocked,IsDeleted")] Customer customer)
         {
             if (id != customer.CustomerId)
             {
@@ -137,6 +133,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 {
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
+                    _notyf.Success("Cập nhật khách hàng thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -154,7 +151,32 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(customer);
         }
 
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var customer = await _context.Customers.FindAsync(id);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
 
+                customer.IsDeleted = true;
+                customer.IsLocked = true;
+                _context.Update(customer);
+                await _context.SaveChangesAsync();
+
+                _notyf.Success("Xóa khách hàng thành công");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _notyf.Error("Xóa khách hàng thất bại");
+                return RedirectToAction(nameof(Index));
+            }
+        }
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.CustomerId == id);

@@ -100,10 +100,10 @@
                             <td><a asp-controller="AdminCustomers" asp-action="Details" asp-route-id="@item.Customer.CustomerId">@item.Customer.FullName</a></td>
                             <td>@item.PickupParkingNavigation.ParkingName</td>
                             <td>@item.OrderTime</td>
-                            <td>@item.TotalMoney</td>
+                            <td>@item.TotalMoney.Value.ToString("#,##0") VNĐ</td>
                             <td>@item.RentalStatus.Description</td>
                             <td class="text-right">
-                                <a data-target="#modal-header" data-toggle="modal" class="btn btn-icon btn-hover btn-sm btn-rounded" asp-area="Admin" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@item.RentalId">
+                                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-area="Admin" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@item.RentalId">
                                     <i class="anticon anticon-edit"></i>
                                 </a>
                                 <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminRentals" asp-action="Details" asp-route-id="@item.RentalId">
@@ -137,12 +137,6 @@
 </div>
 @section Scripts {
     <script>
-        $('#modal-header').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var url = button.attr("href");
-            var modal = $(this);
-            modal.find('.modal-content').load(url);
-        });
         jQuery(document).ready(function () {
             $("#status, #keyword").change(function () {
                 var status = $("#status").children(":selected").val();

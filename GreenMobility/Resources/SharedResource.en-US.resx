@@ -129,6 +129,9 @@
   <data name="AppointmentTimeCO" xml:space="preserve">
     <value>Appointment Time</value>
   </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Back to home</value>
+  </data>
   <data name="Bicycle" xml:space="preserve">
     <value>Bicycle</value>
   </data>
@@ -258,6 +261,9 @@
   <data name="NoBikeInCart" xml:space="preserve">
     <value>No bikes have been rented yet. Let's actively pedal!</value>
   </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Notification</value>
+  </data>
   <data name="OnlyRent" xml:space="preserve">
     <value>You can only rent from one parking lot at a time 😊</value>
   </data>
@@ -290,6 +296,9 @@
   </data>
   <data name="PickupTime" xml:space="preserve">
     <value>Date of bicycles pick-up</value>
+  </data>
+  <data name="PleaseContact" xml:space="preserve">
+    <value>Please contact us for further details.</value>
   </data>
   <data name="Post" xml:space="preserve">
     <value>Posts</value>
@@ -405,6 +414,9 @@ Confirm and review the payment details on the app or website to complete the veh
   </data>
   <data name="View" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="YouAccountLocked" xml:space="preserve">
+    <value>Your account has been locked.</value>
   </data>
   <data name="YourRental" xml:space="preserve">
     <value>Your rental</value>

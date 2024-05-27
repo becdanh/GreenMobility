@@ -48,19 +48,19 @@
                         <th scope="col">Số điện thoại</th>
                         <th scope="col">Email</th>
                         <th scope="col">Trạng thái</th>
-                        <th class="text-right" scope="col"></th>
+                        <th class="text-right" scope="col">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null)
+                    @if (Model != null && Model.Count > 0)
                     {
                         int OrdinalNumber = (CurrentPage - 1) * Model.PageSize;
                         @foreach (var item in Model)
                         {
                             <tr>
                                 <td>@(++OrdinalNumber)</td>
-                                <td>@item.FullName</td>
-                                <td>@item.Phone</td>
+                                <td><a asp-controller="AdminCustomers" asp-action="Details" asp-route-id="@item.CustomerId">@item.FullName</a></td>
+                                <td><a asp-controller="AdminCustomers" asp-action="Details" asp-route-id="@item.CustomerId">@item.Phone</a></td>
                                 <td>@item.Email</td>
                                 <td>
                                     @if ((bool)item.IsLocked)
@@ -82,29 +82,37 @@
                                     <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminCustomers" asp-action="Edit" asp-route-id="@item.CustomerId">
                                         <i class="anticon anticon-edit"></i>
                                     </a>
-                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminCustomers" asp-action="Details" asp-route-id="@item.CustomerId">
-                                        <i class="anticon anticon-eye"></i>
-                                    </a>
+                                    <form class="deleteForm" method="post" asp-controller="AdminCustomers" asp-action="Delete" asp-route-id="@item.CustomerId" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-icon btn-hover btn-sm btn-rounded">
+                                            <i class="anticon anticon-delete"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         }
                     }
+                    else
+                    {
+                    <tr>
+                        <td colspan="6" class="text-left">Chưa có dữ liệu</td>
+                    </tr>
+                    }
                 </tbody>
             </table>
         </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-5">
-                <ul class="pagination">
-                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminCustomers" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
-                </ul>
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <ul class="pagination">
+                        <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminCustomers" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
+                    </ul>
+                </div>
+                <div class="col-sm-12 col-md-7 text-right">
+                    <p>Đang xem @Model.FirstItemOnPage đến @Model.LastItemOnPage trong tổng số @Model.TotalItemCount mục</p>
+                </div>
             </div>
-            <div class="col-sm-12 col-md-7 text-right">
-                @if (Model != null)
-                {
-                    <p>Tổng số khách hàng: @Model.TotalItemCount</p>
-                }
-            </div>
-        </div>
+        }
     </div>
 </div>
 @section Scripts {
@@ -137,6 +145,12 @@
             $("#status").val(status);
             var keyword = "@ViewBag.Keyword";
             $("#keyword").val(keyword);
+        });
+        $('.deleteForm').on('submit', function (event) {
+            event.preventDefault();
+            if (confirm("Bạn có chắc chắn muốn khách hàng này?")) {
+                this.submit();
+            }
         });
     </script>
 }

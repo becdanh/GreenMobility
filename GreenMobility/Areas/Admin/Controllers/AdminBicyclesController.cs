@@ -81,7 +81,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             var bicycle = await _context.Bicycles
                 .Include(x => x.Parking)
                 .Include(x => x.BicycleStatus)
-                .FirstOrDefaultAsync(m => m.BicycleId == id);
+                .FirstOrDefaultAsync(m => m.BicycleId == id && m.IsDeleted == false);
             if (bicycle == null)
             {
                 return NotFound();
@@ -160,7 +160,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var bicycle = await _context.Bicycles.FindAsync(id);
+            var bicycle = await _context.Bicycles.FirstOrDefaultAsync(p => p.BicycleId == id && p.IsDeleted == false);
             if (bicycle == null)
             {
                 return NotFound();
