@@ -5,6 +5,15 @@
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
+@section Styles {
+    <style>
+        .card-employee {
+            box-shadow: 0 2px 6px rgb(0, 0, 0, 0.3);
+        }
+
+        
+    </style>
+}
 <div class="page-header no-gutters">
     <div class="row align-items-md-center">
         <div class="col-md-8">
@@ -53,7 +62,7 @@
             @foreach (var item in Model)
             {
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card card-employee">
                         <div class="card-body">
                             <div class="m-t-20 text-center">
                                 <div class="avatar avatar-image" style="height: 100px; width: 100px;">

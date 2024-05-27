@@ -1,19 +1,46 @@
 @model GreenMobility.Models.Rental
+@{
+    ViewData["Title"] = "Chỉnh sửa đơn thuê";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
 @section Styles {
     <link href="~/Adminassets/summernote/summernote-bs4.css" rel="stylesheet" />
     <link href="~/Adminassets/summernote/summernote.css" rel="stylesheet" />
 }
-
-<div class="modal-header">
-    <h5 class="modal-title">THÔNG TIN ĐƠN THUÊ</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
+<form asp-area="Admin" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@Model.RentalId" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="RentalId" />
+<div class="page-header no-gutters">
+    <div class="row align-items-md-center">
+        <div class="col-md-8">
+            <h2 class="header-title">Quản lý xe đạp</h2>
+            <div class="header-sub-title">
+                <nav class="breadcrumb breadcrumb-dash">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                    <a asp-area="Admin" asp-controller="AdminRentals" asp-action="Index" class="breadcrumb-item">Danh sách đơn thuê</a>
+                    <span class="breadcrumb-item active">Chỉnh sửa đơn thuê</span>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-md-right">
+                <div>
+                    <button type="submit" class="btn btn-primary mr-1">
+                        <i class="anticon anticon-save"></i>
+                        <span>Lưu</span>
+                    </button>
+                    <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal-body">
+<div class="tab-content m-t-15">
     <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Thông tin đơn thuê</h4>
+        </div>
         <div class="card-body">
-            <h4 class="card-title">THÔNG TIN ĐƠN THUÊ #@Model.RentalId</h4>
             <div class="table-responsive">
                 <table class="product-info-table m-t-20">
                     <tbody>
@@ -53,11 +80,10 @@
             </div>
         </div>
     </div>
+</div>
     <div class="card">
         <div class="card-body">
-            <form asp-area="Admin" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@Model.RentalId" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="RentalId" />
+            
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -81,11 +107,11 @@
                         <textarea class="summernote" asp-for="Note"></textarea>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-            </form>
+
         </div>
     </div>
 </div>
+</form>
 @section Scripts {
     <script src="~/Adminassets/vendors/select2/select2.min.js"></script>
     <script src="~/Adminassets/js/pages/e-commerce-product-edit.js"></script>

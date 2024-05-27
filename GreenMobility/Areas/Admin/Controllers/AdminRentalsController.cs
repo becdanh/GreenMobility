@@ -116,7 +116,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return NotFound();
             }
             ViewData["Status"] = new SelectList(_context.RentalStatuses, "RentalStatusId", "Description", rental.RentalStatusId);
-            return PartialView("Edit", rental);
+            return View(rental);
         }
 
         [HttpPost]
@@ -258,7 +258,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Status"] = new SelectList(_context.RentalStatuses, "RentalStatusId", "Description", rental.RentalStatusId);
-            return PartialView("Edit", rental);
+            return View(rental);
         }
 
         public async Task<IActionResult> ExportExcel(string exportOption, DateTime? fromDate, DateTime? toDate, string month, int? year)

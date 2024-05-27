@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = @_localization.Getkey("Notification");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="error-404-area section-space-top-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="error-404-content">
+                    <h1 class="title mb-5">Hmm...</h1>
+                    <h2 class="sub-title mb-4">@_localization.Getkey("YouAccountLocked")</h2>
+                    <p class="short-desc mb-7">@_localization.Getkey("PleaseContact")</p>
+                    <div class="button-wrap">
+                        <a class="btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" href="/">@_localization.Getkey("BackToHome")</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

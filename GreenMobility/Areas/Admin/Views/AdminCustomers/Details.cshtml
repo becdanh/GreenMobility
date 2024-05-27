@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var rentals = ViewBag.Rentals as List<GreenMobility.Models.Rental>;
 }
 <div class="page-header no-gutters">
     <div class="row align-items-md-center">
@@ -19,6 +20,9 @@
         <div class="col-md-5">
             <div class="text-md-right d-flex justify-content-end">
                 <a class="btn btn-primary btn-tone mr-2" asp-area="Admin" asp-controller="AdminCustomers" asp-action="Edit" asp-route-id="@Model.CustomerId">Sửa đổi</a>
+                <form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.CustomerId" class="mr-2">
+                    <button type="submit" class="btn btn-danger btn-tone">Xóa</button>
+                </form>
                 <a asp-area="Admin" asp-controller="AdminBicycles" asp-action="Index" class="btn btn-success btn-tone">Quay lại</a>
             </div>
         </div>
@@ -75,4 +79,62 @@
             </div>
         </div>
     </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Đơn thuê</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn thuê</th>
+                            <th>Ngày tạo</th>
+                            <th>Bãi đỗ</th>
+                            <th>Trạng thái</th>
+                            <th>Số tiền thanh toán</th>
+                            <th class="text-right" scope="col">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (rentals != null && rentals.Count > 0)
+                        {
+                            @foreach (var rental in rentals)
+                            {
+                                <tr>
+                                    <td><a asp-controller="AdminRentals" asp-action="Details" asp-route-id="@rental.RentalId">@rental.RentalId</a></td>
+                                    <td>@rental.OrderTime.ToShortDateString()</td>
+                                    <td>@rental.PickupParkingNavigation.ParkingName</td>
+                                    <td>@rental.RentalStatus.Description</td>
+                                    <td>@rental.TotalMoney.Value.ToString("#,##0") VNĐ</td>
+                                    <td class="text-right">
+                                        <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminRentals" asp-action="Edit" asp-route-id="@rental.RentalId">
+                                            <i class="anticon anticon-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-left">Chưa có dữ liệu</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+@section scripts {
+    <script>
+        document.getElementById("deleteForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            if (confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
+                this.submit();
+            }
+        });
+    </script>
+}

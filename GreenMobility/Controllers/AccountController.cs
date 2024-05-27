@@ -127,7 +127,7 @@ namespace GreenMobility.Controllers
 
             if (customer.IsLocked == true)
             {
-                return RedirectToAction("ThongBao", "Account");
+                return RedirectToAction("AccountLocked", "Account");
             }
 
             //Luu Session MaKh
@@ -331,6 +331,11 @@ namespace GreenMobility.Controllers
             return RedirectToAction("RentalList", "Account");
         }
 
+        [HttpGet]
+        public IActionResult AccountLocked()
+        {
+            return View();
+        }
 
         private bool EmailExists(string email)
         {

@@ -129,6 +129,9 @@
   <data name="AppointmentTimeCO" xml:space="preserve">
     <value>Thời Gian Hẹn Lấy Xe</value>
   </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Trở về trang chủ</value>
+  </data>
   <data name="Bicycle" xml:space="preserve">
     <value>Xe đạp</value>
   </data>
@@ -264,6 +267,9 @@
   <data name="NoBikeInCart" xml:space="preserve">
     <value>Chưa có xe nào được thuê. Hãy tích cực đạp xe nhé!</value>
   </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Thông báo</value>
+  </data>
   <data name="OnlyRent" xml:space="preserve">
     <value>Mỗi lần chỉ có thể thuê từ một bãi xe duy nhất 😊</value>
   </data>
@@ -293,6 +299,9 @@
   </data>
   <data name="PickupTime" xml:space="preserve">
     <value>Ngày nhận xe</value>
+  </data>
+  <data name="PleaseContact" xml:space="preserve">
+    <value>Vui lòng liên hệ chúng tôi để biết thêm chi tiết.</value>
   </data>
   <data name="Post" xml:space="preserve">
     <value>Tin tức</value>
@@ -408,6 +417,9 @@ Xác nhận và kiểm tra chi tiết thanh toán trên ứng dụng hoặc tran
   </data>
   <data name="View" xml:space="preserve">
     <value>Xem chi tiết</value>
+  </data>
+  <data name="YouAccountLocked" xml:space="preserve">
+    <value>Tài khoản của bạn đã bị khóa</value>
   </data>
   <data name="YourRental" xml:space="preserve">
     <value>Đơn thuê của bạn</value>
