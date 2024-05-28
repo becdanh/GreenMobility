@@ -30,7 +30,7 @@ namespace GreenMobility.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int page = 1, int status = 0, string keyword = "")
         {
             var pageNumber = page;
-            var pageSize = 10;
+            var pageSize = 8;
 
             List<SelectListItem> lsStatus = new List<SelectListItem>();
             lsStatus.Add(new SelectListItem() { Text = "Tất cả trạng thái", Value = "0" });
@@ -40,7 +40,8 @@ namespace GreenMobility.Areas.Admin.Controllers
 
             IQueryable<Employee> employeeQuery = _context.Employees
                 .AsNoTracking()
-                .Include(x => x.Parking);
+                .Include(x => x.Parking)
+                .Where(x => x.IsDeleted == false);
 
             if (status == 1)
             {
@@ -85,7 +86,8 @@ namespace GreenMobility.Areas.Admin.Controllers
 
             var employee = await _context.Employees
                 .Include(m => m.Parking)
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
+                .FirstOrDefaultAsync(m => m.EmployeeId == id && m.IsDeleted == false);
+
             if (employee == null)
             {
                 return NotFound();
@@ -103,7 +105,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId,RoleId")] Employee employee, IFormFile fPhoto)
+        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId,RoleId,IsDeleted")] Employee employee, IFormFile fPhoto)
         {
             if (string.IsNullOrWhiteSpace(employee.FullName))
                 ModelState.AddModelError("FullName", "Họ và tên không được để trống");
@@ -147,6 +149,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 employee.DateModified = DateTime.Now;
                 employee.DateCreated = DateTime.Now;
                 employee.IsWorking = true;
+                employee.IsDeleted = false;
 
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
@@ -160,7 +163,6 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(employee);
         }
 
-        // GET: Admin/AdminEmployees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Employees == null)
@@ -168,7 +170,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _context.Employees.FirstOrDefaultAsync(p => p.EmployeeId == id && p.IsDeleted == false);
             if (employee == null)
             {
                 return NotFound();
@@ -178,12 +180,9 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(employee);
         }
 
-        // POST: Admin/AdminEmployees/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId,RoleId")] Employee employee, IFormFile fPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,BirthDate,Address,Phone,Email,Password,Photo,IsWorking,ParkingId,RoleId,IsDeleted")] Employee employee, IFormFile fPhoto)
         {
             if (id != employee.EmployeeId)
             {
@@ -267,9 +266,11 @@ namespace GreenMobility.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                _context.Employees.Remove(employee);
+                 employee.IsDeleted = true;
+                employee.IsWorking = false;
+                _context.Update(employee);
                 await _context.SaveChangesAsync();
-                _notyf.Success("Xóa thành công");
+                _notyf.Success("Xóa nhân viên thành công");
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
