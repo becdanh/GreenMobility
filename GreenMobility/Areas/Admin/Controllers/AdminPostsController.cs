@@ -41,7 +41,8 @@ namespace GreenMobility.Areas.Admin.Controllers
             ViewData["lsStatus"] = lsStatus;
 
             IQueryable<Post> postQuery = _context.Posts
-                .AsNoTracking();
+                .AsNoTracking()
+                .Where(x => x.IsDeleted == false);
 
             if (status == 1)
             {
@@ -85,7 +86,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             }
 
             var post = await _context.Posts
-                .FirstOrDefaultAsync(m => m.PostId == id);
+                .FirstOrDefaultAsync(m => m.PostId == id && m.IsDeleted == false);
             if (post == null)
             {
                 return NotFound();
@@ -101,7 +102,7 @@ namespace GreenMobility.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PostId,Title,Contents,Published,Alias,CreatedDate,AccountId,Thumb,ShortContents")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
+        public async Task<IActionResult> Create([Bind("PostId,Title,Contents,Published,Alias,CreatedDate,AccountId,Thumb,ShortContents,IsDeleted")] Post post, Microsoft.AspNetCore.Http.IFormFile? fThumb)
         {
             if (string.IsNullOrWhiteSpace(post.Title))
                 ModelState.AddModelError("Title", "Tiêu đề không được để trống");
@@ -123,6 +124,7 @@ namespace GreenMobility.Areas.Admin.Controllers
                 if (string.IsNullOrEmpty(post.Thumb)) post.Thumb = "default.jpg";
                 post.Alias = Utilities.SEOUrl(post.Title);
                 post.CreatedDate = DateTime.Now;
+                post.IsDeleted = false;
 
                 _context.Add(post);
                 await _context.SaveChangesAsync();
@@ -140,7 +142,8 @@ namespace GreenMobility.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Posts.FindAsync(id);
+            var bicycle = await _context.Bicycles.FirstOrDefaultAsync(p => p.BicycleId == id && p.IsDeleted == false);
+            var post = await _context.Posts.FirstOrDefaultAsync(p => p.PostId == id && p.IsDeleted == false);
             if (post == null)
             {
                 return NotFound();
@@ -202,39 +205,32 @@ namespace GreenMobility.Areas.Admin.Controllers
             return View(post);
         }
 
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Posts == null)
-            {
-                return NotFound();
-            }
-
-            var post = await _context.Posts
-                .FirstOrDefaultAsync(m => m.PostId == id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return View(post);
-        }
+       
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Posts == null)
+            try
             {
-                return Problem("Entity set 'GreenMobilityContext.Posts'  is null.");
+                var post = await _context.Posts.FindAsync(id);
+                if (post == null)
+                {
+                    return NotFound();
+                }
+
+                post.IsDeleted = true;
+                _context.Update(post);
+                await _context.SaveChangesAsync();
+
+                _notyf.Success("Xóa bài viết thành công");
+                return RedirectToAction(nameof(Index));
             }
-            var post = await _context.Posts.FindAsync(id);
-            if (post != null)
+            catch (Exception ex)
             {
-                _context.Posts.Remove(post);
+                _notyf.Error("Xóa bài viết thất bại");
+                return RedirectToAction(nameof(Index));
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool PostExists(int id)
