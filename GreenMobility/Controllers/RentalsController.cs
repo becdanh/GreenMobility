@@ -1,9 +1,11 @@
 ﻿using GreenMobility.Models;
+using GreenMobility.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
+using GreenMobility.Extension;
 
 namespace GreenMobility.Controllers
 {
@@ -13,6 +15,19 @@ namespace GreenMobility.Controllers
         public RentalsController(GreenMobilityContext context)
         {
             _context = context;
+        }
+
+        public List<CartItemVM> RentalCart
+        {
+            get
+            {
+                var rentalCart = HttpContext.Session.Get<List<CartItemVM>>("RentalCart");
+                if (rentalCart == default(List<CartItemVM>))
+                {
+                    rentalCart = new List<CartItemVM>();
+                }
+                return rentalCart;
+            }
         }
 
         [Route("rentals", Name = "Rental")]
@@ -41,7 +56,7 @@ namespace GreenMobility.Controllers
             Dictionary<int, int> bicycleCounts = new Dictionary<int, int>();
             foreach (var parking in models)
             {
-                int bicycleCount = parking.Bicycles.Count(x => x.BicycleStatusId == 1);
+                int bicycleCount = parking.Bicycles.Count(x => x.BicycleStatusId == 1 && x.IsDeleted == false);
                 bicycleCounts.Add(parking.ParkingId, bicycleCount);
             }
             ViewBag.Keyword = keyword;
@@ -62,18 +77,26 @@ namespace GreenMobility.Controllers
         [Route("rentals/{Alias}-{id}", Name = "ListBicycle")]
         public IActionResult List(int id, int page = 1)
         {
-                var pageSize = 5;
-                var parking = _context.Parkings.AsNoTracking().SingleOrDefault(x => x.ParkingId == id);
-                var LsBicycles = _context.Bicycles
-                    .AsNoTracking()
-                    .Include(x => x.Parking)
-                    .Where(x => x.ParkingId == parking.ParkingId && x.BicycleStatusId == 1 && x.IsDeleted == false)
-                    .OrderByDescending(x => x.DateCreated);
-                PagedList<Bicycle> models = new PagedList<Bicycle>(LsBicycles, page, pageSize);
-                ViewBag.CurrentPage = page;
-                ViewBag.CurrentParking = parking;
-                ViewData["Parking"] = new SelectList(_context.Parkings, "ParkingId", "Address");
-                return View(models);
+            var pageSize = 12;
+            var parking = _context.Parkings.AsNoTracking().SingleOrDefault(x => x.ParkingId == id);
+
+            var availableBicycles = _context.Bicycles
+                .AsNoTracking()
+                .Include(x => x.Parking)
+                .Where(x => x.ParkingId == parking.ParkingId && x.BicycleStatusId == 1 && x.IsDeleted == false)
+                .OrderByDescending(x => x.DateCreated)
+                .ToList();
+
+            var bicyclesNotInCart = availableBicycles
+                .Where(b => !RentalCart.Any(rc => rc.bicycle.BicycleId == b.BicycleId))
+                .ToList();
+
+            PagedList<Bicycle> models = new PagedList<Bicycle>(bicyclesNotInCart.AsQueryable(), page, pageSize);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.CurrentParking = parking;
+            ViewData["Parking"] = new SelectList(_context.Parkings, "ParkingId", "Address");
+            return View(models);
         }
     }
 }
