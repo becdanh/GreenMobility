@@ -237,6 +237,12 @@
   <data name="IncorrectCurrentPassword" xml:space="preserve">
     <value>Mật khẩu không chính xác</value>
   </data>
+  <data name="InvalidAppointmentTime" xml:space="preserve">
+    <value>Thời gian hẹn lấy xe không hợp lệ.</value>
+  </data>
+  <data name="InvalidAppointmentTime2" xml:space="preserve">
+    <value>Chúng tôi chỉ cho phép đặt xe trước 2 ngày</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Ngôn ngữ</value>
   </data>
@@ -272,6 +278,9 @@
   </data>
   <data name="OnlyRent" xml:space="preserve">
     <value>Mỗi lần chỉ có thể thuê từ một bãi xe duy nhất 😊</value>
+  </data>
+  <data name="OrderPlacedSuccessfully" xml:space="preserve">
+    <value>Đặt xe thành công.</value>
   </data>
   <data name="Parking" xml:space="preserve">
     <value>bãi đỗ</value>
@@ -318,6 +327,9 @@
   <data name="Register" xml:space="preserve">
     <value>Đăng ký tài khoản</value>
   </data>
+  <data name="RemoveBicycle" xml:space="preserve">
+    <value>Một hoặc nhiều chiếc xe đạp trong giỏ hàng không còn sẵn nữa và đã được loại bỏ.</value>
+  </data>
   <data name="Rental" xml:space="preserve">
     <value>Thuê xe</value>
   </data>
@@ -335,6 +347,9 @@
   </data>
   <data name="RentalHoursCO" xml:space="preserve">
     <value>Số Giờ Thuê</value>
+  </data>
+  <data name="RentalHoursInvalid" xml:space="preserve">
+    <value>Số giờ thuê không hợp lệ.</value>
   </data>
   <data name="RentalInfor" xml:space="preserve">
     <value>Thông tin đơn thuê</value>

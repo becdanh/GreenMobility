@@ -71,16 +71,32 @@ namespace GreenMobility.Controllers
             foreach (var item in cart)
             {
                 var bicycle = _context.Bicycles.FirstOrDefault(x => x.BicycleId == item.bicycle.BicycleId);
-
                 if (item.RentalHours == 0)
                 {
-                    _notyf.Warning("One or more bicycles in the cart have rental hours equal to 0");
+                    _notyf.Warning(_localization.Getkey("RentalHoursInvalid"));
+                    return RedirectToAction("Index", "RentalCart");
+                }
+
+                if (item.AppointmentTime < DateTime.Now.AddMinutes(-1))
+                {
+                    _notyf.Warning(_localization.Getkey("InvalidAppointmentTime"));
+                    return RedirectToAction("Index", "RentalCart");
+                }
+
+                if (item.AppointmentTime > DateTime.Now.AddDays(2))
+                {
+                    _notyf.Warning(_localization.Getkey("InvalidAppointmentTime2"));
+                    return RedirectToAction("Index", "RentalCart");
+                }
+                if (item.RentalHours == 0)
+                {
+                    
                     return RedirectToAction("Index", "RentalCart");
                 }
 
                 if (bicycle != null)
                 {
-                    if (bicycle.BicycleStatusId != 1)
+                    if (bicycle.BicycleStatusId != 1 || bicycle.IsDeleted == true)
                     {
                         bikesToRemove.Add(item);
                     }
@@ -95,7 +111,7 @@ namespace GreenMobility.Controllers
             if (bikesToRemove.Count > 0)
             {
                 HttpContext.Session.Set("RentalCart", cart);
-                _notyf.Warning("One or more bicycles in the cart are no longer available and have been removed.");
+                _notyf.Warning(_localization.Getkey("RemoveBicycle"));
                 return RedirectToAction("Index", "RentalCart");
             }
 
@@ -127,7 +143,7 @@ namespace GreenMobility.Controllers
                 _context.SaveChanges();
                 HttpContext.Session.Remove("RentalCart");
                 UpdateBicycleStatus(cart);
-                _notyf.Success("Order placed successfully");
+                _notyf.Success(_localization.Getkey("OrderPlacedSuccessfully"));
                 return RedirectToAction("RentalList", "Account");
             }
 

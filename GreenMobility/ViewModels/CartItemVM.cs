@@ -13,20 +13,23 @@ namespace GreenMobility.ViewModels
 
         public int PickupParking => bicycle.ParkingId.Value;
 
-        public string ParkingName => GetParkingNameById(bicycle.ParkingId.Value);
 
-        private string GetParkingNameById(int parkingId)
+        Parking parkingInfo => GetParkingInfoById(bicycle.ParkingId.Value);
+        public string ParkingName => parkingInfo != null ? parkingInfo.ParkingName : "Unknown";
+        public string ParkingAlias => parkingInfo != null ? parkingInfo.ParkingName : "Unknown";
+        private Parking GetParkingInfoById(int parkingId)
         {
-            string parkingName = "Unknown";
+            Parking parkingInfo = new Parking();
             using (var dbContext = new GreenMobilityContext())
             {
                 var parking = dbContext.Parkings.FirstOrDefault(p => p.ParkingId == parkingId);
                 if (parking != null)
                 {
-                    parkingName = parking.ParkingName;
+                    parkingInfo.ParkingName = parking.ParkingName;
+                    parkingInfo.Alias = parking.Alias;
                 }
             }
-            return parkingName;
+            return parkingInfo;
         }
     }
 }

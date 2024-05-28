@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @model List<GreenMobility.ViewModels.CartItemVM>
 @{
-    ViewData["Title"] = "Giỏ thuê";
+    ViewData["Title"] = @_localization.Getkey("RentalCart");
     Layout = "~/Views/Shared/_Layout.cshtml";
     var returnUrl = Context.Request.Query["ReturnUrl"];
 }
@@ -29,8 +29,9 @@
                 <div class="col-12">
                     @if (Model != null && Model.Count() > 0)
                     {
+                        string url = $"rentals/{@Model.First().ParkingAlias}-{@Model.First().PickupParking}";
                         <div class="table-content table-responsive">
-                            <h2>@Model.First().ParkingName</h2>
+                            <h2><a href="@url">@Model.First().ParkingName</a></h2>
                             <table class="table">
                                 <thead>
                                     <tr>

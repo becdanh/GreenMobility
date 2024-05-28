@@ -113,24 +113,35 @@
                             </div>
                         </div>
                     </div>
-                    <div class="pagination-area pt-10">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <span class="fa fa-chevron-left"></span>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <span class="fa fa-chevron-right"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        <div class="pagination-area pt-10">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                                        <a class="page-link" asp-action="List" asp-route-page="@(Model.HasPreviousPage ? Model.PageNumber - 1 : 1)" aria-label="Previous">
+                                            <span class="fa fa-chevron-left" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </a>
+                                    </li>
+
+                                    @for (int i = 1; i <= Model.PageCount; i++)
+                                    {
+                                        <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                                            <a class="page-link" asp-action="List" asp-route-page="@i">@i</a>
+                                        </li>
+                                    }
+
+                                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                                        <a class="page-link" asp-action="List" asp-route-page="@(Model.HasNextPage ? Model.PageNumber + 1 : Model.PageNumber)"aria-label="Next">
+                                            <span class="fa fa-chevron-right" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -150,22 +161,24 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            alert(response.message);
-                            loadHeaderCart();
+                            localStorage.setItem('notificationMessage', response.message);
                             location.reload();
-
                         } else {
-                            alert(response.message);
+                            notyf.error(response.message);
                         }
                     },
                     error: function (error) {
-                        alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng: " + error.responseText);
+                        notyf.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng: " + error.responseText);
                     }
                 });
             });
-            function loadHeaderCart() {
-                $('#numberCart').load("/AjaxContent/NumberCart");
+
+            var notificationMessage = localStorage.getItem('notificationMessage');
+            if (notificationMessage) {
+                notyf.success(notificationMessage);
+                localStorage.removeItem('notificationMessage');
             }
         });
+
     </script>
 }
