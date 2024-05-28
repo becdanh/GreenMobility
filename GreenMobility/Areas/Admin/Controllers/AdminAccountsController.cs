@@ -58,10 +58,10 @@ namespace GreenMobility.Areas.Admin.Controllers
                         return View(model);
                     }
 
-                    await _context.SaveChangesAsync();
-
-
-                    
+                    if (employee.IsWorking == false)
+                    {
+                        return RedirectToAction("AccountLocked", "Error");
+                    }
 
                     HttpContext.Session.SetString("EmployeeId", employee.EmployeeId.ToString());
                     var EmployeeId = HttpContext.Session.GetString("EmployeeId");

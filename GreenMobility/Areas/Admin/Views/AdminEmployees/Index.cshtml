@@ -62,45 +62,50 @@
             @foreach (var item in Model)
             {
                 <div class="col-md-3">
-                    <div class="card card-employee">
-                        <div class="card-body">
-                            <div class="m-t-20 text-center">
-                                <div class="avatar avatar-image" style="height: 100px; width: 100px;">
-                                    <img src="~/images/employees/@item.Photo" alt="@item.FullName">
+                    <a asp-controller="AdminEmployees" asp-action="Details" asp-route-id="@item.EmployeeId">
+                        <div class="card card-employee">
+                            <div class="card-body">
+                                <div class="m-t-20 text-center">
+                                    <div class="avatar avatar-image" style="height: 100px; width: 100px;">
+                                        <img src="~/images/employees/@item.Photo" alt="@item.FullName">
+                                    </div>
+                                    <h4 class="m-t-30">@item.FullName</h4>
+                                    <p>@item.Email</p>
                                 </div>
-                                <h4 class="m-t-30">@item.FullName</h4>
-                                <p>@item.Email</p>
+                                <div class="text-center m-t-15">
+                                    <p>@item.Parking.ParkingName</p>
+                                </div>
+                                <div class="text-center m-t-30">
+                                    <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminEmployees" asp-action="Edit" asp-route-id="@item.EmployeeId">
+                                        <i class="anticon anticon-edit"></i>
+                                    </a>
+                                    <form class="deleteForm" method="post" asp-controller="AdminEmployees" asp-action="Delete" asp-route-id="@item.EmployeeId" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-icon btn-hover btn-sm btn-rounded">
+                                            <i class="anticon anticon-delete"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
                             </div>
-                            <div class="text-center m-t-15">
-                                <p>@item.Parking.ParkingName</p>
-                            </div>
-                            <div class="text-center m-t-30">
-                                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminEmployees" asp-action="Edit" asp-route-id="@item.EmployeeId">
-                                    <i class="anticon anticon-edit"></i>
-                                </a>
-                                <a class="btn btn-icon btn-hover btn-sm btn-rounded" asp-controller="AdminEmployees" asp-action="Details" asp-route-id="@item.EmployeeId">
-                                    <i class="anticon anticon-eye"></i>
-                                </a>
-                            </div>
-                            
                         </div>
-                    </div>
+                    </a>
                 </div>
             }
         </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-5">
-                <ul class="pagination">
-                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminEmployees" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
-                </ul>
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <ul class="pagination">
+                        <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminEmployees" asp-route-status="@ViewBag.CurrentStatus" asp-route-keyword="@ViewBag.Keyword" asp-action="Index"></pager>
+                    </ul>
+                </div>
+
+                <div class="col-sm-12 col-md-7 text-right">
+                    <p>Đang xem @Model.FirstItemOnPage đến @Model.LastItemOnPage trong tổng số @Model.TotalItemCount mục</p>
+                </div>
             </div>
-            <div class="col-sm-12 col-md-7 text-right">
-                @if (Model != null)
-                {
-                    <p>Tổng số nhân viên: @Model.TotalItemCount</p>
-                }
-            </div>
-        </div>
+        }
     </div>
 </div>
 @section Scripts {
@@ -133,6 +138,12 @@
             $("#idstatus").val(status);
             var keyword = "@ViewBag.Keyword";
             $("#keyword").val(keyword);
+        });
+        $('.deleteForm').on('submit', function (event) {
+            event.preventDefault();
+            if (confirm("Bạn có chắc chắn muốn xóa xe đạp này?")) {
+                this.submit();
+            }
         });
     </script>
 }

@@ -90,7 +90,7 @@ namespace GreenMobility.Controllers
         {
             try
             {
-                if (rentalHours == 0)
+                if (rentalHours <= 0)
                 {
                     string errorMessage = _localization.Getkey("RentalHoursInvalid");
                     return Json(new { success = false, message = errorMessage });
