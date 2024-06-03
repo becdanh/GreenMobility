@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie("AdminCookie", options =>
     {
         options.LoginPath = "/Admin/AdminAccounts/Login";
-        options.AccessDeniedPath = "/admin/access-denied";
+        options.AccessDeniedPath = "/Admin/Error/AccessDenied";
         options.Cookie.Name = "AdminAuthenticationCookie";
     });
 

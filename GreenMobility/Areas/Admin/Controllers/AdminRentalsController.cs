@@ -84,6 +84,7 @@ namespace GreenMobility.Areas.Admin.Controllers
             var rental = await _context.Rentals
                 .Include(r => r.Customer)
                 .Include(r => r.RentalStatus)
+                .Include(r => r.PickupParkingNavigation)
                 .FirstOrDefaultAsync(m => m.RentalId == id);
             if (rental == null)
             {
@@ -148,12 +149,17 @@ namespace GreenMobility.Areas.Admin.Controllers
                         {
                             rent.PickupTime = DateTime.Now;
                             var employyeeIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "EmployeeId");
-
-                            if (employyeeIdClaim != null)
+                            if (employyeeIdClaim != null && int.TryParse(employyeeIdClaim.Value, out int employeeId))
                             {
-                                if (int.TryParse(employyeeIdClaim.Value, out int employeeId))
+                                var employee = await _context.Employees.FirstOrDefaultAsync(e => e.EmployeeId == employeeId);
+                                if (employee != null && employee.ParkingId == rent.PickupParking)
                                 {
                                     rent.PickupEmployeeId = employeeId;
+                                }
+                                else
+                                {
+                                    _notyf.Error("Nhân viên không thuộc bãi đỗ xe này.");
+                                    return RedirectToAction("Index");
                                 }
                             }
                             foreach (var detail in rent.RentalDetails)

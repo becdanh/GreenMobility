@@ -9,5 +9,9 @@ namespace GreenMobility.Areas.Admin.Controllers
         {
             return View();
         }
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
